@@ -1,236 +1,401 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Network Port Label Generator</title>
-    <style>
-        :root {
-            --sidebar-width: 400px;
-            --bg-color: #f8fafc;
-            --surface-color: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #cbd5e1;
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --success: #059669;
-            --success-hover: #047857;
-            --danger: #ef4444;
-            --danger-hover: #dc2626;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Port Label Generator</title>
+<!-- Google Fonts & Material Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+    :root {
+        --sidebar-width: 400px;
+        --bg-color: #f4f6f8;
+        --surface-color: #ffffff;
+        --text-main: #212529;
+        --text-muted: #6c757d;
+        --border-color: #e0e0e0;
+        --primary: #1976d2;
+        --primary-hover: #115293;
+        --success: #2e7d32;
+        --success-hover: #1b5e20;
+        --danger: #d32f2f;
+        --danger-hover: #c62828;
+        --shadow: 0 2px 4px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
+        --shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    body {
+        font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+        direction: ltr;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            direction: ltr;
-        }
+    body[dir="rtl"] {
+        direction: rtl;
+        text-align: right;
+    }
+    
+    #mobile-menu-btn {
+        display: none;
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        z-index: 100;
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        box-shadow: 0 3px 1px -2px rgba(0,0,0,0.2), 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+        transition: background 0.2s;
+    }
+    #mobile-menu-btn:hover { background: var(--primary-hover); }
+    body[dir="rtl"] #mobile-menu-btn { left: auto; right: 16px; }
 
+    #sidebar {
+        width: var(--sidebar-width);
+        background: var(--surface-color);
+        padding: 20px;
+        box-shadow: 4px 0 16px rgba(0,0,0,0.08);
+        height: 100vh;
+        overflow-y: auto;
+        box-sizing: border-box;
+        border-right: 1px solid var(--border-color);
+        flex-shrink: 0;
+        z-index: 50;
+        transition: transform 0.3s ease;
+    }
+    
+    body[dir="rtl"] #sidebar {
+        border-right: none;
+        border-left: 1px solid var(--border-color);
+        box-shadow: -4px 0 16px rgba(0,0,0,0.08);
+    }
+    
+    #main-content {
+        padding: 24px;
+        flex-grow: 1;
+        box-sizing: border-box;
+        height: 100vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .lang-toggle { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+    body[dir="rtl"] .lang-toggle { justify-content: flex-start; }
+    
+    .lang-toggle button {
+        background: #f5f5f5; color: #424242; border: 1px solid var(--border-color); padding: 4px 12px;
+        font-size: 0.8em; border-radius: 16px; cursor: pointer; font-weight: 500; width: auto;
+        transition: background 0.2s;
+    }
+    .lang-toggle button:hover { background: #e0e0e0; }
+
+    h2 { color: var(--text-main); margin-top: 0; margin-bottom: 16px; font-size: 1.25em; font-weight: 500; letter-spacing: 0.15px; }
+    
+    .accordion-section {
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        margin-bottom: 12px;
+        background: #fff;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+    }
+    .accordion-header {
+        background: #fff;
+        padding: 14px 16px;
+        font-size: 0.95em;
+        font-weight: 500;
+        color: var(--text-main);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
+        transition: background 0.2s;
+    }
+    .accordion-header:hover { background: #fafafa; }
+    .accordion-header::after {
+        content: 'expand_more';
+        font-family: 'Material Icons';
+        font-size: 1.2em;
+        color: var(--text-muted);
+        transition: transform 0.3s;
+    }
+    .accordion-section.active .accordion-header::after { transform: rotate(180deg); }
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        padding: 0 16px;
+        background: #fff;
+    }
+    .accordion-section.active .accordion-content {
+        max-height: 1000px;
+        padding: 14px 16px;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .form-group { margin-bottom: 14px; }
+    label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.85em; color: var(--text-muted); }
+    
+    input[type="number"], input[type="text"], input[type="file"], select {
+        width: 100%; padding: 10px 12px; box-sizing: border-box; 
+        border: 1px solid var(--border-color); border-radius: 4px; 
+        background: #fff; color: var(--text-main); 
+        font-size: 0.9em; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    body[dir="rtl"] input[type="text"], body[dir="rtl"] select { text-align: right; }
+    
+    input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15); }
+    
+    button {
+        font-family: inherit; font-weight: 500; border-radius: 4px; 
+        cursor: pointer; transition: all 0.2s; width: 100%; padding: 10px 16px;
+        background: var(--primary); color: white; border: none; font-size: 0.9em;
+        box-shadow: var(--shadow);
+        letter-spacing: 0.4px;
+    }
+    button:hover { background: var(--primary-hover); box-shadow: var(--shadow-lg); }
+    
+    button.btn-success { background-color: var(--success); margin-top: 12px; font-size: 0.95em; padding: 12px; }
+    button.btn-success:hover { background-color: var(--success-hover); }
+    
+    button.btn-secondary { background: #f5f5f5; color: #334155; border: 1px solid var(--border-color); box-shadow: none; }
+    button.btn-secondary:hover { background: #e0e0e0; box-shadow: var(--shadow); }
+    
+    button.delete-btn {
+        background: transparent; color: var(--text-muted); border: 1px solid transparent; 
+        width: 32px; height: 32px; padding: 0; border-radius: 50%; 
+        display: flex; align-items: center; justify-content: center; font-size: 1.1em;
+        flex-shrink: 0; transition: all 0.2s; box-shadow: none;
+    }
+    button.delete-btn:hover { background: #ffebee; color: var(--danger); }
+
+    .view-container {
+        background: var(--surface-color); border: 1px solid var(--border-color);
+        border-radius: 8px; padding: 20px; box-shadow: var(--shadow);
+        width: 100%; box-sizing: border-box; overflow: hidden; flex-shrink: 0;
+    }
+    
+    .scale-wrapper { transform-origin: top left; width: max-content; }
+    body[dir="rtl"] .scale-wrapper { transform-origin: top right; }
+
+    .rack-visual-row {
+        display: flex; flex-wrap: nowrap; margin-bottom: 10px; background: #f8f9fa;
+        padding: 8px; border-radius: 6px; width: max-content; border: 1px solid var(--border-color);
+    }
+    
+    .hardware-port {
+        background: #fff; border: 1px solid #b0bec5; box-sizing: border-box;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        font-size: 10px; text-align: center; border-radius: 4px; flex-shrink: 0; 
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .hardware-port .pins { width: 50%; height: 2px; background: #ffa726; margin-bottom: 3px; border-radius: 1px; }
+
+    .page {
+        background: white; color: black; margin-bottom: 20px; padding: 20px;
+        border-radius: 8px; box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        max-width: 190mm; 
+        box-sizing: border-box;
+    }
+    .page-title { text-align: center; margin-bottom: 15px; color: #424242; font-size: 1em; font-weight: 500; }
+    
+    .print-labels-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3mm;
+        justify-content: flex-start;
+    }
+    body[dir="rtl"] .print-labels-container {
+        justify-content: flex-start;
+    }
+
+    .label {
+        border: 1px solid #212529; 
+        display: flex; flex-direction: column; justify-content: center;
+        align-items: center; box-sizing: border-box; text-align: center; font-weight: 700;
+        font-size: 11px; line-height: 1.2; 
+        border-radius: 4px;
+        flex-shrink: 0; overflow: hidden;
+        background-color: #fff;
+    }
+
+    .cat-manager {
+        background: #fafafa; border: 1px solid var(--border-color); border-radius: 6px;
+        padding: 12px; margin-bottom: 14px;
+    }
+    .cat-item-row {
+        display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
+        background: #fff; padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border-color);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+    .cat-item-row input[type="text"] { flex: 2; border: none; background: transparent; padding: 2px; font-size: 0.9em; }
+    body[dir="rtl"] .cat-item-row input[type="text"] { text-align: right; }
+    .cat-item-row input[type="text"]:focus { box-shadow: none; }
+    
+    .cat-color-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 1.2;
+    }
+    .cat-color-wrapper input[type="color"] {
+        -webkit-appearance: none;
+        border: none;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        cursor: pointer;
+        background: none;
+        padding: 0;
+    }
+    .cat-color-wrapper input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    .cat-color-wrapper input[type="color"]::-webkit-color-swatch { border: 1px solid var(--border-color); border-radius: 50%; }
+
+    .table-container { 
+        overflow-x: auto; 
+        max-height: 300px; 
+        overflow-y: auto; 
+        border: 1px solid var(--border-color); 
+        border-radius: 6px; 
+        margin-top: 10px; 
+    }
+    table { 
+        width: 100%; 
+        border-collapse: separate; 
+        border-spacing: 0; 
+        text-align: left; 
+    }
+    body[dir="rtl"] table { text-align: right; }
+    
+    th, td { 
+        padding: 10px 12px; 
+        border-bottom: 1px solid var(--border-color); 
+        vertical-align: middle; 
+        background: #fff;
+    }
+    body[dir="rtl"] th, body[dir="rtl"] td { text-align: right; }
+    
+    th { 
+        background: #fafafa; 
+        font-weight: 500; 
+        font-size: 0.8em; 
+        color: var(--text-muted); 
+        position: sticky; 
+        top: 0; 
+        z-index: 2;
+        border-bottom: 2px solid var(--border-color);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+    
+    tbody tr {
+        transition: background-color 0.2s;
+    }
+    tbody tr.dragging {
+        opacity: 0.4;
+        background: #e3f2fd;
+    }
+    tbody tr.drag-over {
+        border-top: 2px solid var(--primary);
+    }
+    
+    tbody tr:last-child td { border-bottom: none; }
+    td input, td select { width: 100%; padding: 6px 10px; margin: 0; box-sizing: border-box; }
+    
+    /* Category indicator left/right border accent for table rows */
+    tbody tr.has-category-border {
+        border-left: 5px solid var(--row-cat-color, transparent);
+    }
+    body[dir="rtl"] tbody tr.has-category-border {
+        border-left: 1px solid var(--border-color);
+        border-right: 5px solid var(--row-cat-color, transparent);
+    }
+    
+    .drag-handle {
+        cursor: grab;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        font-size: 1.2em;
+        padding: 4px;
+    }
+    .drag-handle:active {
+        cursor: grabbing;
+    }
+
+    .port-number-badge {
+        display: inline-block;
+        background: #e3f2fd;
+        color: #1565c0;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.8em;
+        font-weight: 600;
+        border: 1px solid #bbdefb;
+    }
+
+    .action-cols { width: 90px; text-align: center; }
+    .action-btns { display: flex; gap: 6px; align-items: center; justify-content: center; }
+
+    @media (max-width: 768px) {
+        #mobile-menu-btn { display: block; }
         #sidebar {
-            width: var(--sidebar-width);
-            background: var(--surface-color);
-            padding: 20px;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.04);
-            height: 100vh;
-            overflow-y: auto;
-            box-sizing: border-box;
-            border-right: 1px solid var(--border-color);
-            flex-shrink: 0;
-            z-index: 10;
-        }
-
-        body[dir="rtl"] #sidebar {
-            border-right: none;
-            border-left: 1px solid var(--border-color);
-            box-shadow: -4px 0 20px rgba(0,0,0,0.04);
-        }
-
-        #main-content {
-            padding: 24px;
-            flex-grow: 1;
-            box-sizing: border-box;
-            height: 100vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .lang-toggle { display: flex; justify-content: flex-end; margin-bottom: 10px; }
-        .lang-toggle button {
-            background: #f1f5f9; color: #475569; border: 1px solid var(--border-color); padding: 5px 12px;
-            font-size: 0.8em; border-radius: 20px; cursor: pointer; font-weight: 600; width: auto;
-        }
-        .lang-toggle button:hover { background: #e2e8f0; }
-
-        h2 { color: var(--text-main); margin-top: 0; margin-bottom: 14px; font-size: 1.15em; font-weight: 700; }
-        h3 { color: var(--text-main); margin-top: 0; margin-bottom: 10px; font-size: 0.95em; font-weight: 600; border-bottom: 2px solid var(--border-color); padding-bottom: 6px;}
-
-        .form-group { margin-bottom: 12px; }
-        label { display: block; margin-bottom: 4px; font-weight: 500; font-size: 0.8em; color: var(--text-muted); }
-
-        input[type="number"], input[type="text"], input[type="file"], select {
-            width: 100%; padding: 8px 10px; box-sizing: border-box;
-            border: 1px solid #cbd5e1; border-radius: 6px;
-            background: #fff; color: var(--text-main);
-            font-size: 0.9em; transition: all 0.2s;
-        }
-        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
-
-        button {
-            font-family: inherit; font-weight: 600; border-radius: 6px;
-            cursor: pointer; transition: all 0.2s; width: 100%; padding: 9px 12px;
-            background: var(--primary); color: white; border: none; font-size: 0.9em;
-        }
-        button:hover { background: var(--primary-hover); }
-
-        button.btn-success { background-color: var(--success); margin-top: 10px; font-size: 1em; padding: 12px; }
-        button.btn-success:hover { background-color: var(--success-hover); }
-
-        button.btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
-        button.btn-secondary:hover { background: #e2e8f0; }
-
-        button.delete-btn {
-            background: transparent; color: #94a3b8; border: 1px solid transparent;
-            width: 28px; height: 28px; padding: 0; border-radius: 4px;
-            display: flex; align-items: center; justify-content: center; font-size: 0.85em;
-            flex-shrink: 0; transition: all 0.2s;
-        }
-        button.delete-btn:hover { background: #fee2e2; color: var(--danger); border-color: #fecaca; }
-
-        /* --- Sections container fitting screen --- */
-        .view-container {
-            background: var(--surface-color); border: 1px solid var(--border-color);
-            border-radius: 10px; padding: 20px; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-            width: 100%; box-sizing: border-box; overflow: hidden; flex-shrink: 0;
-        }
-
-        .scale-wrapper { transform-origin: top left; width: max-content; }
-        body[dir="rtl"] .scale-wrapper { transform-origin: top right; }
-
-        /* For Hardware View specifically */
-        .rack-visual-row {
-            display: flex; flex-wrap: nowrap; margin-bottom: 10px; background: #f1f5f9;
-            padding: 8px; border-radius: 6px; width: max-content; border: 1px solid #e2e8f0;
-        }
-
-        .hardware-port {
-            background: #fff; border: 1px solid #cbd5e1; box-sizing: border-box;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            font-size: 10px; text-align: center; border-radius: 4px; flex-shrink: 0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-        }
-        .hardware-port .pins { width: 50%; height: 2px; background: #f59e0b; margin-bottom: 3px; border-radius: 1px; }
-
-        /* --- Print Sheets Styling (Optimized for A4 Packing) --- */
-        .page {
-            background: white; color: black; margin-bottom: 20px; padding: 20px;
-            border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border-color);
-            max-width: 190mm;
-            box-sizing: border-box;
-        }
-        .page-title { text-align: center; margin-bottom: 15px; color: #475569; font-size: 1em; font-weight: 700; }
-
-        .print-labels-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 3mm;
-            justify-content: flex-start;
-        }
-
-        .label {
-            border: 1px solid #0f172a;
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; box-sizing: border-box; text-align: center; font-weight: 700;
-            font-size: 11px; line-height: 1.2;
-            border-radius: 6px;
-            flex-shrink: 0; overflow: hidden;
-            background-color: #fff;
-        }
-
-        /* --- Sidebar Category Manager Styles --- */
-        .cat-manager {
-            background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px;
-            padding: 12px; margin-bottom: 14px;
-        }
-        .cat-item-row {
-            display: flex; gap: 6px; align-items: center; margin-bottom: 8px;
-            background: #fff; padding: 6px 8px; border-radius: 6px; border: 1px solid #e2e8f0;
-        }
-        .cat-item-row input { flex: 2; border: none; background: transparent; padding: 2px; font-size: 0.9em; }
-        .cat-item-row input:focus { box-shadow: none; }
-        .cat-item-row select { flex: 1.2; padding: 4px; font-size: 0.85em; }
-
-        /* --- Main Port Table Styles --- */
-        .table-container {
-            overflow-x: auto;
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            text-align: left;
-        }
-        body[dir="rtl"] table { text-align: right; }
-
-        th, td {
-            padding: 10px 12px;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-            background: #fff;
-        }
-
-        th {
-            background: #f8fafc;
-            font-weight: 600;
-            font-size: 0.8em;
-            color: var(--text-muted);
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 2;
-            border-bottom: 2px solid var(--border-color);
+            left: 0;
+            height: 100vh;
+            transform: translateX(-100%);
         }
-
-        tbody tr:last-child td { border-bottom: none; }
-        td input, td select { width: 100%; padding: 6px 8px; margin: 0; box-sizing: border-box; }
-
-        .action-cols { width: 110px; text-align: center; }
-        .action-btns { display: flex; gap: 4px; align-items: center; justify-content: flex-start; }
-        body[dir="rtl"] .action-btns { justify-content: flex-end; }
-        .action-btns button { padding: 4px 8px; font-size: 0.8em; width: auto; height: 32px; display: flex; align-items: center; justify-content: center; }
-
-        @media print {
-            body { background: white; color: black; display: block; height: auto; overflow: visible; }
-            #sidebar { display: none; }
-            #main-content { padding: 0; height: auto; overflow: visible; display: block; background: white; gap: 0; }
-            .view-container { background: none; border: none; padding: 0; box-shadow: none; margin-bottom: 0; overflow: visible; }
-            .hardware-section, .view-container:nth-child(1), .view-container:nth-child(2) { display: none; }
-
-            .scale-wrapper { transform: none !important; width: 100% !important; }
-            .scale-container-sizer { height: auto !important; }
-
-            .page {
-                margin: 0; padding: 0; box-shadow: none; border: none;
-                page-break-after: always; max-width: none; width: 100%;
-            }
-            .page-title { display: none; }
-            @page { size: auto; margin: 10mm; }
+        body[dir="rtl"] #sidebar {
+            left: auto;
+            right: 0;
+            transform: translateX(100%);
         }
-    </style>
+        #sidebar.mobile-open { transform: translateX(0); }
+        #main-content { padding: 70px 16px 20px 16px; }
+    }
+
+    @media print {
+        body { background: white; color: black; display: block; height: auto; overflow: visible; }
+        #sidebar, #mobile-menu-btn { display: none !important; }
+        #main-content { padding: 0; height: auto; overflow: visible; display: block; background: white; gap: 0; }
+        .view-container { background: none; border: none; padding: 0; box-shadow: none; margin-bottom: 0; overflow: visible; }
+        .hardware-section, .view-container:nth-child(1), .view-container:nth-child(2) { display: none; } 
+        
+        .scale-wrapper { transform: none !important; width: 100% !important; }
+        .scale-container-sizer { height: auto !important; }
+        
+        .page { 
+            margin: 0; padding: 0; box-shadow: none; border: none; 
+            page-break-after: always; max-width: none; width: 100%; 
+        }
+        .page-title { display: none; }
+        @page { size: auto; margin: 10mm; }
+    }
+</style>
 </head>
 <body>
+
+<button id="mobile-menu-btn" onclick="toggleMobileSidebar()">☰ Settings</button>
 
 <div id="sidebar">
     <div class="lang-toggle">
@@ -238,79 +403,100 @@
     </div>
 
     <h2 data-i18n="settings">Settings</h2>
+    
+    <!-- ACCORDION 1: DIMENSIONS -->
+    <div class="accordion-section active">
+        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="dim_header">1. Dimensions (mm)</div>
+        <div class="accordion-content">
+            <div class="form-group">
+                <label data-i18n="ports_row">Number of Ports in One Row</label>
+                <input type="number" id="portsPerRow" class="config-input" value="24" min="1">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                    <label data-i18n="port_w">Port Width</label>
+                    <input type="number" id="portWidth" class="config-input" value="15" min="1">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label data-i18n="port_h">Port Height</label>
+                    <input type="number" id="portHeight" class="config-input" value="10" min="1">
+                </div>
+            </div>
+            <div class="form-group">
+                <label data-i18n="std_gap">Normal Gap</label>
+                <input type="number" id="standardGap" class="config-input" value="2" min="0">
+            </div>
 
-    <h3 data-i18n="dim_header">1. Dimensions (mm)</h3>
-    <div class="form-group">
-        <label data-i18n="ports_row">Number of Ports in One Row</label>
-        <input type="number" id="portsPerRow" class="config-input" value="24" min="1">
-    </div>
-    <div style="display: flex; gap: 10px;">
-        <div class="form-group" style="flex: 1;">
-            <label data-i18n="port_w">Port Width</label>
-            <input type="number" id="portWidth" class="config-input" value="15" min="1">
+            <div class="form-group" style="margin-top: 10px; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-weight: 500;">
+                    <input type="checkbox" id="enableGrouping" class="config-input" style="width: auto;" onchange="toggleGroupingParams()">
+                    <span data-i18n="enable_grouping">Enable Port Grouping Spacing</span>
+                </label>
+            </div>
+            <div id="groupingParamsContainer" style="display: none; padding-left: 10px; border-left: 2px solid var(--primary); margin-top: 8px;">
+                <div class="form-group">
+                    <label data-i18n="seg_gap">Group Gap (mm)</label>
+                    <input type="number" id="segmentGap" class="config-input" value="8" min="0">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="seg_size">Ports per Group</label>
+                    <input type="number" id="segmentSize" class="config-input" value="4" min="1">
+                </div>
+            </div>
         </div>
-        <div class="form-group" style="flex: 1;">
-            <label data-i18n="port_h">Port Height</label>
-            <input type="number" id="portHeight" class="config-input" value="10" min="1">
-        </div>
-    </div>
-    <div style="display: flex; gap: 10px;">
-        <div class="form-group" style="flex: 1;">
-            <label data-i18n="std_gap">Normal Gap</label>
-            <input type="number" id="standardGap" class="config-input" value="2" min="0">
-        </div>
-        <div class="form-group" style="flex: 1;">
-            <label data-i18n="seg_gap">Group Gap (0 = Normal)</label>
-            <input type="number" id="segmentGap" class="config-input" value="8" min="0">
-        </div>
-    </div>
-    <div class="form-group">
-        <label data-i18n="seg_size">Ports per Group</label>
-        <input type="number" id="segmentSize" class="config-input" value="4" min="1">
-    </div>
-
-    <br>
-
-    <h3 data-i18n="sys_config">2. Categories & Colors</h3>
-    <div class="form-group">
-        <label data-i18n="avail_colors">Available Colors (Comma separated)</label>
-        <input type="text" id="availableColors" class="config-input" value="White, Blue, Yellow, Green, Red, Gray">
-    </div>
-
-    <!-- SIDEBAR CATEGORY MANAGER -->
-    <div class="cat-manager">
-        <label style="font-weight: 600; color: var(--text-main); margin-bottom: 8px;" data-i18n="manage_cats">Manage Categories</label>
-        <div id="sidebarCatList" style="margin-bottom: 8px;">
-            <!-- Category rows injected via JS -->
-        </div>
-        <button class="btn-secondary" onclick="addCategory()" data-i18n="add_cat">+ New Category</button>
     </div>
 
-    <div class="form-group">
-        <label data-i18n="print_mode">Print Output Mode</label>
-        <select id="printMode" class="config-input">
-            <option value="separate" data-i18n="mode_separate">Separate Pages (Colored Paper)</option>
-            <option value="ink" data-i18n="mode_ink">Single Sheet (Colored Ink on Borders)</option>
-        </select>
+    <!-- ACCORDION 2: CATEGORIES & COLORS -->
+    <div class="accordion-section">
+        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sys_config">2. Categories & Colors</div>
+        <div class="accordion-content">
+            <div class="cat-manager">
+                <label style="font-weight: 500; color: var(--text-main); margin-bottom: 8px;" data-i18n="manage_cats">Manage Categories</label>
+                <div id="sidebarCatList" style="margin-bottom: 8px;"></div>
+                <button class="btn-secondary" onclick="addCategory()" data-i18n="add_cat">+ New Category</button>
+            </div>
+
+            <div class="form-group">
+                <label data-i18n="print_mode">Print Output Mode</label>
+                <select id="printMode" class="config-input">
+                    <option value="separate" data-i18n="mode_separate">Separate Pages (Colored Paper)</option>
+                    <option value="ink" data-i18n="mode_ink">Single Sheet (Colored Ink on Borders)</option>
+                </select>
+            </div>
+        </div>
     </div>
 
-    <div class="form-group" style="background: #f1f5f9; padding: 12px; border-radius: 6px; border: 1px dashed #cbd5e1;">
-        <label style="color: var(--text-main); font-weight: 600;" data-i18n="bulk_add">Bulk Data Utilities</label>
-        <div style="display: flex; gap: 5px; margin-bottom: 10px;">
-            <button class="btn-secondary" onclick="addSequence()" data-i18n="add_seq">Add Sequence</button>
-            <input type="number" id="seqAmount" value="24" style="width: 70px;">
+    <!-- ACCORDION 3: PROJECT SAVE / LOAD & BULK UTILITIES -->
+    <div class="accordion-section">
+        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="proj_utils">3. Project & Bulk Actions</div>
+        <div class="accordion-content">
+            <div class="form-group" style="background: #fafafa; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 12px;">
+                <label style="color: var(--text-main); font-weight: 500;" data-i18n="proj_files">Project Files</label>
+                <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                    <button class="btn-secondary" onclick="saveProjectFile()" data-i18n="save_proj">💾 Save Project</button>
+                    <button class="btn-secondary" onclick="document.getElementById('projectFileOpen').click()" data-i18n="open_proj">📂 Open Project</button>
+                    <input type="file" id="projectFileOpen" accept=".json" style="display:none;" onchange="loadProjectFile(event)">
+                </div>
+            </div>
+
+            <div class="form-group" style="background: #fafafa; padding: 10px; border-radius: 6px; border: 1px dashed var(--border-color);">
+                <label style="color: var(--text-main); font-weight: 500;" data-i18n="bulk_add">Bulk Utilities</label>
+                <div style="display: flex; gap: 5px; margin-bottom: 8px;">
+                    <button class="btn-secondary" onclick="addSequence()" data-i18n="add_seq">Add Sequence</button>
+                    <input type="number" id="seqAmount" value="24" style="width: 70px;">
+                </div>
+                <button class="btn-secondary" onclick="downloadCsvTemplate()" data-i18n="dl_template" style="margin-bottom: 6px;">Download CSV Template</button>
+                <input type="file" id="csvFile" accept=".csv" style="background: white; font-size: 0.85em;">
+                <button class="btn-secondary" onclick="clearData()" style="margin-top: 8px; color: var(--danger); border-color: #ffcdd2; background: #ffebee;" data-i18n="clear_all">Clear All Data</button>
+            </div>
         </div>
-        <button class="btn-secondary" onclick="downloadCsvTemplate()" data-i18n="dl_template" style="margin-bottom: 5px;">Download CSV Template</button>
-        <input type="file" id="csvFile" accept=".csv" style="background: white;">
-        <button class="btn-secondary" onclick="clearData()" style="margin-top: 10px; color: var(--danger); border-color: #fecaca; background: #fee2e2;" data-i18n="clear_all">Clear All Data</button>
     </div>
 
     <button class="btn-success" onclick="window.print()" data-i18n="print_btn">Print Label Sheets</button>
 </div>
 
-<div id="main-content">
-
-    <!-- MAIN PORTS LIST TABLE -->
+<div id="main-content" onclick="checkCloseMobileMenu(event)">
+    
     <div class="view-container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <h2 data-i18n="editor_title" style="margin-bottom: 0;">Ports List Editor</h2>
@@ -319,16 +505,16 @@
         <div class="table-container">
             <table>
                 <thead>
-                <tr>
-                    <th data-i18n="th_cat" style="width: 25%;">Category</th>
-                    <th data-i18n="th_port" style="width: 45%;">Port Label / Number</th>
-                    <th data-i18n="th_span" style="width: 15%;">Port Span</th>
-                    <th data-i18n="th_action" class="action-cols">Actions</th>
-                </tr>
+                    <tr>
+                        <th style="width: 40px; text-align: center;">⠿</th>
+                        <th data-i18n="th_num" style="width: 15%;">Port #</th>
+                        <th data-i18n="th_cat" style="width: 25%;">Category</th>
+                        <th data-i18n="th_port" style="width: 35%;">Port Label / Number</th>
+                        <th data-i18n="th_span" style="width: 15%;">Port Span</th>
+                        <th data-i18n="th_action" class="action-cols">Actions</th>
+                    </tr>
                 </thead>
-                <tbody id="portsTableBody">
-                <!-- Port entries injected via JS -->
-                </tbody>
+                <tbody id="portsTableBody"></tbody>
             </table>
         </div>
     </div>
@@ -353,56 +539,122 @@
         en: {
             settings: "Settings", dim_header: "1. Dimensions (mm)",
             ports_row: "Number of Ports in One Row", port_w: "Port Width", port_h: "Port Height",
-            std_gap: "Normal Gap", seg_gap: "Group Gap (0 = Normal)", seg_size: "Ports per Group",
-            sys_config: "2. Categories & Colors", avail_colors: "Available Colors (Comma separated)",
+            std_gap: "Normal Gap", enable_grouping: "Enable Port Grouping Spacing",
+            seg_gap: "Group Gap (mm)", seg_size: "Ports per Group",
+            sys_config: "2. Categories & Colors",
             manage_cats: "Manage Categories", add_cat: "+ New Category",
+            proj_utils: "3. Project & Bulk Actions", proj_files: "Project Files", save_proj: "💾 Save Project", open_proj: "📂 Open Project",
             print_mode: "Print Output Mode", mode_separate: "Separate Pages (Colored Paper)", mode_ink: "Single Sheet (Colored Ink on Borders)",
-            bulk_add: "Bulk Data Utilities", add_seq: "Add Sequence", dl_template: "Download CSV Template", clear_all: "Clear All Data", print_btn: "Print Label Sheets",
+            bulk_add: "Bulk Utilities", add_seq: "Add Sequence", dl_template: "Download CSV Template", clear_all: "Clear All Data", print_btn: "Print Label Sheets",
             editor_title: "Ports List Editor", add_port: "+ Add Port Entry",
-            th_port: "Port Label / Number", th_cat: "Category", th_span: "Port Span", th_action: "Actions",
+            th_num: "Port #", th_port: "Port Label / Number", th_cat: "Category", th_span: "Port Span", th_action: "Actions",
             hw_title: "Hardware Visualizer", pr_title: "Print Sheets (A4 Pack)", paper_color: "Print on Paper Color:", sheet_color: "Continuous Print Sheet"
         },
         he: {
             settings: "הגדרות", dim_header: '1. מידות (מ"מ)',
             ports_row: "שקעים בשורה", port_w: "רוחב שקע", port_h: "גובה שקע",
-            std_gap: "מרווח רגיל", seg_gap: "מרווח קבוצות (0 = רגיל)", seg_size: "שקעים בקבוצה",
-            sys_config: "2. קטגוריות וצבעים", avail_colors: "צבעים זמינים (מופרדים בפסיק)",
+            std_gap: "מרווח רגיל", enable_grouping: "הפעל מרווחי קבוצות שקעים",
+            seg_gap: 'מרווח קבוצות (מ"מ)', seg_size: "שקעים בקבוצה",
+            sys_config: "2. קטגוריות וצבעים",
             manage_cats: "ניהול קטגוריות", add_cat: "+ קטגוריה חדשה",
+            proj_utils: "3. ניהול קובץ ופעולות", proj_files: "קבצי פרויקט", save_proj: "💾 שמור פרויקט", open_proj: "📂 טען פרויקט",
             print_mode: "מצב הדפסה", mode_separate: "דפים נפרדים (דפי צבע)", mode_ink: "דף רציף (גבולות צבעוניים)",
             bulk_add: "פעולות נתונים", add_seq: "הוסף רצף", dl_template: "הורד תבנית CSV", clear_all: "נקה את כל הנתונים", print_btn: "הדפס תוויות",
             editor_title: "עורך רשימת השקעים", add_port: "+ הוסף שקע",
-            th_port: "טקסט/מספר שקע", th_cat: "קטגוריה", th_span: "פריסה", th_action: "פעולות",
+            th_num: "מספר שקע", th_port: "טקסט/מספר שקע", th_cat: "קטגוריה", th_span: "פריסה", th_action: "פעולות",
             hw_title: "תצוגת חומרה", pr_title: "תצוגת הדפסה (דפי A4)", paper_color: "הדפס על דף בצבע:", sheet_color: "דף הדפסה רציף"
         }
     };
 
     let currentLang = 'en';
-    let categories = [];
-    let portsList = [];
-    let colorOptions = [];
+    let categories = []; 
+    let portsList = [];  
     let configInputTimeout = null;
+    let draggedIndex = null;
+
+    const humanNamesPool = [
+        "Alex", "Sam", "Jordan", "Taylor", "Morgan", "Charlie", "Casey", "Riley", 
+        "Avery", "Jamie", "Logan", "Parker", "Dakota", "Reese", "Skyler", "Cameron",
+        "Rowan", "Kendall", "Sawyer", "Peyton", "Finley", "Emerson", "River", "Shai"
+    ];
+
+    const namedColors = {
+        "#ffffff": "White",
+        "#fff": "White",
+        "#2196f3": "Blue",
+        "#3b82f6": "Blue",
+        "#ffeb3b": "Yellow",
+        "#f59e0b": "Yellow",
+        "#4caf50": "Green",
+        "#10b981": "Green",
+        "#f44336": "Red",
+        "#ef4444": "Red",
+        "#9e9e9e": "Gray",
+        "#64748b": "Gray",
+        "#000000": "Black",
+        "#9c27b0": "Purple",
+        "#ff9800": "Orange"
+    };
+
+    function getColorName(hex) {
+        if (!hex) return "White";
+        const cleanHex = hex.toLowerCase().trim();
+        if (namedColors[cleanHex]) return namedColors[cleanHex];
+        
+        let hash = 0;
+        for (let i = 0; i < cleanHex.length; i++) {
+            hash = cleanHex.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const index = Math.abs(hash) % humanNamesPool.length;
+        return humanNamesPool[index];
+    }
 
     function generateId() { return Math.random().toString(36).substr(2, 9); }
 
+    function toggleAccordion(headerEl) {
+        const section = headerEl.parentElement;
+        section.classList.toggle('active');
+    }
+
+    function toggleMobileSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('mobile-open');
+    }
+
+    function checkCloseMobileMenu(e) {
+        const sidebar = document.getElementById('sidebar');
+        const btn = document.getElementById('mobile-menu-btn');
+        if (window.innerWidth <= 768 && sidebar.classList.contains('mobile-open')) {
+            if (!sidebar.contains(e.target) && !btn.contains(e.target)) {
+                sidebar.classList.remove('mobile-open');
+            }
+        }
+    }
+
+    function toggleGroupingParams() {
+        const checkbox = document.getElementById('enableGrouping');
+        const container = document.getElementById('groupingParamsContainer');
+        container.style.display = checkbox.checked ? 'block' : 'none';
+        processLayout(false);
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         loadSettingsFromStorage();
-
+        
         document.querySelectorAll('.config-input').forEach(input => {
             input.addEventListener('input', (e) => {
                 clearTimeout(configInputTimeout);
                 configInputTimeout = setTimeout(() => {
                     saveSettingsToStorage();
-                    const needsFullRebuild = (e.target.id === 'availableColors');
-                    processLayout(needsFullRebuild);
+                    processLayout(false); 
                 }, 100);
             });
         });
 
         window.addEventListener('resize', applyScaling);
-
+        
         if(categories.length === 0 && portsList.length === 0) {
-            updateColorOptions();
-            categories.push({ id: generateId(), name: "Switch A", color: colorOptions[0] || "White" });
+            categories.push({ id: generateId(), name: "Switch A", color: "#ffffff" });
             addSequence(24, false);
         } else {
             processLayout(true);
@@ -415,19 +667,19 @@
             portWidth: document.getElementById('portWidth').value,
             portHeight: document.getElementById('portHeight').value,
             standardGap: document.getElementById('standardGap').value,
+            enableGrouping: document.getElementById('enableGrouping').checked,
             segmentGap: document.getElementById('segmentGap').value,
             segmentSize: document.getElementById('segmentSize').value,
-            availableColors: document.getElementById('availableColors').value,
             printMode: document.getElementById('printMode').value,
             lang: currentLang,
             categories: categories,
             portsList: portsList
         };
-        localStorage.setItem('portLabelMakerConfigV3', JSON.stringify(config));
+        localStorage.setItem('portLabelMakerConfigV12', JSON.stringify(config));
     }
 
     function loadSettingsFromStorage() {
-        const stored = localStorage.getItem('portLabelMakerConfigV3');
+        const stored = localStorage.getItem('portLabelMakerConfigV12');
         if (stored) {
             try {
                 const config = JSON.parse(stored);
@@ -435,28 +687,83 @@
                 document.getElementById('portWidth').value = config.portWidth || 15;
                 document.getElementById('portHeight').value = config.portHeight || 10;
                 document.getElementById('standardGap').value = config.standardGap || 2;
+                document.getElementById('enableGrouping').checked = !!config.enableGrouping;
                 document.getElementById('segmentGap').value = (config.segmentGap !== undefined) ? config.segmentGap : 8;
                 document.getElementById('segmentSize').value = config.segmentSize || 4;
-                document.getElementById('availableColors').value = config.availableColors || "White, Blue, Yellow, Green, Red, Gray";
                 document.getElementById('printMode').value = config.printMode || "separate";
-
+                
                 categories = config.categories || [];
                 portsList = config.portsList || [];
+                
+                document.getElementById('groupingParamsContainer').style.display = document.getElementById('enableGrouping').checked ? 'block' : 'none';
 
-                if (config.lang && config.lang !== currentLang) toggleLanguage();
+                if (config.lang && config.lang !== currentLang) {
+                    currentLang = config.lang;
+                    document.body.dir = currentLang === 'en' ? 'ltr' : 'rtl';
+                    document.getElementById('langToggleBtn').innerText = currentLang === 'en' ? 'עברית' : 'English';
+                    applyLanguageStrings();
+                }
             } catch (e) { console.error("Could not parse local storage."); }
         }
     }
 
-    function updateColorOptions() {
-        const colorString = document.getElementById('availableColors').value;
-        colorOptions = colorString.split(',').map(c => c.trim()).filter(c => c);
-        if(colorOptions.length === 0) colorOptions = ['White'];
+    function saveProjectFile() {
+        const state = {
+            version: 1,
+            timestamp: new Date().toISOString(),
+            portsPerRow: document.getElementById('portsPerRow').value,
+            portWidth: document.getElementById('portWidth').value,
+            portHeight: document.getElementById('portHeight').value,
+            standardGap: document.getElementById('standardGap').value,
+            enableGrouping: document.getElementById('enableGrouping').checked,
+            segmentGap: document.getElementById('segmentGap').value,
+            segmentSize: document.getElementById('segmentSize').value,
+            printMode: document.getElementById('printMode').value,
+            categories: categories,
+            portsList: portsList
+        };
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `port_labels_project_${new Date().toISOString().slice(0,10)}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function loadProjectFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const config = JSON.parse(e.target.result);
+                document.getElementById('portsPerRow').value = config.portsPerRow || 24;
+                document.getElementById('portWidth').value = config.portWidth || 15;
+                document.getElementById('portHeight').value = config.portHeight || 10;
+                document.getElementById('standardGap').value = config.standardGap || 2;
+                document.getElementById('enableGrouping').checked = !!config.enableGrouping;
+                document.getElementById('segmentGap').value = (config.segmentGap !== undefined) ? config.segmentGap : 8;
+                document.getElementById('segmentSize').value = config.segmentSize || 4;
+                document.getElementById('printMode').value = config.printMode || "separate";
+                
+                categories = config.categories || [];
+                portsList = config.portsList || [];
+                
+                document.getElementById('groupingParamsContainer').style.display = document.getElementById('enableGrouping').checked ? 'block' : 'none';
+                
+                event.target.value = ''; 
+                processLayout(true);
+            } catch (err) {
+                alert("Invalid project file JSON.");
+            }
+        };
+        reader.readAsText(file);
     }
 
     // --- Sidebar Category Manager Logic ---
     function renderSidebarCategories() {
-        updateColorOptions();
         const container = document.getElementById('sidebarCatList');
         container.innerHTML = '';
 
@@ -466,33 +773,28 @@
         }
 
         categories.forEach((cat, index) => {
-            let colorSelectHtml = `<select onchange="updateSidebarCategory(${index}, 'color', this.value)">`;
-            let found = false;
-            colorOptions.forEach(c => {
-                const selected = (c.toLowerCase() === cat.color.toLowerCase()) ? 'selected' : '';
-                if (selected) found = true;
-                colorSelectHtml += `<option value="${c}" ${selected}>${c}</option>`;
-            });
-            if (!found) colorSelectHtml += `<option value="${cat.color}" selected>${cat.color}</option>`;
-            colorSelectHtml += `</select>`;
+            let colorHex = cat.color || '#ffffff';
+            let colorName = getColorName(colorHex);
 
             let row = document.createElement('div');
             row.className = 'cat-item-row';
             row.innerHTML = `
                 <input type="text" value="${cat.name}" oninput="updateSidebarCategory(${index}, 'name', this.value)" placeholder="Category Name">
-                ${colorSelectHtml}
+                <div class="cat-color-wrapper">
+                    <input type="color" value="${colorHex}" onchange="updateSidebarCategory(${index}, 'color', this.value)" title="Choose Category Color">
+                    <span style="font-size: 0.8em; color: var(--text-muted);">${colorName}</span>
+                </div>
                 <button class="delete-btn" onclick="deleteCategory(${index})" title="Delete Category">✕</button>
             `;
             container.appendChild(row);
         });
     }
 
-    function addCategory(name = "New Category", color = null) {
-        updateColorOptions();
+    function addCategory(name = "New Category", color = "#2196f3") {
         categories.push({
             id: generateId(),
             name: name,
-            color: color || colorOptions[0]
+            color: color
         });
         processLayout(true);
     }
@@ -511,35 +813,107 @@
         processLayout(true);
     }
 
+    // --- Drag and Drop Handlers for Table Rows ---
+    function handleDragStart(e) {
+        draggedIndex = parseInt(this.getAttribute('data-index'));
+        e.dataTransfer.effectAllowed = 'move';
+        this.classList.add('dragging');
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        return false;
+    }
+
+    function handleDragEnter(e) {
+        this.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+        this.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        e.stopPropagation();
+        this.classList.remove('drag-over');
+        const targetIndex = parseInt(this.getAttribute('data-index'));
+
+        if (draggedIndex !== null && draggedIndex !== targetIndex) {
+            const movedItem = portsList.splice(draggedIndex, 1)[0];
+            portsList.splice(targetIndex, 0, movedItem);
+            processLayout(true);
+        }
+        return false;
+    }
+
+    function handleDragEnd(e) {
+        this.classList.remove('dragging');
+        document.querySelectorAll('#portsTableBody tr').forEach(row => {
+            row.classList.remove('drag-over');
+        });
+        draggedIndex = null;
+    }
+
     // --- Main Ports Table Editor Logic ---
     function renderPortsTable() {
-        updateColorOptions();
         const tbody = document.getElementById('portsTableBody');
         tbody.innerHTML = '';
 
         if(portsList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding: 15px;">No ports added yet. Click '+ Add Port Entry' below.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding: 15px;">No ports added yet. Click '+ Add Port Entry' below.</td></tr>`;
             return;
         }
 
+        let currentPortNum = 1;
+        let catLookup = {};
+        categories.forEach(c => catLookup[c.id] = c);
+
         portsList.forEach((port, index) => {
             let tr = document.createElement('tr');
+            tr.setAttribute('draggable', 'true');
+            tr.setAttribute('data-index', index);
+
+            tr.addEventListener('dragstart', handleDragStart, false);
+            tr.addEventListener('dragenter', handleDragEnter, false);
+            tr.addEventListener('dragover', handleDragOver, false);
+            tr.addEventListener('dragleave', handleDragLeave, false);
+            tr.addEventListener('drop', handleDrop, false);
+            tr.addEventListener('dragend', handleDragEnd, false);
+
+            let cat = catLookup[port.categoryId] || { color: '#ffffff' };
+            let catColor = cat.color || '#ffffff';
+            let isWhite = (catColor.toLowerCase() === '#ffffff' || catColor.toLowerCase() === '#fff');
+            
+            if (!isWhite) {
+                tr.classList.add('has-category-border');
+                tr.style.setProperty('--row-cat-color', catColor);
+            }
+
+            let span = parseInt(port.span) || 1;
+            let portRangeDisplay = "";
+            if (span === 1) {
+                portRangeDisplay = `${currentPortNum}`;
+            } else {
+                portRangeDisplay = `${currentPortNum} - ${currentPortNum + span - 1}`;
+            }
+            currentPortNum += span;
 
             let catSelectHtml = `<select onchange="updatePortEntry(${index}, 'categoryId', this.value)">`;
-            categories.forEach(cat => {
-                const selected = (cat.id === port.categoryId) ? 'selected' : '';
-                catSelectHtml += `<option value="${cat.id}" ${selected}>${cat.name}</option>`;
+            categories.forEach(catItem => {
+                const selected = (catItem.id === port.categoryId) ? 'selected' : '';
+                catSelectHtml += `<option value="${catItem.id}" ${selected}>${catItem.name}</option>`;
             });
             catSelectHtml += `</select>`;
 
             tr.innerHTML = `
+                <td style="text-align: center;"><span class="drag-handle" title="Drag to reorder">⠿</span></td>
+                <td><span class="port-number-badge">Port ${portRangeDisplay}</span></td>
                 <td>${catSelectHtml}</td>
                 <td><input type="text" value="${port.text}" oninput="updatePortEntry(${index}, 'text', this.value)" placeholder=""></td>
                 <td><input type="number" min="1" value="${port.span}" oninput="updatePortEntry(${index}, 'span', this.value)"></td>
                 <td class="action-cols">
                     <div class="action-btns">
-                        <button class="btn-secondary" onclick="movePort(${index}, -1)" ${index === 0 ? 'disabled' : ''}>↑</button>
-                        <button class="btn-secondary" onclick="movePort(${index}, 1)" ${index === portsList.length - 1 ? 'disabled' : ''}>↓</button>
                         <button class="delete-btn" onclick="deletePortEntry(${index})" title="Delete Port">✕</button>
                     </div>
                 </td>
@@ -556,7 +930,7 @@
 
         portsList.push({
             id: generateId(),
-            text: "",
+            text: "", 
             categoryId: categories[0].id,
             span: 1
         });
@@ -574,14 +948,6 @@
         processLayout(true);
     }
 
-    function movePort(index, direction) {
-        if (index + direction < 0 || index + direction >= portsList.length) return;
-        const temp = portsList[index];
-        portsList[index] = portsList[index + direction];
-        portsList[index + direction] = temp;
-        processLayout(true);
-    }
-
     function scheduleRender() {
         saveSettingsToStorage();
         clearTimeout(window.renderTimeout);
@@ -589,15 +955,14 @@
     }
 
     function addSequence(n = null, overwrite = false) {
-        updateColorOptions();
         const amount = n || parseInt(document.getElementById('seqAmount').value) || 24;
-
+        
         if(categories.length === 0) {
-            categories.push({ id: generateId(), name: "Switch A", color: colorOptions[0] || "White" });
+            categories.push({ id: generateId(), name: "Switch A", color: "#ffffff" });
         }
-
+        
         if (overwrite) portsList = [];
-
+        
         const defaultCatId = categories[0].id;
         for (let i = 1; i <= amount; i++) {
             portsList.push({
@@ -625,7 +990,7 @@
         const reader = new FileReader();
         reader.onload = function(e) {
             parseCSV(e.target.result);
-            document.getElementById('csvFile').value = '';
+            document.getElementById('csvFile').value = ''; 
             processLayout(true);
         };
         reader.readAsText(file);
@@ -637,16 +1002,16 @@
         const lines = text.split('\n');
         let startIndex = (lines[0] && lines[0].toLowerCase().includes('category')) ? 1 : 0;
 
-        let catMap = {};
+        let catMap = {}; 
 
         for (let i = startIndex; i < lines.length; i++) {
             const line = lines[i];
             if (line.trim() === '') continue;
             const parts = line.split(',').map(p => p.trim());
-
+            
             let catName = parts[0] || 'Unknown';
             let portText = parts[1] || '';
-            let color = parts[2] || 'White';
+            let color = parts[2] || '#ffffff';
             let span = parseInt(parts[3]) || 1;
 
             if(!catMap[catName]) {
@@ -663,9 +1028,9 @@
             });
         }
     }
-
+    
     function downloadCsvTemplate() {
-        const csvContent = "Category,Port,Color,PortSpan\nSwitch A,1,White,1\nSwitch A,2,White,1\nMain Uplink,Uplink,Blue,2\nStorage SAN,SAN,Green,4";
+        const csvContent = "Category,Port,Color,PortSpan\nSwitch A,1,#ffffff,1\nSwitch A,2,#ffffff,1\nMain Uplink,Uplink,#2196f3,2\nStorage SAN,SAN,#4caf50,4";
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -681,17 +1046,20 @@
         if (fullRebuild) {
             renderSidebarCategories();
             renderPortsTable();
+        } else {
+            renderPortsTable();
         }
         saveSettingsToStorage();
-
+        
         const portsPerRow = parseInt(document.getElementById('portsPerRow').value) || 1;
         const portWidth = parseFloat(document.getElementById('portWidth').value) || 0;
         const portHeight = parseFloat(document.getElementById('portHeight').value) || 0;
         const standardGap = parseFloat(document.getElementById('standardGap').value) || 0;
-        const segmentSize = parseInt(document.getElementById('segmentSize').value) || 1;
-
+        
+        const enableGrouping = document.getElementById('enableGrouping').checked;
+        const segmentSize = enableGrouping ? (parseInt(document.getElementById('segmentSize').value) || 1) : 999999;
         let segmentGapRaw = parseFloat(document.getElementById('segmentGap').value);
-        const segmentGap = (isNaN(segmentGapRaw) || segmentGapRaw === 0) ? standardGap : segmentGapRaw;
+        const segmentGap = (!enableGrouping || isNaN(segmentGapRaw) || segmentGapRaw === 0) ? standardGap : segmentGapRaw;
 
         const printMode = document.getElementById('printMode').value;
 
@@ -700,11 +1068,11 @@
 
         let flattenedData = [];
         portsList.forEach(port => {
-            let cat = catLookup[port.categoryId] || { name: "Unassigned", color: "White" };
+            let cat = catLookup[port.categoryId] || { name: "Unassigned", color: "#ffffff" };
             flattenedData.push({
-                text1: cat.name,
-                text2: port.text,
-                color: cat.color,
+                text1: cat.name,       
+                text2: port.text,      
+                color: cat.color || "#ffffff",      
                 span: port.span
             });
         });
@@ -734,7 +1102,7 @@
 
         renderHardwareView(expandedItems, portsPerRow, portWidth, portHeight, standardGap, segmentSize, segmentGap);
         renderPrintSheets(expandedItems, portsPerRow, portWidth, portHeight, standardGap, segmentSize, segmentGap, printMode);
-
+        
         setTimeout(applyScaling, 0);
     }
 
@@ -750,25 +1118,25 @@
             for (let i = 0; i < item.span; i++) {
                 let portEl = document.createElement('div');
                 portEl.className = 'hardware-port';
-
+                
                 const finalWidth = `${portWidth}mm`;
                 portEl.style.width = finalWidth;
                 portEl.style.minWidth = finalWidth;
                 portEl.style.maxWidth = finalWidth;
                 portEl.style.height = `${portHeight + 8}mm`;
-
-                if (item.color.toLowerCase() !== 'white') {
+                
+                if (item.color && item.color.toLowerCase() !== '#ffffff' && item.color.toLowerCase() !== '#fff') {
                     portEl.style.borderBottom = `3px solid ${item.color}`;
                 }
-
+                
                 portEl.innerHTML = `<div class="pins"></div><span style="font-size:7px; overflow:hidden; white-space:nowrap; text-overflow:clip; width:90%;">${item.text2 || item.text1}</span>`;
-
+                
                 let directionMargin = currentLang === 'en' ? 'marginRight' : 'marginLeft';
                 let regularMargin = standardGap;
-
+                
                 if ((portCountInRow + 1) % segmentSize === 0) regularMargin = segmentGap;
                 if ((portCountInRow + 1) % portsPerRow === 0) regularMargin = 0;
-
+                
                 portEl.style[directionMargin] = `${regularMargin}mm`;
 
                 rowDiv.appendChild(portEl);
@@ -793,7 +1161,7 @@
         if (printMode === 'separate') {
             let colorGroups = {};
             items.forEach(item => {
-                const colorKey = item.color.trim();
+                const colorKey = (item.color || '#ffffff').trim(); 
                 if (!colorGroups[colorKey]) colorGroups[colorKey] = [];
                 colorGroups[colorKey].push(item);
             });
@@ -809,46 +1177,38 @@
     function buildPaginatedPages(items, portsPerRow, portWidth, portHeight, standardGap, segmentSize, segmentGap, groupTitle, useInk) {
         const previewArea = document.getElementById('preview-area');
 
-        // Estimate A4 capacity per page. A standard A4 printable area width ~190mm, height ~260mm.
-        // Let's pack items sequentially into pages, checking total accumulated height or item count per page.
-        // A safe estimation for standard label blocks fitting comfortably onto an A4 page:
-        // Max horizontal width per row is ~180mm. Let's calculate items per row based on label size + gap.
-
         let pages = [];
         let currentPageItems = [];
         let currentRowWidth = 0;
-        let currentRowHeight = portHeight + 3; // label height + vertical gap (3mm)
+        const gapSize = 3; 
+        const itemHeightWithGap = portHeight + gapSize; 
         let currentPageTotalHeight = 0;
-        const maxPageHeight = 240; // mm safe height for A4 layout block
-        const maxPageWidth = 185;  // mm safe width for A4 layout block
+        
+        const maxPageWidth = 185; 
+        const maxPageHeight = 240; 
 
         items.forEach(item => {
-            // Calculate exact width of this label
             let totalWidth = (item.span * portWidth) + ((item.span - 1) * standardGap);
             let extraGaps = 0;
             for (let s = 1; s < item.span; s++) {
                 if ((item.startIndex + s) % segmentSize === 0) extraGaps++;
             }
             totalWidth += extraGaps * (segmentGap - standardGap);
-            let itemTotalSpace = totalWidth + 3; // including 3mm right gap spacing
+            let itemTotalSpace = totalWidth + gapSize;
 
-            // Check if it fits in the current row of the page layout
-            if (currentRowWidth + itemTotalSpace > maxPageWidth) {
-                // Move to next row on the same page
-                currentPageTotalHeight += currentRowHeight;
-                currentRowWidth = itemTotalSpace;
-            } else {
-                currentRowWidth += itemTotalSpace;
+            if (currentRowWidth > 0 && (currentRowWidth + itemTotalSpace > maxPageWidth)) {
+                currentPageTotalHeight += itemHeightWithGap;
+                currentRowWidth = 0;
             }
 
-            // Check if it exceeds the page height limit -> push current page and start a new one
-            if (currentPageTotalHeight + currentRowHeight > maxPageHeight && currentPageItems.length > 0) {
+            if (currentPageTotalHeight + itemHeightWithGap > maxPageHeight && currentPageItems.length > 0) {
                 pages.push(currentPageItems);
                 currentPageItems = [];
                 currentPageTotalHeight = 0;
-                currentRowWidth = itemTotalSpace;
+                currentRowWidth = 0;
             }
 
+            currentRowWidth += itemTotalSpace;
             currentPageItems.push({ item, totalWidth });
         });
 
@@ -856,7 +1216,6 @@
             pages.push(currentPageItems);
         }
 
-        // Render each generated page
         pages.forEach((pageItems, pageIdx) => {
             let pageDiv = document.createElement('div');
             pageDiv.className = 'page';
@@ -864,9 +1223,14 @@
             let title = document.createElement('div');
             title.className = 'page-title';
             let pageLabelSuffix = pages.length > 1 ? ` (Part ${pageIdx + 1}/${pages.length})` : '';
-            title.textContent = (useInk ? i18n[currentLang].sheet_color : `${i18n[currentLang].paper_color} ${groupTitle}`) + pageLabelSuffix;
+            
+            let groupDisplayTitle = groupTitle;
+            if (!useInk) {
+                groupDisplayTitle = getColorName(groupTitle);
+            }
+            title.textContent = (useInk ? i18n[currentLang].sheet_color : `${i18n[currentLang].paper_color} ${groupDisplayTitle}`) + pageLabelSuffix;
             pageDiv.appendChild(title);
-
+            
             let labelsContainer = document.createElement('div');
             labelsContainer.className = 'print-labels-container';
 
@@ -879,17 +1243,18 @@
                 labelDiv.style.minWidth = `${entry.totalWidth}mm`;
                 labelDiv.style.maxWidth = `${entry.totalWidth}mm`;
                 labelDiv.style.height = `${portHeight}mm`;
-
+                
                 let catColorStyle = "";
-                if (useInk && item.color.toLowerCase() !== 'white') {
+                const isWhite = (!item.color || item.color.toLowerCase() === '#ffffff' || item.color.toLowerCase() === '#fff');
+                if (useInk && !isWhite) {
                     labelDiv.style.borderColor = item.color;
                     labelDiv.style.borderWidth = '2px';
                     catColorStyle = `color: ${item.color};`;
                 }
 
                 labelDiv.innerHTML = `<div style="overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px; ${catColorStyle}">${item.text1}</div>` +
-                    (item.text2 ? `<div style="font-size:9px; font-weight:normal; overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; color:#333;">${item.text2}</div>` : '');
-
+                                     (item.text2 ? `<div style="font-size:9px; font-weight:normal; overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; color:#333;">${item.text2}</div>` : '');
+                
                 labelsContainer.appendChild(labelDiv);
             });
 
@@ -902,25 +1267,27 @@
         currentLang = currentLang === 'en' ? 'he' : 'en';
         document.body.dir = currentLang === 'en' ? 'ltr' : 'rtl';
         document.getElementById('langToggleBtn').innerText = currentLang === 'en' ? 'עברית' : 'English';
+        applyLanguageStrings();
+        processLayout(true);
+    }
 
+    function applyLanguageStrings() {
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if (i18n[currentLang][key]) el.innerHTML = i18n[currentLang][key];
         });
-
-        processLayout(true);
     }
 
     function applyScaling() {
         const containers = document.querySelectorAll('.view-container');
         containers.forEach(container => {
             if(container.querySelector('.table-container')) return;
-
+            
             const wrapper = container.querySelector('.scale-wrapper');
             const sizer = container.querySelector('.scale-container-sizer');
             if (!wrapper || !sizer) return;
 
-            const availableWidth = container.clientWidth - 48;
+            const availableWidth = container.clientWidth - 48; 
             const requiredWidth = wrapper.scrollWidth;
 
             if (requiredWidth > availableWidth && requiredWidth > 0) {
