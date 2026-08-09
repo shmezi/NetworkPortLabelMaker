@@ -764,7 +764,7 @@
     </div>
 
     <div class="view-container">
-<!--        <h2 data-i18n="pr_title">תצוגה מקדימה להדפסה</h2>-->
+        <h2 data-i18n="pr_title"></h2>
         <div class="scale-container-sizer" id="print-sizer">
             <div class="scale-wrapper" id="preview-area"></div>
         </div>
@@ -838,7 +838,7 @@
             print_btn: "🖨️ הדפס מסמך",
             editor_title: "עורך רשימת הפורטים", add_port: "+ הוסף פורט",
             th_num: "מספר פורט", th_port: "טקסט פורט", th_cat: "יעד / קטגוריה", th_span: "פריסה", th_action: "פעולות",
-            hw_title: "תצוגת חומרה", pr_title: "תצוגה מקדימה להדפסה", paper_color: "הדפס על דף בצבע:", sheet_color: "דף הדפסה רציף", summary_title: "לוח חיבורים לפי יעד"
+            hw_title: "תצוגת חומרה", pr_title: "", paper_color: "הדפס על דף בצבע:", sheet_color: "דף הדפסה רציף", summary_title: "לוח חיבורים לפי יעד"
         }
     };
 
@@ -1707,7 +1707,7 @@
 
                 catMap[cat.name].items.push({
                     portDisplay: portDisplay,
-                    portLabel: port.text || "—"
+                    portLabel: port.text || ""
                 });
                 catMap[cat.name].totalPorts += span;
             });
