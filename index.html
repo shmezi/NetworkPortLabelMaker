@@ -1,518 +1,755 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Network Port Label Generator</title>
-<!-- Google Fonts & Material Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<style>
-    :root {
-        --sidebar-width: 400px;
-        --bg-color: #f4f6f8;
-        --surface-color: #ffffff;
-        --text-main: #212529;
-        --text-muted: #6c757d;
-        --border-color: #e0e0e0;
-        --primary: #1976d2;
-        --primary-hover: #115293;
-        --success: #2e7d32;
-        --success-hover: #1b5e20;
-        --danger: #d32f2f;
-        --danger-hover: #c62828;
-        --shadow: 0 2px 4px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
-        --shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-    
-    body {
-        font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: var(--bg-color);
-        color: var(--text-main);
-        display: flex;
-        height: 100vh;
-        overflow: hidden;
-        direction: ltr;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Port Label Generator</title>
+    <!-- Google Fonts & Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'GladiaCLM';
+            src: url('GladiaCLMBold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
 
-    body[dir="rtl"] {
-        direction: rtl;
-        text-align: right;
-    }
-    
-    #mobile-menu-btn {
-        display: none;
-        position: fixed;
-        top: 16px;
-        left: 16px;
-        z-index: 100;
-        background: var(--primary);
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 4px;
-        font-size: 0.9em;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        cursor: pointer;
-        box-shadow: 0 3px 1px -2px rgba(0,0,0,0.2), 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
-        transition: background 0.2s;
-    }
-    #mobile-menu-btn:hover { background: var(--primary-hover); }
-    body[dir="rtl"] #mobile-menu-btn { left: auto; right: 16px; }
+        :root {
+            --sidebar-width: 400px;
+            --bg-color: #f4f6f8;
+            --surface-color: #ffffff;
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --border-color: #e0e0e0;
+            --primary: #1976d2;
+            --primary-hover: #115293;
+            --success: #2e7d32;
+            --success-hover: #1b5e20;
+            --danger: #d32f2f;
+            --danger-hover: #c62828;
+            --shadow: 0 2px 4px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --global-font: 'GladiaCLM', 'Roboto', sans-serif;
+            --global-border-width: 1px;
+        }
 
-    #sidebar {
-        width: var(--sidebar-width);
-        background: var(--surface-color);
-        padding: 20px;
-        box-shadow: 4px 0 16px rgba(0,0,0,0.08);
-        height: 100vh;
-        overflow-y: auto;
-        box-sizing: border-box;
-        border-right: 1px solid var(--border-color);
-        flex-shrink: 0;
-        z-index: 50;
-        transition: transform 0.3s ease;
-    }
-    
-    body[dir="rtl"] #sidebar {
-        border-right: none;
-        border-left: 1px solid var(--border-color);
-        box-shadow: -4px 0 16px rgba(0,0,0,0.08);
-    }
-    
-    #main-content {
-        padding: 24px;
-        flex-grow: 1;
-        box-sizing: border-box;
-        height: 100vh;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-    
-    .lang-toggle { display: flex; justify-content: flex-end; margin-bottom: 12px; }
-    body[dir="rtl"] .lang-toggle { justify-content: flex-start; }
-    
-    .lang-toggle button {
-        background: #f5f5f5; color: #424242; border: 1px solid var(--border-color); padding: 4px 12px;
-        font-size: 0.8em; border-radius: 16px; cursor: pointer; font-weight: 500; width: auto;
-        transition: background 0.2s;
-    }
-    .lang-toggle button:hover { background: #e0e0e0; }
-
-    h2 { color: var(--text-main); margin-top: 0; margin-bottom: 16px; font-size: 1.25em; font-weight: 500; letter-spacing: 0.15px; }
-    
-    .accordion-section {
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        margin-bottom: 12px;
-        background: #fff;
-        overflow: hidden;
-        box-shadow: var(--shadow);
-    }
-    .accordion-header {
-        background: #fff;
-        padding: 14px 16px;
-        font-size: 0.95em;
-        font-weight: 500;
-        color: var(--text-main);
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        user-select: none;
-        transition: background 0.2s;
-    }
-    .accordion-header:hover { background: #fafafa; }
-    .accordion-header::after {
-        content: 'expand_more';
-        font-family: 'Material Icons';
-        font-size: 1.2em;
-        color: var(--text-muted);
-        transition: transform 0.3s;
-    }
-    .accordion-section.active .accordion-header::after { transform: rotate(180deg); }
-    .accordion-content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-        padding: 0 16px;
-        background: #fff;
-    }
-    .accordion-section.active .accordion-content {
-        max-height: 1000px;
-        padding: 14px 16px;
-        border-top: 1px solid var(--border-color);
-    }
-    
-    .form-group { margin-bottom: 14px; }
-    label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.85em; color: var(--text-muted); }
-    
-    input[type="number"], input[type="text"], input[type="file"], select {
-        width: 100%; padding: 10px 12px; box-sizing: border-box; 
-        border: 1px solid var(--border-color); border-radius: 4px; 
-        background: #fff; color: var(--text-main); 
-        font-size: 0.9em; transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    body[dir="rtl"] input[type="text"], body[dir="rtl"] select { text-align: right; }
-    
-    input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15); }
-    
-    button {
-        font-family: inherit; font-weight: 500; border-radius: 4px; 
-        cursor: pointer; transition: all 0.2s; width: 100%; padding: 10px 16px;
-        background: var(--primary); color: white; border: none; font-size: 0.9em;
-        box-shadow: var(--shadow);
-        letter-spacing: 0.4px;
-    }
-    button:hover { background: var(--primary-hover); box-shadow: var(--shadow-lg); }
-    
-    button.btn-success { background-color: var(--success); margin-top: 12px; font-size: 0.95em; padding: 12px; }
-    button.btn-success:hover { background-color: var(--success-hover); }
-    
-    button.btn-secondary { background: #f5f5f5; color: #334155; border: 1px solid var(--border-color); box-shadow: none; }
-    button.btn-secondary:hover { background: #e0e0e0; box-shadow: var(--shadow); }
-    
-    button.delete-btn {
-        background: transparent; color: var(--text-muted); border: 1px solid transparent; 
-        width: 32px; height: 32px; padding: 0; border-radius: 50%; 
-        display: flex; align-items: center; justify-content: center; font-size: 1.1em;
-        flex-shrink: 0; transition: all 0.2s; box-shadow: none;
-    }
-    button.delete-btn:hover { background: #ffebee; color: var(--danger); }
-
-    .view-container {
-        background: var(--surface-color); border: 1px solid var(--border-color);
-        border-radius: 8px; padding: 20px; box-shadow: var(--shadow);
-        width: 100%; box-sizing: border-box; overflow: hidden; flex-shrink: 0;
-    }
-    
-    .scale-wrapper { transform-origin: top left; width: max-content; }
-    body[dir="rtl"] .scale-wrapper { transform-origin: top right; }
-
-    .rack-visual-row {
-        display: flex; flex-wrap: nowrap; margin-bottom: 10px; background: #f8f9fa;
-        padding: 8px; border-radius: 6px; width: max-content; border: 1px solid var(--border-color);
-    }
-    
-    .hardware-port {
-        background: #fff; border: 1px solid #b0bec5; box-sizing: border-box;
-        display: flex; flex-direction: column; justify-content: center; align-items: center;
-        font-size: 10px; text-align: center; border-radius: 4px; flex-shrink: 0; 
-        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-    }
-    .hardware-port .pins { width: 50%; height: 2px; background: #ffa726; margin-bottom: 3px; border-radius: 1px; }
-
-    .page {
-        background: white; color: black; margin-bottom: 20px; padding: 20px;
-        border-radius: 8px; box-shadow: var(--shadow-lg);
-        border: 1px solid var(--border-color);
-        max-width: 190mm; 
-        box-sizing: border-box;
-    }
-    .page-title { text-align: center; margin-bottom: 15px; color: #424242; font-size: 1em; font-weight: 500; }
-    
-    .print-labels-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 3mm;
-        justify-content: flex-start;
-    }
-    body[dir="rtl"] .print-labels-container {
-        justify-content: flex-start;
-    }
-
-    .label {
-        border: 1px solid #212529; 
-        display: flex; flex-direction: column; justify-content: center;
-        align-items: center; box-sizing: border-box; text-align: center; font-weight: 700;
-        font-size: 11px; line-height: 1.2; 
-        border-radius: 4px;
-        flex-shrink: 0; overflow: hidden;
-        background-color: #fff;
-    }
-
-    .cat-manager {
-        background: #fafafa; border: 1px solid var(--border-color); border-radius: 6px;
-        padding: 12px; margin-bottom: 14px;
-    }
-    .cat-item-row {
-        display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
-        background: #fff; padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border-color);
-        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-    }
-    .cat-item-row input[type="text"] { flex: 2; border: none; background: transparent; padding: 2px; font-size: 0.9em; }
-    body[dir="rtl"] .cat-item-row input[type="text"] { text-align: right; }
-    .cat-item-row input[type="text"]:focus { box-shadow: none; }
-    
-    .cat-color-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex: 1.2;
-    }
-    .cat-color-wrapper input[type="color"] {
-        -webkit-appearance: none;
-        border: none;
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        cursor: pointer;
-        background: none;
-        padding: 0;
-    }
-    .cat-color-wrapper input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-    .cat-color-wrapper input[type="color"]::-webkit-color-swatch { border: 1px solid var(--border-color); border-radius: 50%; }
-
-    .table-container { 
-        overflow-x: auto; 
-        max-height: 300px; 
-        overflow-y: auto; 
-        border: 1px solid var(--border-color); 
-        border-radius: 6px; 
-        margin-top: 10px; 
-    }
-    table { 
-        width: 100%; 
-        border-collapse: separate; 
-        border-spacing: 0; 
-        text-align: left; 
-    }
-    body[dir="rtl"] table { text-align: right; }
-    
-    th, td { 
-        padding: 10px 12px; 
-        border-bottom: 1px solid var(--border-color); 
-        vertical-align: middle; 
-        background: #fff;
-    }
-    body[dir="rtl"] th, body[dir="rtl"] td { text-align: right; }
-    
-    th { 
-        background: #fafafa; 
-        font-weight: 500; 
-        font-size: 0.8em; 
-        color: var(--text-muted); 
-        position: sticky; 
-        top: 0; 
-        z-index: 2;
-        border-bottom: 2px solid var(--border-color);
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-    }
-    
-    tbody tr {
-        transition: background-color 0.2s;
-    }
-    tbody tr.dragging {
-        opacity: 0.4;
-        background: #e3f2fd;
-    }
-    tbody tr.drag-over {
-        border-top: 2px solid var(--primary);
-    }
-    
-    tbody tr:last-child td { border-bottom: none; }
-    td input, td select { width: 100%; padding: 6px 10px; margin: 0; box-sizing: border-box; }
-    
-    /* Category indicator left/right border accent for table rows */
-    tbody tr.has-category-border {
-        border-left: 5px solid var(--row-cat-color, transparent);
-    }
-    body[dir="rtl"] tbody tr.has-category-border {
-        border-left: 1px solid var(--border-color);
-        border-right: 5px solid var(--row-cat-color, transparent);
-    }
-    
-    .drag-handle {
-        cursor: grab;
-        color: var(--text-muted);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        user-select: none;
-        font-size: 1.2em;
-        padding: 4px;
-    }
-    .drag-handle:active {
-        cursor: grabbing;
-    }
-
-    .port-number-badge {
-        display: inline-block;
-        background: #e3f2fd;
-        color: #1565c0;
-        padding: 3px 8px;
-        border-radius: 12px;
-        font-size: 0.8em;
-        font-weight: 600;
-        border: 1px solid #bbdefb;
-    }
-
-    .action-cols { width: 90px; text-align: center; }
-    .action-btns { display: flex; gap: 6px; align-items: center; justify-content: center; }
-
-    @media (max-width: 768px) {
-        #mobile-menu-btn { display: block; }
-        #sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
+        body {
+            font-family: var(--global-font);
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
             height: 100vh;
-            transform: translateX(-100%);
+            overflow: hidden;
+            direction: ltr;
         }
-        body[dir="rtl"] #sidebar {
-            left: auto;
-            right: 0;
-            transform: translateX(100%);
-        }
-        #sidebar.mobile-open { transform: translateX(0); }
-        #main-content { padding: 70px 16px 20px 16px; }
-    }
 
-    @media print {
-        body { background: white; color: black; display: block; height: auto; overflow: visible; }
-        #sidebar, #mobile-menu-btn { display: none !important; }
-        #main-content { padding: 0; height: auto; overflow: visible; display: block; background: white; gap: 0; }
-        .view-container { background: none; border: none; padding: 0; box-shadow: none; margin-bottom: 0; overflow: visible; }
-        .hardware-section, .view-container:nth-child(1), .view-container:nth-child(2) { display: none; } 
-        
-        .scale-wrapper { transform: none !important; width: 100% !important; }
-        .scale-container-sizer { height: auto !important; }
-        
-        .page { 
-            margin: 0; padding: 0; box-shadow: none; border: none; 
-            page-break-after: always; max-width: none; width: 100%; 
+        body[dir="rtl"] {
+            direction: rtl;
+            text-align: right;
         }
-        .page-title { display: none; }
-        @page { size: auto; margin: 10mm; }
-    }
-</style>
+
+        #mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 100;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 3px 1px -2px rgba(0,0,0,0.2), 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+            transition: background 0.2s;
+        }
+        #mobile-menu-btn:hover { background: var(--primary-hover); }
+        body[dir="rtl"] #mobile-menu-btn { left: auto; right: 16px; }
+
+        #sidebar {
+            width: var(--sidebar-width);
+            background: var(--surface-color);
+            padding: 20px;
+            box-shadow: 4px 0 16px rgba(0,0,0,0.08);
+            height: 100vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+            border-right: 1px solid var(--border-color);
+            flex-shrink: 0;
+            z-index: 50;
+            transition: transform 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        body[dir="rtl"] #sidebar {
+            border-right: none;
+            border-left: 1px solid var(--border-color);
+            box-shadow: -4px 0 16px rgba(0,0,0,0.08);
+        }
+
+        #main-content {
+            padding: 24px;
+            flex-grow: 1;
+            box-sizing: border-box;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Frozen / Sticky Top Action Bar */
+        .top-action-bar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 20px;
+            box-shadow: var(--shadow);
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        body[dir="rtl"] .top-action-bar {
+            flex-direction: row-reverse;
+        }
+
+        .top-action-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lang-toggle button {
+            background: #f5f5f5; color: #424242; border: 1px solid var(--border-color); padding: 4px 12px;
+            font-size: 0.8em; border-radius: 16px; cursor: pointer; font-weight: 500; width: auto;
+            transition: background 0.2s;
+        }
+        .lang-toggle button:hover { background: #e0e0e0; }
+
+        h2 { color: var(--text-main); margin-top: 0; margin-bottom: 16px; font-size: 1.25em; font-weight: 500; letter-spacing: 0.15px; }
+
+        .accordion-section {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 12px;
+            background: #fff;
+            overflow: visible;
+            box-shadow: var(--shadow);
+        }
+        .accordion-header {
+            background: #fff;
+            padding: 14px 16px;
+            font-size: 0.95em;
+            font-weight: 500;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        .accordion-header:hover { background: #fafafa; }
+        .accordion-header::after {
+            content: 'expand_more';
+            font-family: 'Material Icons';
+            font-size: 1.2em;
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+        .accordion-section.active .accordion-header::after { transform: rotate(180deg); }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            padding: 0 16px;
+            background: #fff;
+        }
+        .accordion-section.active .accordion-content {
+            max-height: 1500px;
+            overflow: visible;
+            padding: 14px 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .form-group { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.85em; color: var(--text-muted); }
+
+        input[type="number"], input[type="text"], input[type="file"], select {
+            width: 100%; padding: 10px 12px; box-sizing: border-box;
+            border: 1px solid var(--border-color); border-radius: 4px;
+            background: #fff; color: var(--text-main);
+            font-size: 0.9em; transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+        body[dir="rtl"] input[type="text"], body[dir="rtl"] select { text-align: right; }
+
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15); }
+
+        button {
+            font-family: inherit; font-weight: 500; border-radius: 4px;
+            cursor: pointer; transition: all 0.2s; width: 100%; padding: 10px 16px;
+            background: var(--primary); color: white; border: none; font-size: 0.9em;
+            box-shadow: var(--shadow);
+            letter-spacing: 0.4px;
+        }
+        button:hover { background: var(--primary-hover); box-shadow: var(--shadow-lg); }
+
+        button.btn-success { background-color: var(--success); margin-top: 0; font-size: 0.9em; padding: 10px 20px; width: auto; }
+        button.btn-success:hover { background-color: var(--success-hover); }
+
+        button.btn-secondary { background: #f5f5f5; color: #334155; border: 1px solid var(--border-color); box-shadow: none; width: auto; padding: 8px 14px; font-size: 0.85em; }
+        button.btn-secondary:hover { background: #e0e0e0; box-shadow: var(--shadow); }
+
+        button.delete-btn {
+            background: transparent; color: var(--text-muted); border: 1px solid transparent;
+            width: 32px; height: 32px; padding: 0; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1.1em;
+            flex-shrink: 0; transition: all 0.2s; box-shadow: none;
+        }
+        button.delete-btn:hover { background: #ffebee; color: var(--danger); }
+
+        /* Segmented Control Styling */
+        .segmented-control {
+            display: flex;
+            background: #e2e8f0;
+            border-radius: 6px;
+            padding: 3px;
+            gap: 3px;
+        }
+        .segment-btn {
+            background: transparent;
+            color: #475569;
+            border: none;
+            padding: 8px 12px;
+            font-size: 0.85em;
+            font-weight: 500;
+            border-radius: 4px;
+            box-shadow: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            width: auto;
+        }
+        .segment-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text-main);
+            box-shadow: none;
+        }
+        .segment-btn.active {
+            background: #ffffff;
+            color: var(--primary);
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .view-container {
+            background: var(--surface-color); border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 20px; box-shadow: var(--shadow);
+            width: 100%; box-sizing: border-box; overflow: hidden; flex-shrink: 0;
+        }
+
+        .scale-wrapper { transform-origin: top left; width: max-content; }
+        body[dir="rtl"] .scale-wrapper { transform-origin: top right; }
+
+        .rack-visual-row {
+            display: flex; flex-wrap: nowrap; margin-bottom: 10px; background: #f8f9fa;
+            padding: 8px; border-radius: 6px; width: max-content; border: 1px solid var(--border-color);
+        }
+
+        .hardware-port {
+            background: #fff; border: var(--global-border-width) solid #b0bec5; box-sizing: border-box;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-size: 10px; text-align: center; border-radius: 4px; flex-shrink: 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+        .hardware-port .pins { width: 50%; height: 2px; background: #ffa726; margin-bottom: 3px; border-radius: 1px; }
+
+        .page {
+            background: white; color: black; margin-bottom: 20px; padding: 20px;
+            border-radius: 8px; box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            max-width: 190mm;
+            box-sizing: border-box;
+        }
+        .page-title { text-align: center; margin-bottom: 15px; color: #424242; font-size: 1em; font-weight: 500; }
+
+        .print-labels-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3mm;
+            justify-content: flex-start;
+        }
+        body[dir="rtl"] .print-labels-container {
+            justify-content: flex-start;
+        }
+
+        .label {
+            border: var(--global-border-width) solid #212529;
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; box-sizing: border-box; text-align: center; font-weight: 700;
+            font-size: 11px; line-height: 1.2;
+            border-radius: 4px;
+            flex-shrink: 0; overflow: hidden;
+            background-color: #fff;
+        }
+
+        /* --- OFFICIAL REPORT MAP LAYOUT --- */
+        .official-report-header {
+            text-align: center;
+            border-bottom: 2px solid #0f172a;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+        }
+        .official-report-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .official-report-subtitle {
+            font-size: 0.9em;
+            color: #64748b;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .map-columns-container {
+            columns: 260px;
+            column-gap: 24px;
+        }
+        .map-cat-table-wrapper {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            margin-bottom: 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            background: #fff;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .map-cat-table-header {
+            background: #f8fafc;
+            color: #0f172a;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-bottom: 1px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+        .map-cat-table-header .cat-count {
+            font-weight: 400;
+            color: #64748b;
+            font-size: 0.85em;
+            margin-inline-start: auto;
+        }
+        .map-cat-table-header .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .map-cat-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8em;
+        }
+        .map-cat-table th, .map-cat-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .map-cat-table tr:last-child td {
+            border-bottom: none;
+        }
+        .map-cat-table tr:nth-child(even) {
+            background-color: #fcfcfc;
+        }
+        .map-cat-table .td-port {
+            font-weight: 700;
+            color: #334155;
+            width: 35%;
+            white-space: nowrap;
+            border-right: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        body[dir="rtl"] .map-cat-table .td-port {
+            border-right: none;
+            border-left: 1px solid #e2e8f0;
+        }
+        .map-cat-table .td-label {
+            font-weight: 500;
+            color: #0f172a;
+            text-align: center;
+        }
+
+        .cat-manager {
+            background: #fafafa; border: 1px solid var(--border-color); border-radius: 6px;
+            padding: 12px; margin-bottom: 14px;
+            overflow: visible;
+        }
+        .cat-item-row {
+            display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
+            background: #fff; padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border-color);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            position: relative;
+            overflow: visible;
+        }
+        .cat-item-row input[type="text"] { flex: 2; border: none; background: transparent; padding: 2px; font-size: 0.9em; min-width: 0; }
+        body[dir="rtl"] .cat-item-row input[type="text"] { text-align: right; }
+        .cat-item-row input[type="text"]:focus { box-shadow: none; }
+
+        /* Custom Color Picker Styling */
+        .cat-color-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin: 0 4px;
+            position: relative;
+            overflow: visible;
+        }
+        .color-picker-trigger {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            flex-shrink: 0;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+            transition: transform 0.1s;
+        }
+        .color-picker-trigger:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .color-picker-palette {
+            position: absolute;
+            top: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            z-index: 9999;
+            display: none;
+            grid-template-columns: repeat(6, 24px);
+            gap: 6px;
+            white-space: nowrap;
+        }
+        body[dir="rtl"] .color-picker-palette {
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%);
+        }
+        .color-swatch {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.15);
+            box-sizing: border-box;
+            transition: transform 0.15s ease;
+        }
+        .color-swatch:hover {
+            transform: scale(1.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .color-swatch.selected {
+            border: 2px solid #212529;
+            transform: scale(1.1);
+            box-shadow: inset 0 0 0 2px #fff;
+        }
+
+        /* Multi-section manager card UI */
+        .section-card {
+            background: #fafafa;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .section-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9em;
+            color: var(--primary);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            text-align: left;
+        }
+        body[dir="rtl"] table { text-align: right; }
+
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+            background: #fff;
+        }
+        body[dir="rtl"] th, body[dir="rtl"] td { text-align: right; }
+
+        th {
+            background: #fafafa;
+            font-weight: 500;
+            font-size: 0.8em;
+            color: var(--text-muted);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            border-bottom: 2px solid var(--border-color);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        tr.section-header-row td {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.95em;
+            border-bottom: 2px solid var(--border-color);
+            padding: 10px 14px;
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+        tbody tr.dragging {
+            opacity: 0.4;
+            background: #e3f2fd;
+        }
+        tbody tr.drag-over {
+            border-top: 2px solid var(--primary);
+        }
+
+        tbody tr:last-child td { border-bottom: none; }
+        td input, td select { width: 100%; padding: 6px 10px; margin: 0; box-sizing: border-box; }
+
+        tbody tr.has-category-border {
+            border-left: 5px solid var(--row-cat-color, transparent);
+        }
+        body[dir="rtl"] tbody tr.has-category-border {
+            border-left: 1px solid var(--border-color);
+            border-right: 5px solid var(--row-cat-color, transparent);
+        }
+
+        .drag-handle {
+            cursor: grab;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            font-size: 1.2em;
+            padding: 4px;
+        }
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .port-number-badge {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            border: 1px solid #bbdefb;
+        }
+
+        .action-cols { width: 90px; text-align: center; }
+        .action-btns { display: flex; gap: 6px; align-items: center; justify-content: center; }
+
+        @media (max-width: 768px) {
+            #mobile-menu-btn { display: block; }
+            #sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+            }
+            body[dir="rtl"] #sidebar {
+                left: auto;
+                right: 0;
+                transform: translateX(100%);
+            }
+            #sidebar.mobile-open { transform: translateX(0); }
+            #main-content { padding: 70px 16px 20px 16px; }
+        }
+
+        @media print {
+            body { background: white; color: black; display: block; height: auto; overflow: visible; }
+            #sidebar, #mobile-menu-btn, .top-action-bar { display: none !important; }
+            #main-content { padding: 0; height: auto; overflow: visible; display: block; background: white; gap: 0; }
+            .view-container { background: none; border: none; padding: 0; box-shadow: none; margin-bottom: 0; overflow: visible; }
+            .hardware-section, .view-container:nth-child(2), .view-container:nth-child(3) { display: none; }
+
+            .scale-wrapper { transform: none !important; width: 100% !important; }
+            .scale-container-sizer { height: auto !important; }
+
+            .page {
+                margin: 0; padding: 0; box-shadow: none; border: none;
+                page-break-after: always; max-width: none; width: 100%;
+            }
+            .page-title { display: none !important; }
+            @page { size: auto; margin: 10mm; }
+        }
+    </style>
 </head>
 <body>
 
-<button id="mobile-menu-btn" onclick="toggleMobileSidebar()">☰ Settings</button>
+<button id="mobile-menu-btn" onclick="toggleMobileSidebar()">☰ הגדרות</button>
 
 <div id="sidebar">
-    <div class="lang-toggle">
-        <button id="langToggleBtn" onclick="toggleLanguage()">עברית</button>
-    </div>
+    <h2 data-i18n="settings">הגדרות</h2>
 
-    <h2 data-i18n="settings">Settings</h2>
-    
-    <!-- ACCORDION 1: DIMENSIONS -->
+    <!-- SECTION 1: TITLE, FONT & BORDER -->
     <div class="accordion-section active">
-        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="dim_header">1. Dimensions (mm)</div>
+        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sec_styles">1. כותרת, גופן ומסגרת</div>
         <div class="accordion-content">
-            <div class="form-group">
-                <label data-i18n="ports_row">Number of Ports in One Row</label>
-                <input type="number" id="portsPerRow" class="config-input" value="24" min="1">
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <div class="form-group" style="flex: 1;">
-                    <label data-i18n="port_w">Port Width</label>
-                    <input type="number" id="portWidth" class="config-input" value="15" min="1">
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label data-i18n="port_h">Port Height</label>
-                    <input type="number" id="portHeight" class="config-input" value="10" min="1">
-                </div>
+            <div class="form-group" style="margin-top: 6px;">
+                <label data-i18n="proj_name_label">שם הפרויקט</label>
+                <input type="text" id="projectNameInput" class="config-input" value="התקנת רשת">
             </div>
             <div class="form-group">
-                <label data-i18n="std_gap">Normal Gap</label>
-                <input type="number" id="standardGap" class="config-input" value="2" min="0">
-            </div>
-
-            <div class="form-group" style="margin-top: 10px; border-top: 1px dashed var(--border-color); padding-top: 10px;">
-                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-weight: 500;">
-                    <input type="checkbox" id="enableGrouping" class="config-input" style="width: auto;" onchange="toggleGroupingParams()">
-                    <span data-i18n="enable_grouping">Enable Port Grouping Spacing</span>
-                </label>
-            </div>
-            <div id="groupingParamsContainer" style="display: none; padding-left: 10px; border-left: 2px solid var(--primary); margin-top: 8px;">
-                <div class="form-group">
-                    <label data-i18n="seg_gap">Group Gap (mm)</label>
-                    <input type="number" id="segmentGap" class="config-input" value="8" min="0">
-                </div>
-                <div class="form-group">
-                    <label data-i18n="seg_size">Ports per Group</label>
-                    <input type="number" id="segmentSize" class="config-input" value="4" min="1">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ACCORDION 2: CATEGORIES & COLORS -->
-    <div class="accordion-section">
-        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sys_config">2. Categories & Colors</div>
-        <div class="accordion-content">
-            <div class="cat-manager">
-                <label style="font-weight: 500; color: var(--text-main); margin-bottom: 8px;" data-i18n="manage_cats">Manage Categories</label>
-                <div id="sidebarCatList" style="margin-bottom: 8px;"></div>
-                <button class="btn-secondary" onclick="addCategory()" data-i18n="add_cat">+ New Category</button>
-            </div>
-
-            <div class="form-group">
-                <label data-i18n="print_mode">Print Output Mode</label>
-                <select id="printMode" class="config-input">
-                    <option value="separate" data-i18n="mode_separate">Separate Pages (Colored Paper)</option>
-                    <option value="ink" data-i18n="mode_ink">Single Sheet (Colored Ink on Borders)</option>
+                <label data-i18n="font_family">גופן</label>
+                <select id="fontFamilySelect" class="config-input">
+                    <option value="GladiaCLM">GladiaCLM</option>
+                    <option value="Roboto">Roboto</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Times New Roman">Times New Roman</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label data-i18n="border_thick">עובי מסגרת (פיקסלים)</label>
+                <input type="number" id="borderThickness" class="config-input" value="1" min="0" max="5">
+            </div>
         </div>
     </div>
 
-    <!-- ACCORDION 3: PROJECT SAVE / LOAD & BULK UTILITIES -->
+    <!-- SECTION 2: CATEGORIES & COLORS -->
     <div class="accordion-section">
-        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="proj_utils">3. Project & Bulk Actions</div>
+        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sec_cats">2. קטגוריות וצבעים</div>
+        <div class="accordion-content">
+            <div class="cat-manager">
+                <label style="font-weight: 500; color: var(--text-main); margin-bottom: 8px;" data-i18n="manage_cats">ניהול קטגוריות</label>
+                <div id="sidebarCatList" style="margin-bottom: 8px;"></div>
+                <button class="btn-secondary" onclick="addCategory()" data-i18n="add_cat">+ קטגוריה חדשה</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 3: PORT SECTIONS -->
+    <div class="accordion-section">
+        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sec_sections">3. מקטעי פורטים</div>
+        <div class="accordion-content">
+            <div style="font-size: 0.85em; color: var(--text-muted); margin-bottom: 10px;" data-i18n="sections_desc">הגדר מספר מקטעי פאנל עם כללי פריסה מותאמים אישית.</div>
+            <div id="sectionsListContainer"></div>
+            <button class="btn-secondary" onclick="addPortSection()" data-i18n="add_section" style="width: 100%; margin-top: 4px;">+ הוסף מקטע פורטים</button>
+        </div>
+    </div>
+
+    <!-- SECTION 4: DATA UTILITIES & PROJECT MANAGEMENT -->
+    <div class="accordion-section">
+        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sec_data">4. נתונים וקבצי פרויקט</div>
         <div class="accordion-content">
             <div class="form-group" style="background: #fafafa; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 12px;">
-                <label style="color: var(--text-main); font-weight: 500;" data-i18n="proj_files">Project Files</label>
+                <label style="color: var(--text-main); font-weight: 500;" data-i18n="proj_files">קבצי פרויקט</label>
                 <div style="display: flex; gap: 6px; margin-bottom: 8px;">
-                    <button class="btn-secondary" onclick="saveProjectFile()" data-i18n="save_proj">💾 Save Project</button>
-                    <button class="btn-secondary" onclick="document.getElementById('projectFileOpen').click()" data-i18n="open_proj">📂 Open Project</button>
+                    <button class="btn-secondary" onclick="saveProjectFile()" data-i18n="save_proj">💾 שמור פרויקט</button>
+                    <button class="btn-secondary" onclick="document.getElementById('projectFileOpen').click()" data-i18n="open_proj">📂 טען פרויקט</button>
                     <input type="file" id="projectFileOpen" accept=".json" style="display:none;" onchange="loadProjectFile(event)">
                 </div>
             </div>
 
             <div class="form-group" style="background: #fafafa; padding: 10px; border-radius: 6px; border: 1px dashed var(--border-color);">
-                <label style="color: var(--text-main); font-weight: 500;" data-i18n="bulk_add">Bulk Utilities</label>
-                <div style="display: flex; gap: 5px; margin-bottom: 8px;">
-                    <button class="btn-secondary" onclick="addSequence()" data-i18n="add_seq">Add Sequence</button>
-                    <input type="number" id="seqAmount" value="24" style="width: 70px;">
-                </div>
-                <button class="btn-secondary" onclick="downloadCsvTemplate()" data-i18n="dl_template" style="margin-bottom: 6px;">Download CSV Template</button>
-                <input type="file" id="csvFile" accept=".csv" style="background: white; font-size: 0.85em;">
-                <button class="btn-secondary" onclick="clearData()" style="margin-top: 8px; color: var(--danger); border-color: #ffcdd2; background: #ffebee;" data-i18n="clear_all">Clear All Data</button>
+                <label style="color: var(--text-main); font-weight: 500;" data-i18n="bulk_add">כלי עזר</label>
+                <button class="btn-secondary" onclick="downloadCsvTemplate()" data-i18n="dl_template" style="margin-bottom: 6px; width: 100%;">הורד תבנית CSV</button>
+                <input type="file" id="csvFile" accept=".csv" style="background: white; font-size: 0.85em; width: 100%;">
+                <button class="btn-secondary" onclick="clearData()" style="margin-top: 8px; color: var(--danger); border-color: #ffcdd2; background: #ffebee; width: 100%;" data-i18n="clear_all">נקה את כל הנתונים</button>
             </div>
         </div>
     </div>
-
-    <button class="btn-success" onclick="window.print()" data-i18n="print_btn">Print Label Sheets</button>
 </div>
 
 <div id="main-content" onclick="checkCloseMobileMenu(event)">
-    
+
+    <!-- FROZEN TOP ACTION BAR FOR PRINT CONTROLS & LANGUAGE -->
+    <div class="top-action-bar">
+        <div class="top-action-group">
+            <label style="margin-bottom: 0; font-weight: 600; font-size: 0.9em;" data-i18n="print_mode_label">פורמט הדפסה:</label>
+            <div class="segmented-control" id="printModeSegmented">
+                <button class="segment-btn active" data-mode="separate" onclick="setPrintMode('separate')" data-i18n="mode_separate">דפים נפרדים</button>
+                <button class="segment-btn" data-mode="ink" onclick="setPrintMode('ink')" data-i18n="mode_ink">דף רציף</button>
+                <button class="segment-btn" data-mode="summary" onclick="setPrintMode('summary')" data-i18n="mode_summary">מפה גרפית</button>
+            </div>
+            <!-- Hidden select kept for state compatibility -->
+            <select id="printMode" class="config-input" style="display: none;">
+                <option value="separate">Separate Pages</option>
+                <option value="ink">Single Sheet</option>
+                <option value="summary">Graphical Map</option>
+            </select>
+        </div>
+
+        <div class="top-action-group">
+            <div class="lang-toggle" style="margin-bottom: 0;">
+                <button id="langToggleBtn" onclick="toggleLanguage()">English</button>
+            </div>
+            <button class="btn-success" onclick="window.print()" data-i18n="print_btn">🖨️ הדפס מסמך</button>
+        </div>
+    </div>
+
     <div class="view-container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h2 data-i18n="editor_title" style="margin-bottom: 0;">Ports List Editor</h2>
-            <button onclick="addPortEntry()" style="width: auto;" data-i18n="add_port">+ Add Port Entry</button>
+            <h2 data-i18n="editor_title" style="margin-bottom: 0;">עורך רשימת הפורטים</h2>
         </div>
         <div class="table-container">
             <table>
                 <thead>
-                    <tr>
-                        <th style="width: 40px; text-align: center;">⠿</th>
-                        <th data-i18n="th_num" style="width: 15%;">Port #</th>
-                        <th data-i18n="th_cat" style="width: 25%;">Category</th>
-                        <th data-i18n="th_port" style="width: 35%;">Port Label / Number</th>
-                        <th data-i18n="th_span" style="width: 15%;">Port Span</th>
-                        <th data-i18n="th_action" class="action-cols">Actions</th>
-                    </tr>
+                <tr>
+                    <th style="width: 40px; text-align: center;">⠿</th>
+                    <th data-i18n="th_num" style="width: 15%;">מספר פורט</th>
+                    <th data-i18n="th_cat" style="width: 25%;">יעד / קטגוריה</th>
+                    <th data-i18n="th_port" style="width: 35%;">טקסט פורט</th>
+                    <th data-i18n="th_span" style="width: 15%;">פריסה</th>
+                    <th data-i18n="th_action" class="action-cols">פעולות</th>
+                </tr>
                 </thead>
                 <tbody id="portsTableBody"></tbody>
             </table>
@@ -520,14 +757,14 @@
     </div>
 
     <div class="view-container">
-        <h2 data-i18n="hw_title">Hardware Visualizer</h2>
+        <h2 data-i18n="hw_title">תצוגת חומרה</h2>
         <div class="scale-container-sizer" id="hw-sizer">
             <div class="scale-wrapper" id="hardware-view-area"></div>
         </div>
     </div>
 
     <div class="view-container">
-        <h2 data-i18n="pr_title">Print Preview</h2>
+<!--        <h2 data-i18n="pr_title">תצוגה מקדימה להדפסה</h2>-->
         <div class="scale-container-sizer" id="print-sizer">
             <div class="scale-wrapper" id="preview-area"></div>
         </div>
@@ -535,78 +772,91 @@
 </div>
 
 <script>
+    const standardColors = [
+        { hex: "#ffffff", en: "White", he: "לבן" },
+        { hex: "#000000", en: "Black", he: "שחור" },
+        { hex: "#9e9e9e", en: "Gray", he: "אפור" },
+        { hex: "#e0e0e0", en: "Light Gray", he: "אפור בהיר" },
+        { hex: "#f44336", en: "Red", he: "אדום" },
+        { hex: "#e53935", en: "Dark Red", he: "אדום כהה" },
+        { hex: "#ff8a80", en: "Light Red", he: "אדום בהיר" },
+        { hex: "#ff9800", en: "Orange", he: "כתום" },
+        { hex: "#fb8c00", en: "Dark Orange", he: "כתום כהה" },
+        { hex: "#ffe0b2", en: "Light Orange", he: "כתום בהיר" },
+        { hex: "#ffeb3b", en: "Yellow", he: "צהוב" },
+        { hex: "#fdd835", en: "Dark Yellow", he: "צהוב כהה" },
+        { hex: "#fff9c4", en: "Light Yellow", he: "צהוב בהיר" },
+        { hex: "#4caf50", en: "Green", he: "ירוק" },
+        { hex: "#2e7d32", en: "Dark Green", he: "ירוק כהה" },
+        { hex: "#a5d6a7", en: "Light Green", he: "ירוק בהיר" },
+        { hex: "#00bcd4", en: "Cyan", he: "תכלת" },
+        { hex: "#2196f3", en: "Blue", he: "כחול" },
+        { hex: "#1565c0", en: "Dark Blue", he: "כחול כהה" },
+        { hex: "#90caf9", en: "Light Blue", he: "כחול בהיר" },
+        { hex: "#9c27b0", en: "Purple", he: "סגול" },
+        { hex: "#6a1b9a", en: "Dark Purple", he: "סגול כהה" },
+        { hex: "#e1bee7", en: "Light Purple", he: "סגול בהיר" },
+        { hex: "#795548", en: "Brown", he: "חום" }
+    ];
+
     const i18n = {
         en: {
-            settings: "Settings", dim_header: "1. Dimensions (mm)",
-            ports_row: "Number of Ports in One Row", port_w: "Port Width", port_h: "Port Height",
-            std_gap: "Normal Gap", enable_grouping: "Enable Port Grouping Spacing",
-            seg_gap: "Group Gap (mm)", seg_size: "Ports per Group",
-            sys_config: "2. Categories & Colors",
+            settings: "Settings",
+            sec_cats: "2. Categories & Colors",
+            sec_sections: "3. Port Sections",
+            sec_styles: "1. Title, Font & Border",
+            sec_data: "4. Data & Project Files",
+            proj_name_label: "Project Name",
+            sections_desc: "Define multiple panel sections with individual layout rules.",
+            add_section: "+ Add Port Section",
+            font_family: "Font Family", border_thick: "Border Thickness (px)",
             manage_cats: "Manage Categories", add_cat: "+ New Category",
-            proj_utils: "3. Project & Bulk Actions", proj_files: "Project Files", save_proj: "💾 Save Project", open_proj: "📂 Open Project",
-            print_mode: "Print Output Mode", mode_separate: "Separate Pages (Colored Paper)", mode_ink: "Single Sheet (Colored Ink on Borders)",
-            bulk_add: "Bulk Utilities", add_seq: "Add Sequence", dl_template: "Download CSV Template", clear_all: "Clear All Data", print_btn: "Print Label Sheets",
+            proj_files: "Project Files", save_proj: "💾 Save Project", open_proj: "📂 Open Project",
+            print_mode_label: "Format:",
+            mode_separate: "Separate Pages", mode_ink: "Single Sheet", mode_summary: "Graphical Map",
+            bulk_add: "Bulk Utilities", dl_template: "Download CSV Template", clear_all: "Clear All Data",
+            print_btn: "🖨️ Print Document",
             editor_title: "Ports List Editor", add_port: "+ Add Port Entry",
-            th_num: "Port #", th_port: "Port Label / Number", th_cat: "Category", th_span: "Port Span", th_action: "Actions",
-            hw_title: "Hardware Visualizer", pr_title: "Print Sheets (A4 Pack)", paper_color: "Print on Paper Color:", sheet_color: "Continuous Print Sheet"
+            th_num: "Port #", th_port: "Port Label", th_cat: "Destination / Category", th_span: "Port Span", th_action: "Actions",
+            hw_title: "Hardware Visualizer", pr_title: "Print Preview", paper_color: "Print on Paper Color:", sheet_color: "Continuous Print Sheet", summary_title: "Destination Connection Schedule"
         },
         he: {
-            settings: "הגדרות", dim_header: '1. מידות (מ"מ)',
-            ports_row: "שקעים בשורה", port_w: "רוחב שקע", port_h: "גובה שקע",
-            std_gap: "מרווח רגיל", enable_grouping: "הפעל מרווחי קבוצות שקעים",
-            seg_gap: 'מרווח קבוצות (מ"מ)', seg_size: "שקעים בקבוצה",
-            sys_config: "2. קטגוריות וצבעים",
+            settings: "הגדרות",
+            sec_cats: "2. קטגוריות וצבעים",
+            sec_sections: "3. מקטעי פורטים",
+            sec_styles: "1. כותרת, גופן ומסגרת",
+            sec_data: "4. נתונים וקבצי פרויקט",
+            proj_name_label: "שם הפרויקט",
+            sections_desc: "הגדר מספר מקטעי פאנל עם כללי פריסה מותאמים אישית.",
+            add_section: "+ הוסף מקטע פורטים",
+            font_family: "גופן", border_thick: "עובי מסגרת (פיקסלים)",
             manage_cats: "ניהול קטגוריות", add_cat: "+ קטגוריה חדשה",
-            proj_utils: "3. ניהול קובץ ופעולות", proj_files: "קבצי פרויקט", save_proj: "💾 שמור פרויקט", open_proj: "📂 טען פרויקט",
-            print_mode: "מצב הדפסה", mode_separate: "דפים נפרדים (דפי צבע)", mode_ink: "דף רציף (גבולות צבעוניים)",
-            bulk_add: "פעולות נתונים", add_seq: "הוסף רצף", dl_template: "הורד תבנית CSV", clear_all: "נקה את כל הנתונים", print_btn: "הדפס תוויות",
-            editor_title: "עורך רשימת השקעים", add_port: "+ הוסף שקע",
-            th_num: "מספר שקע", th_port: "טקסט/מספר שקע", th_cat: "קטגוריה", th_span: "פריסה", th_action: "פעולות",
-            hw_title: "תצוגת חומרה", pr_title: "תצוגת הדפסה (דפי A4)", paper_color: "הדפס על דף בצבע:", sheet_color: "דף הדפסה רציף"
+            proj_files: "קבצי פרויקט", save_proj: "💾 שמור פרויקט", open_proj: "📂 טען פרויקט",
+            print_mode_label: "פורמט הדפסה:",
+            mode_separate: "דפים נפרדים", mode_ink: "דף רציף", mode_summary: "מפה גרפית",
+            bulk_add: "כלי עזר", dl_template: "הורד תבנית CSV", clear_all: "נקה את כל הנתונים",
+            print_btn: "🖨️ הדפס מסמך",
+            editor_title: "עורך רשימת הפורטים", add_port: "+ הוסף פורט",
+            th_num: "מספר פורט", th_port: "טקסט פורט", th_cat: "יעד / קטגוריה", th_span: "פריסה", th_action: "פעולות",
+            hw_title: "תצוגת חומרה", pr_title: "תצוגה מקדימה להדפסה", paper_color: "הדפס על דף בצבע:", sheet_color: "דף הדפסה רציף", summary_title: "לוח חיבורים לפי יעד"
         }
     };
 
-    let currentLang = 'en';
-    let categories = []; 
-    let portsList = [];  
+    let currentLang = 'he';
+    let categories = [];
+    let portsList = [];
+    let portSections = [];
     let configInputTimeout = null;
     let draggedIndex = null;
 
-    const humanNamesPool = [
-        "Alex", "Sam", "Jordan", "Taylor", "Morgan", "Charlie", "Casey", "Riley", 
-        "Avery", "Jamie", "Logan", "Parker", "Dakota", "Reese", "Skyler", "Cameron",
-        "Rowan", "Kendall", "Sawyer", "Peyton", "Finley", "Emerson", "River", "Shai"
-    ];
-
-    const namedColors = {
-        "#ffffff": "White",
-        "#fff": "White",
-        "#2196f3": "Blue",
-        "#3b82f6": "Blue",
-        "#ffeb3b": "Yellow",
-        "#f59e0b": "Yellow",
-        "#4caf50": "Green",
-        "#10b981": "Green",
-        "#f44336": "Red",
-        "#ef4444": "Red",
-        "#9e9e9e": "Gray",
-        "#64748b": "Gray",
-        "#000000": "Black",
-        "#9c27b0": "Purple",
-        "#ff9800": "Orange"
-    };
-
-    function getColorName(hex) {
-        if (!hex) return "White";
+    function getBasicColorName(hex, lang) {
+        if (!hex) return lang === 'he' ? "לבן" : "White";
         const cleanHex = hex.toLowerCase().trim();
-        if (namedColors[cleanHex]) return namedColors[cleanHex];
-        
-        let hash = 0;
-        for (let i = 0; i < cleanHex.length; i++) {
-            hash = cleanHex.charCodeAt(i) + ((hash << 5) - hash);
+        const found = standardColors.find(c => c.hex.toLowerCase() === cleanHex);
+        if (found) {
+            return found[lang] || found['en'];
         }
-        const index = Math.abs(hash) % humanNamesPool.length;
-        return humanNamesPool[index];
+        return lang === 'he' ? "לבן" : "White";
     }
 
     function generateId() { return Math.random().toString(36).substr(2, 9); }
@@ -631,77 +881,120 @@
         }
     }
 
-    function toggleGroupingParams() {
-        const checkbox = document.getElementById('enableGrouping');
-        const container = document.getElementById('groupingParamsContainer');
-        container.style.display = checkbox.checked ? 'block' : 'none';
+    function setPrintMode(mode) {
+        document.getElementById('printMode').value = mode;
+        document.querySelectorAll('.segment-btn').forEach(btn => {
+            if (btn.getAttribute('data-mode') === mode) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        saveSettingsToStorage();
         processLayout(false);
     }
 
+    // Close color palettes when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.cat-color-wrapper')) {
+            document.querySelectorAll('.color-picker-palette').forEach(p => p.style.display = 'none');
+        }
+    });
+
     document.addEventListener("DOMContentLoaded", () => {
         loadSettingsFromStorage();
-        
+        document.body.dir = currentLang === 'en' ? 'ltr' : 'rtl';
+        document.getElementById('langToggleBtn').innerText = currentLang === 'en' ? 'עברית' : 'English';
+        applyLanguageStrings();
+
         document.querySelectorAll('.config-input').forEach(input => {
             input.addEventListener('input', (e) => {
                 clearTimeout(configInputTimeout);
                 configInputTimeout = setTimeout(() => {
                     saveSettingsToStorage();
-                    processLayout(false); 
+                    processLayout(false);
                 }, 100);
             });
         });
 
         window.addEventListener('resize', applyScaling);
-        
+
         if(categories.length === 0 && portsList.length === 0) {
-            categories.push({ id: generateId(), name: "Switch A", color: "#ffffff" });
+            categories.push({ id: generateId(), name: currentLang === 'he' ? "מתג א'" : "Switch A", color: "#2196f3" });
+            portSections.push({
+                id: generateId(),
+                name: currentLang === 'he' ? "פאנל א'" : "Panel A",
+                startNumber: 1,
+                portsPerRow: 24,
+                portWidth: 15,
+                portHeight: 10,
+                standardGap: 2,
+                enableGrouping: false,
+                segmentGap: 8,
+                segmentSize: 4
+            });
             addSequence(24, false);
         } else {
-            processLayout(true);
+            if (!portSections || portSections.length === 0) {
+                portSections.push({
+                    id: generateId(),
+                    name: currentLang === 'he' ? "פאנל ראשי" : "Main Panel",
+                    startNumber: 1,
+                    portsPerRow: 24,
+                    portWidth: 15,
+                    portHeight: 10,
+                    standardGap: 2,
+                    enableGrouping: false,
+                    segmentGap: 8,
+                    segmentSize: 4
+                });
+            } else {
+                portSections.forEach(sec => {
+                    if (sec.startNumber === undefined) sec.startNumber = 1;
+                });
+            }
+
+            if (!portsList || portsList.length === 0) {
+                addSequence(24, false);
+            } else {
+                processLayout(true);
+            }
         }
     });
 
     function saveSettingsToStorage() {
         const config = {
-            portsPerRow: document.getElementById('portsPerRow').value,
-            portWidth: document.getElementById('portWidth').value,
-            portHeight: document.getElementById('portHeight').value,
-            standardGap: document.getElementById('standardGap').value,
-            enableGrouping: document.getElementById('enableGrouping').checked,
-            segmentGap: document.getElementById('segmentGap').value,
-            segmentSize: document.getElementById('segmentSize').value,
+            projectName: document.getElementById('projectNameInput').value,
+            fontFamily: document.getElementById('fontFamilySelect').value,
+            borderThickness: document.getElementById('borderThickness').value,
             printMode: document.getElementById('printMode').value,
             lang: currentLang,
             categories: categories,
+            portSections: portSections,
             portsList: portsList
         };
-        localStorage.setItem('portLabelMakerConfigV12', JSON.stringify(config));
+        localStorage.setItem('portLabelMakerConfigV41', JSON.stringify(config));
     }
 
     function loadSettingsFromStorage() {
-        const stored = localStorage.getItem('portLabelMakerConfigV12');
+        const stored = localStorage.getItem('portLabelMakerConfigV41');
         if (stored) {
             try {
                 const config = JSON.parse(stored);
-                document.getElementById('portsPerRow').value = config.portsPerRow || 24;
-                document.getElementById('portWidth').value = config.portWidth || 15;
-                document.getElementById('portHeight').value = config.portHeight || 10;
-                document.getElementById('standardGap').value = config.standardGap || 2;
-                document.getElementById('enableGrouping').checked = !!config.enableGrouping;
-                document.getElementById('segmentGap').value = (config.segmentGap !== undefined) ? config.segmentGap : 8;
-                document.getElementById('segmentSize').value = config.segmentSize || 4;
-                document.getElementById('printMode').value = config.printMode || "separate";
-                
-                categories = config.categories || [];
-                portsList = config.portsList || [];
-                
-                document.getElementById('groupingParamsContainer').style.display = document.getElementById('enableGrouping').checked ? 'block' : 'none';
+                document.getElementById('projectNameInput').value = config.projectName || 'התקנת רשת';
+                document.getElementById('fontFamilySelect').value = config.fontFamily || 'GladiaCLM';
+                document.getElementById('borderThickness').value = config.borderThickness !== undefined ? config.borderThickness : 1;
 
-                if (config.lang && config.lang !== currentLang) {
+                const loadedMode = config.printMode || "separate";
+                document.getElementById('printMode').value = loadedMode;
+                setPrintMode(loadedMode);
+
+                categories = config.categories || [];
+                portSections = config.portSections || [];
+                portsList = config.portsList || [];
+
+                if (config.lang) {
                     currentLang = config.lang;
-                    document.body.dir = currentLang === 'en' ? 'ltr' : 'rtl';
-                    document.getElementById('langToggleBtn').innerText = currentLang === 'en' ? 'עברית' : 'English';
-                    applyLanguageStrings();
                 }
             } catch (e) { console.error("Could not parse local storage."); }
         }
@@ -711,15 +1004,12 @@
         const state = {
             version: 1,
             timestamp: new Date().toISOString(),
-            portsPerRow: document.getElementById('portsPerRow').value,
-            portWidth: document.getElementById('portWidth').value,
-            portHeight: document.getElementById('portHeight').value,
-            standardGap: document.getElementById('standardGap').value,
-            enableGrouping: document.getElementById('enableGrouping').checked,
-            segmentGap: document.getElementById('segmentGap').value,
-            segmentSize: document.getElementById('segmentSize').value,
+            projectName: document.getElementById('projectNameInput').value,
+            fontFamily: document.getElementById('fontFamilySelect').value,
+            borderThickness: document.getElementById('borderThickness').value,
             printMode: document.getElementById('printMode').value,
             categories: categories,
+            portSections: portSections,
             portsList: portsList
         };
         const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
@@ -739,24 +1029,22 @@
         reader.onload = function(e) {
             try {
                 const config = JSON.parse(e.target.result);
-                document.getElementById('portsPerRow').value = config.portsPerRow || 24;
-                document.getElementById('portWidth').value = config.portWidth || 15;
-                document.getElementById('portHeight').value = config.portHeight || 10;
-                document.getElementById('standardGap').value = config.standardGap || 2;
-                document.getElementById('enableGrouping').checked = !!config.enableGrouping;
-                document.getElementById('segmentGap').value = (config.segmentGap !== undefined) ? config.segmentGap : 8;
-                document.getElementById('segmentSize').value = config.segmentSize || 4;
-                document.getElementById('printMode').value = config.printMode || "separate";
-                
+                document.getElementById('projectNameInput').value = config.projectName || 'התקנת רשת';
+                document.getElementById('fontFamilySelect').value = config.fontFamily || 'GladiaCLM';
+                document.getElementById('borderThickness').value = config.borderThickness !== undefined ? config.borderThickness : 1;
+
+                const loadedMode = config.printMode || "separate";
+                document.getElementById('printMode').value = loadedMode;
+                setPrintMode(loadedMode);
+
                 categories = config.categories || [];
+                portSections = config.portSections || [];
                 portsList = config.portsList || [];
-                
-                document.getElementById('groupingParamsContainer').style.display = document.getElementById('enableGrouping').checked ? 'block' : 'none';
-                
-                event.target.value = ''; 
+
+                event.target.value = '';
                 processLayout(true);
             } catch (err) {
-                alert("Invalid project file JSON.");
+                alert("קובץ פרויקט שגוי.");
             }
         };
         reader.readAsText(file);
@@ -768,29 +1056,58 @@
         container.innerHTML = '';
 
         if(categories.length === 0) {
-            container.innerHTML = `<span style="font-size:0.8em; color:var(--text-muted); display: block; padding: 4px;">No categories created yet.</span>`;
+            container.innerHTML = `<span style="font-size:0.8em; color:var(--text-muted); display: block; padding: 4px;">טרם נוצרו קטגוריות.</span>`;
             return;
         }
 
         categories.forEach((cat, index) => {
             let colorHex = cat.color || '#ffffff';
-            let colorName = getColorName(colorHex);
+            let colorName = getBasicColorName(colorHex, currentLang);
 
             let row = document.createElement('div');
             row.className = 'cat-item-row';
+
+            let swatchesHtml = standardColors.map(sc => {
+                let isSelected = sc.hex.toLowerCase() === colorHex.toLowerCase();
+                let title = sc[currentLang] || sc['en'];
+                return `<div class="color-swatch ${isSelected ? 'selected' : ''}" style="background-color: ${sc.hex};" title="${title}" onclick="updateSidebarCategoryColor(event, ${index}, '${sc.hex}')"></div>`;
+            }).join('');
+
             row.innerHTML = `
-                <input type="text" value="${cat.name}" oninput="updateSidebarCategory(${index}, 'name', this.value)" placeholder="Category Name">
+                <input type="text" value="${cat.name}" oninput="updateSidebarCategory(${index}, 'name', this.value)" placeholder="שם הקטגוריה">
                 <div class="cat-color-wrapper">
-                    <input type="color" value="${colorHex}" onchange="updateSidebarCategory(${index}, 'color', this.value)" title="Choose Category Color">
-                    <span style="font-size: 0.8em; color: var(--text-muted);">${colorName}</span>
+                    <div class="color-picker-trigger" style="background-color: ${colorHex};" onclick="toggleColorPalette(event, ${index})" title="${colorName}"></div>
+                    <div class="color-picker-palette" id="palette-${index}">
+                        ${swatchesHtml}
+                    </div>
                 </div>
-                <button class="delete-btn" onclick="deleteCategory(${index})" title="Delete Category">✕</button>
+                <button class="delete-btn" onclick="deleteCategory(${index})" title="מחק קטגוריה">✕</button>
             `;
             container.appendChild(row);
         });
     }
 
-    function addCategory(name = "New Category", color = "#2196f3") {
+    function toggleColorPalette(event, index) {
+        event.stopPropagation();
+        document.querySelectorAll('.color-picker-palette').forEach(p => {
+            if (p.id !== `palette-${index}`) p.style.display = 'none';
+        });
+        const palette = document.getElementById(`palette-${index}`);
+        if (palette) {
+            palette.style.display = palette.style.display === 'none' || !palette.style.display ? 'grid' : 'none';
+        }
+    }
+
+    function updateSidebarCategoryColor(event, index, hex) {
+        event.stopPropagation();
+        categories[index].color = hex;
+        saveSettingsToStorage();
+        renderSidebarCategories();
+        updatePreviewsOnly();
+        renderPortsTable();
+    }
+
+    function addCategory(name = (currentLang === 'he' ? "יעד חדש" : "New Destination"), color = "#2196f3") {
         categories.push({
             id: generateId(),
             name: name,
@@ -801,15 +1118,128 @@
 
     function updateSidebarCategory(index, field, value) {
         categories[index][field] = value;
-        scheduleRender();
+        saveSettingsToStorage();
+        updatePreviewsOnly();
+        renderPortsTable();
     }
 
     function deleteCategory(index) {
         const catId = categories[index].id;
         if(portsList.some(p => p.categoryId === catId)) {
-            if(!confirm("Some ports are assigned to this category. Delete anyway?")) return;
+            if(!confirm(currentLang === 'he' ? "ישנם פורטים המשויכים ליעד זה. למחוק בכל זאת?" : "Some ports are assigned to this destination. Delete anyway?")) return;
         }
         categories.splice(index, 1);
+        processLayout(true);
+    }
+
+    // --- Sidebar Port Sections Manager Logic ---
+    function renderPortSections() {
+        const container = document.getElementById('sectionsListContainer');
+        container.innerHTML = '';
+
+        if(portSections.length === 0) {
+            container.innerHTML = `<span style="font-size:0.8em; color:var(--text-muted); display: block; padding: 4px;">לא הוגדרו פאנלים. הוסף פאנל למטה.</span>`;
+            return;
+        }
+
+        portSections.forEach((sec, index) => {
+            let startNum = sec.startNumber !== undefined ? sec.startNumber : 1;
+            let card = document.createElement('div');
+            card.className = 'section-card';
+            card.innerHTML = `
+                <div class="section-card-header">
+                    <input type="text" value="${sec.name}" oninput="updateSectionProp(${index}, 'name', this.value)" placeholder="שם הפאנל" style="font-weight:600; width: 75%; padding: 4px 8px;">
+                    <button class="delete-btn" onclick="deletePortSection(${index})" title="מחק פאנל">✕</button>
+                </div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <div style="flex: 1;">
+                        <label style="font-size:0.75em;">מספר התחלה</label>
+                        <input type="number" value="${startNum}" oninput="updateSectionProp(${index}, 'startNumber', parseInt(this.value) !== NaN ? parseInt(this.value) : 1)">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size:0.75em;">פורטים בשורה</label>
+                        <input type="number" min="1" value="${sec.portsPerRow}" oninput="updateSectionProp(${index}, 'portsPerRow', parseInt(this.value) || 1)">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <div style="flex: 1;">
+                        <label style="font-size:0.75em;">רוחב (מ"מ)</label>
+                        <input type="number" min="1" value="${sec.portWidth}" oninput="updateSectionProp(${index}, 'portWidth', parseFloat(this.value) || 1)">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size:0.75em;">גובה (מ"מ)</label>
+                        <input type="number" min="1" value="${sec.portHeight}" oninput="updateSectionProp(${index}, 'portHeight', parseFloat(this.value) || 1)">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                    <div style="flex: 1;">
+                        <label style="font-size:0.75em;">רווח רגיל</label>
+                        <input type="number" min="0" value="${sec.standardGap}" oninput="updateSectionProp(${index}, 'standardGap', parseFloat(this.value) || 0)">
+                    </div>
+                    <div style="flex: 1; display: flex; align-items: flex-end;">
+                        <label style="display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 0.8em; padding-bottom: 8px;">
+                            <input type="checkbox" ${sec.enableGrouping ? 'checked' : ''} onchange="toggleSectionGrouping(${index}, this.checked)"> קיבוץ
+                        </label>
+                    </div>
+                </div>
+                <div id="secGroupingParams_${index}" style="display: ${sec.enableGrouping ? 'block' : 'none'}; padding-left: 8px; border-left: 2px solid var(--primary); margin-top: 6px;">
+                    <div style="display: flex; gap: 8px;">
+                        <div style="flex: 1;">
+                            <label style="font-size:0.75em;">רווח קבוצה</label>
+                            <input type="number" min="0" value="${sec.segmentGap}" oninput="updateSectionProp(${index}, 'segmentGap', parseFloat(this.value) || 0)">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size:0.75em;">גודל קבוצה</label>
+                            <input type="number" min="1" value="${sec.segmentSize}" oninput="updateSectionProp(${index}, 'segmentSize', parseInt(this.value) || 1)">
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function addPortSection() {
+        portSections.push({
+            id: generateId(),
+            name: currentLang === 'he' ? `פאנל ${String.fromCharCode(50 + portSections.length)}` : `Panel ${String.fromCharCode(65 + portSections.length)}`,
+            startNumber: 1,
+            portsPerRow: 24,
+            portWidth: 15,
+            portHeight: 10,
+            standardGap: 2,
+            enableGrouping: false,
+            segmentGap: 8,
+            segmentSize: 4
+        });
+        processLayout(true);
+    }
+
+    function updateSectionProp(index, prop, val) {
+        portSections[index][prop] = val;
+        saveSettingsToStorage();
+        updatePreviewsOnly();
+        renderPortsTable();
+    }
+
+    function toggleSectionGrouping(index, checked) {
+        portSections[index].enableGrouping = checked;
+        const container = document.getElementById(`secGroupingParams_${index}`);
+        if(container) container.style.display = checked ? 'block' : 'none';
+        scheduleRender();
+    }
+
+    function deletePortSection(index) {
+        if(portSections.length <= 1) {
+            alert(currentLang === 'he' ? "חובה להשאיר לפחות פאנל אחד." : "You must keep at least one panel.");
+            return;
+        }
+        portSections.splice(index, 1);
+        portsList.forEach(p => {
+            if(!portSections.some(s => s.id === p.sectionId)) {
+                p.sectionId = portSections[0].id;
+            }
+        });
         processLayout(true);
     }
 
@@ -860,87 +1290,129 @@
         const tbody = document.getElementById('portsTableBody');
         tbody.innerHTML = '';
 
-        if(portsList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding: 15px;">No ports added yet. Click '+ Add Port Entry' below.</td></tr>`;
+        if(portSections.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding: 15px;">לא הוגדרו פאנלים.</td></tr>`;
             return;
         }
 
-        let currentPortNum = 1;
         let catLookup = {};
         categories.forEach(c => catLookup[c.id] = c);
 
-        portsList.forEach((port, index) => {
-            let tr = document.createElement('tr');
-            tr.setAttribute('draggable', 'true');
-            tr.setAttribute('data-index', index);
-
-            tr.addEventListener('dragstart', handleDragStart, false);
-            tr.addEventListener('dragenter', handleDragEnter, false);
-            tr.addEventListener('dragover', handleDragOver, false);
-            tr.addEventListener('dragleave', handleDragLeave, false);
-            tr.addEventListener('drop', handleDrop, false);
-            tr.addEventListener('dragend', handleDragEnd, false);
-
-            let cat = catLookup[port.categoryId] || { color: '#ffffff' };
-            let catColor = cat.color || '#ffffff';
-            let isWhite = (catColor.toLowerCase() === '#ffffff' || catColor.toLowerCase() === '#fff');
-            
-            if (!isWhite) {
-                tr.classList.add('has-category-border');
-                tr.style.setProperty('--row-cat-color', catColor);
-            }
-
-            let span = parseInt(port.span) || 1;
-            let portRangeDisplay = "";
-            if (span === 1) {
-                portRangeDisplay = `${currentPortNum}`;
-            } else {
-                portRangeDisplay = `${currentPortNum} - ${currentPortNum + span - 1}`;
-            }
-            currentPortNum += span;
-
-            let catSelectHtml = `<select onchange="updatePortEntry(${index}, 'categoryId', this.value)">`;
-            categories.forEach(catItem => {
-                const selected = (catItem.id === port.categoryId) ? 'selected' : '';
-                catSelectHtml += `<option value="${catItem.id}" ${selected}>${catItem.name}</option>`;
-            });
-            catSelectHtml += `</select>`;
-
-            tr.innerHTML = `
-                <td style="text-align: center;"><span class="drag-handle" title="Drag to reorder">⠿</span></td>
-                <td><span class="port-number-badge">Port ${portRangeDisplay}</span></td>
-                <td>${catSelectHtml}</td>
-                <td><input type="text" value="${port.text}" oninput="updatePortEntry(${index}, 'text', this.value)" placeholder=""></td>
-                <td><input type="number" min="1" value="${port.span}" oninput="updatePortEntry(${index}, 'span', this.value)"></td>
-                <td class="action-cols">
-                    <div class="action-btns">
-                        <button class="delete-btn" onclick="deletePortEntry(${index})" title="Delete Port">✕</button>
-                    </div>
+        portSections.forEach(sec => {
+            let headerTr = document.createElement('tr');
+            headerTr.className = 'section-header-row';
+            headerTr.innerHTML = `
+                <td colspan="5">
+                    📁 ${sec.name}
+                </td>
+                <td style="text-align: center; white-space: nowrap;">
+                    <button class="btn-secondary add-port-btn" onclick="handleAccordionAddPort(event, '${sec.id}')" style="padding: 6px 12px; font-size: 0.85em; background: var(--primary); color: white; border: none; width: auto; display: inline-flex; align-items: center; justify-content: center;" title="לחץ להוספת פורט, או Shift+לחץ להוספת 10 פורטים">+ הוסף פורט</button>
                 </td>
             `;
-            tbody.appendChild(tr);
+            tbody.appendChild(headerTr);
+
+            let sectionPorts = portsList.map((p, origIdx) => ({ p, origIdx })).filter(item => (item.p.sectionId === sec.id || (!item.p.sectionId && sec === portSections[0])));
+
+            if(sectionPorts.length === 0) {
+                let emptyTr = document.createElement('tr');
+                emptyTr.innerHTML = `<td colspan="6" style="text-align:center; color:var(--text-muted); font-size: 0.85em; font-style: italic; padding: 8px;">אין פורטים בפאנל זה. לחץ על '+ הוסף פורט' למעלה.</td>`;
+                tbody.appendChild(emptyTr);
+                return;
+            }
+
+            let sectionPortCounter = sec.startNumber !== undefined ? sec.startNumber : 1;
+
+            sectionPorts.forEach(({ p: port, origIdx: index }, sIdx) => {
+                let tr = document.createElement('tr');
+                tr.setAttribute('draggable', 'true');
+                tr.setAttribute('data-index', index);
+
+                tr.addEventListener('dragstart', handleDragStart, false);
+                tr.addEventListener('dragenter', handleDragEnter, false);
+                tr.addEventListener('dragover', handleDragOver, false);
+                tr.addEventListener('dragleave', handleDragLeave, false);
+                tr.addEventListener('drop', handleDrop, false);
+                tr.addEventListener('dragend', handleDragEnd, false);
+
+                let cat = catLookup[port.categoryId] || { color: '#ffffff' };
+                let catColor = cat.color || '#ffffff';
+                let isWhite = (catColor.toLowerCase() === '#ffffff' || catColor.toLowerCase() === '#fff');
+
+                if (!isWhite) {
+                    tr.classList.add('has-category-border');
+                    tr.style.setProperty('--row-cat-color', catColor);
+                }
+
+                let span = parseInt(port.span) || 1;
+                let portRangeDisplay = "";
+                if (span === 1) {
+                    portRangeDisplay = `${sectionPortCounter}`;
+                } else {
+                    portRangeDisplay = `${sectionPortCounter} - ${sectionPortCounter + span - 1}`;
+                }
+                sectionPortCounter += span;
+
+                let catSelectHtml = `<select onchange="updatePortCategory(${index}, this.value)">`;
+                categories.forEach(catItem => {
+                    const selected = (catItem.id === port.categoryId) ? 'selected' : '';
+                    catSelectHtml += `<option value="${catItem.id}" ${selected}>${catItem.name}</option>`;
+                });
+                catSelectHtml += `</select>`;
+
+                tr.innerHTML = `
+                    <td style="text-align: center;"><span class="drag-handle" title="גרור לשינוי סדר">⠿</span></td>
+                    <td><span class="port-number-badge">${currentLang === 'he' ? 'פורט' : 'Port'} ${portRangeDisplay}</span></td>
+                    <td>${catSelectHtml}</td>
+                    <td><input type="text" value="${port.text}" oninput="updatePortText(${index}, this.value)" placeholder=""></td>
+                    <td><input type="number" min="1" value="${port.span}" oninput="updatePortSpan(${index}, this.value)"></td>
+                    <td class="action-cols">
+                        <div class="action-btns">
+                            <button class="delete-btn" onclick="deletePortEntry(${index})" title="מחק פורט">✕</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         });
     }
 
-    function addPortEntry() {
+    function handleAccordionAddPort(event, secId) {
+        const count = event.shiftKey ? 10 : 1;
+        addPortToSection(secId, count);
+    }
+
+    function addPortToSection(secId, count = 1) {
         if(categories.length === 0) {
-            alert("Please create at least one category on the left sidebar first.");
+            alert(currentLang === 'he' ? "אנא צור לפחות קטגוריה אחת בסרגל הצדדי תחילה." : "Please create at least one destination category on the left sidebar first.");
             return;
         }
 
-        portsList.push({
-            id: generateId(),
-            text: "", 
-            categoryId: categories[0].id,
-            span: 1
-        });
+        for (let i = 0; i < count; i++) {
+            portsList.push({
+                id: generateId(),
+                text: "",
+                categoryId: categories[0].id,
+                sectionId: secId,
+                span: 2
+            });
+        }
         processLayout(true);
     }
 
-    function updatePortEntry(index, field, value) {
-        if(field === 'span') value = parseInt(value) || 1;
-        portsList[index][field] = value;
+    function updatePortText(index, value) {
+        portsList[index].text = value;
+        saveSettingsToStorage();
+        updatePreviewsOnly();
+    }
+
+    function updatePortSpan(index, value) {
+        portsList[index].span = parseInt(value) || 1;
         scheduleRender();
+    }
+
+    function updatePortCategory(index, value) {
+        portsList[index].categoryId = value;
+        processLayout(true);
     }
 
     function deletePortEntry(index) {
@@ -954,240 +1426,357 @@
         window.renderTimeout = setTimeout(() => { processLayout(false); }, 300);
     }
 
-    function addSequence(n = null, overwrite = false) {
-        const amount = n || parseInt(document.getElementById('seqAmount').value) || 24;
-        
+    function updatePreviewsOnly() {
+        const printMode = document.getElementById('printMode').value;
+
+        let catLookup = {};
+        categories.forEach(c => catLookup[c.id] = c);
+
+        let secLookup = {};
+        portSections.forEach(s => secLookup[s.id] = s);
+
+        let flattenedData = [];
+        portsList.forEach(port => {
+            let cat = catLookup[port.categoryId] || { name: currentLang === 'he' ? "לא משויך" : "Unassigned", color: "#ffffff" };
+            let sec = secLookup[port.sectionId] || portSections[0] || { name: "Panel", portsPerRow: 24, portWidth: 15, portHeight: 10, standardGap: 2, enableGrouping: false, segmentGap: 8, segmentSize: 4 };
+
+            flattenedData.push({
+                text1: port.text || "",
+                text2: cat.name,
+                color: cat.color || "#ffffff",
+                span: port.span,
+                section: sec
+            });
+        });
+
+        let sectionGroups = {};
+        portSections.forEach(sec => sectionGroups[sec.id] = { section: sec, items: [] });
+
+        flattenedData.forEach(item => {
+            let sId = item.section.id;
+            if(!sectionGroups[sId]) {
+                sectionGroups[sId] = { section: item.section, items: [] };
+            }
+            sectionGroups[sId].items.push(item);
+        });
+
+        let processedSections = [];
+        portSections.forEach(sec => {
+            let group = sectionGroups[sec.id];
+            if(!group || group.items.length === 0) return;
+
+            let portsPerRow = sec.portsPerRow || 24;
+            let segmentSize = sec.enableGrouping ? (sec.segmentSize || 4) : 999999;
+            let segmentGap = sec.enableGrouping ? (sec.segmentGap || 8) : sec.standardGap;
+
+            let expandedItems = [];
+            let currentPortIndex = 0;
+
+            group.items.forEach(item => {
+                let spanLeft = item.span;
+                while (spanLeft > 0) {
+                    const spaceInRow = portsPerRow - currentPortIndex;
+                    const spanThisRow = Math.min(spanLeft, spaceInRow);
+
+                    expandedItems.push({
+                        text1: item.text1,
+                        text2: item.text2,
+                        color: item.color,
+                        span: spanThisRow,
+                        startIndex: currentPortIndex,
+                        section: sec
+                    });
+
+                    currentPortIndex += spanThisRow;
+                    spanLeft -= spanThisRow;
+                    if (currentPortIndex >= portsPerRow) currentPortIndex = 0;
+                }
+            });
+
+            processedSections.push({
+                section: sec,
+                expandedItems: expandedItems
+            });
+        });
+
+        renderHardwareView(processedSections);
+        renderPrintSheets(flattenedData, processedSections, printMode);
+    }
+
+    function addSequence(n = 24, overwrite = false) {
         if(categories.length === 0) {
-            categories.push({ id: generateId(), name: "Switch A", color: "#ffffff" });
+            categories.push({ id: generateId(), name: currentLang === 'he' ? "מתג א'" : "Switch A", color: "#2196f3" });
         }
-        
+        if(portSections.length === 0) {
+            addPortSection();
+        }
+
         if (overwrite) portsList = [];
-        
-        const defaultCatId = categories[0].id;
-        for (let i = 1; i <= amount; i++) {
+
+        const defaultCatId = categories.length > 0 ? categories[0].id : null;
+        const defaultSecId = portSections.length > 0 ? portSections[0].id : null;
+
+        for (let i = 0; i < n; i++) {
             portsList.push({
                 id: generateId(),
-                text: i.toString(),
+                text: "",
                 categoryId: defaultCatId,
-                span: 1
+                sectionId: defaultSecId,
+                span: 2
             });
         }
         processLayout(true);
     }
 
     function clearData() {
-        if (confirm("Are you sure you want to clear all ports and categories?")) {
+        if (confirm(currentLang === 'he' ? "האם אתה בטוח שברצונך לנקות את כל הפורטים והקטגוריות?" : "Are you sure you want to clear all ports and categories?")) {
             categories = [];
             portsList = [];
             processLayout(true);
         }
     }
 
-    // --- CSV Handling ---
-    document.getElementById('csvFile').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            parseCSV(e.target.result);
-            document.getElementById('csvFile').value = ''; 
-            processLayout(true);
-        };
-        reader.readAsText(file);
-    });
-
-    function parseCSV(text) {
-        categories = [];
-        portsList = [];
-        const lines = text.split('\n');
-        let startIndex = (lines[0] && lines[0].toLowerCase().includes('category')) ? 1 : 0;
-
-        let catMap = {}; 
-
-        for (let i = startIndex; i < lines.length; i++) {
-            const line = lines[i];
-            if (line.trim() === '') continue;
-            const parts = line.split(',').map(p => p.trim());
-            
-            let catName = parts[0] || 'Unknown';
-            let portText = parts[1] || '';
-            let color = parts[2] || '#ffffff';
-            let span = parseInt(parts[3]) || 1;
-
-            if(!catMap[catName]) {
-                let newCatId = generateId();
-                categories.push({ id: newCatId, name: catName, color: color });
-                catMap[catName] = newCatId;
-            }
-
-            portsList.push({
-                id: generateId(),
-                text: portText,
-                categoryId: catMap[catName],
-                span: span
-            });
-        }
-    }
-    
-    function downloadCsvTemplate() {
-        const csvContent = "Category,Port,Color,PortSpan\nSwitch A,1,#ffffff,1\nSwitch A,2,#ffffff,1\nMain Uplink,Uplink,#2196f3,2\nStorage SAN,SAN,#4caf50,4";
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", "ports_list_template.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
     // --- Visualizer & Render Logic ---
     function processLayout(fullRebuild = true) {
         if (fullRebuild) {
             renderSidebarCategories();
+            renderPortSections();
             renderPortsTable();
         } else {
+            renderPortSections();
             renderPortsTable();
         }
+
+        const fontFamily = document.getElementById('fontFamilySelect').value;
+        const borderThickness = document.getElementById('borderThickness').value;
+        document.documentElement.style.setProperty('--global-font', `'${fontFamily}', 'Roboto', sans-serif`);
+        document.documentElement.style.setProperty('--global-border-width', `${borderThickness}px`);
+
         saveSettingsToStorage();
-        
-        const portsPerRow = parseInt(document.getElementById('portsPerRow').value) || 1;
-        const portWidth = parseFloat(document.getElementById('portWidth').value) || 0;
-        const portHeight = parseFloat(document.getElementById('portHeight').value) || 0;
-        const standardGap = parseFloat(document.getElementById('standardGap').value) || 0;
-        
-        const enableGrouping = document.getElementById('enableGrouping').checked;
-        const segmentSize = enableGrouping ? (parseInt(document.getElementById('segmentSize').value) || 1) : 999999;
-        let segmentGapRaw = parseFloat(document.getElementById('segmentGap').value);
-        const segmentGap = (!enableGrouping || isNaN(segmentGapRaw) || segmentGapRaw === 0) ? standardGap : segmentGapRaw;
+        updatePreviewsOnly();
 
-        const printMode = document.getElementById('printMode').value;
-
-        let catLookup = {};
-        categories.forEach(c => catLookup[c.id] = c);
-
-        let flattenedData = [];
-        portsList.forEach(port => {
-            let cat = catLookup[port.categoryId] || { name: "Unassigned", color: "#ffffff" };
-            flattenedData.push({
-                text1: cat.name,       
-                text2: port.text,      
-                color: cat.color || "#ffffff",      
-                span: port.span
-            });
-        });
-
-        let expandedItems = [];
-        let currentPortIndex = 0;
-
-        flattenedData.forEach((item) => {
-            let spanLeft = item.span;
-            while (spanLeft > 0) {
-                const spaceInRow = portsPerRow - currentPortIndex;
-                const spanThisRow = Math.min(spanLeft, spaceInRow);
-
-                expandedItems.push({
-                    text1: item.text1,
-                    text2: item.text2,
-                    color: item.color,
-                    span: spanThisRow,
-                    startIndex: currentPortIndex
-                });
-
-                currentPortIndex += spanThisRow;
-                spanLeft -= spanThisRow;
-                if (currentPortIndex >= portsPerRow) currentPortIndex = 0;
-            }
-        });
-
-        renderHardwareView(expandedItems, portsPerRow, portWidth, portHeight, standardGap, segmentSize, segmentGap);
-        renderPrintSheets(expandedItems, portsPerRow, portWidth, portHeight, standardGap, segmentSize, segmentGap, printMode);
-        
         setTimeout(applyScaling, 0);
     }
 
-    function renderHardwareView(items, portsPerRow, portWidth, portHeight, standardGap, segmentSize, segmentGap) {
+    function renderHardwareView(processedSections) {
         const hwViewArea = document.getElementById('hardware-view-area');
         hwViewArea.innerHTML = '';
 
-        let rowDiv = document.createElement('div');
-        rowDiv.className = 'rack-visual-row';
-        let portCountInRow = 0;
+        processedSections.forEach(group => {
+            let sec = group.section;
+            let items = group.expandedItems;
+            if(items.length === 0) return;
 
-        items.forEach(item => {
-            for (let i = 0; i < item.span; i++) {
-                let portEl = document.createElement('div');
-                portEl.className = 'hardware-port';
-                
-                const finalWidth = `${portWidth}mm`;
-                portEl.style.width = finalWidth;
-                portEl.style.minWidth = finalWidth;
-                portEl.style.maxWidth = finalWidth;
-                portEl.style.height = `${portHeight + 8}mm`;
-                
-                if (item.color && item.color.toLowerCase() !== '#ffffff' && item.color.toLowerCase() !== '#fff') {
-                    portEl.style.borderBottom = `3px solid ${item.color}`;
+            let headerEl = document.createElement('div');
+            headerEl.style.cssText = "font-weight: 600; font-size: 0.9em; color: var(--primary); margin: 8px 0 4px 0;";
+            headerEl.textContent = sec.name;
+            hwViewArea.appendChild(headerEl);
+
+            let rowDiv = document.createElement('div');
+            rowDiv.className = 'rack-visual-row';
+            let portCountInRow = 0;
+
+            let portsPerRow = sec.portsPerRow || 24;
+            let portWidth = sec.portWidth || 15;
+            let portHeight = sec.portHeight || 10;
+            let standardGap = sec.standardGap || 2;
+            let segmentSize = sec.enableGrouping ? (sec.segmentSize || 4) : 999999;
+            let segmentGap = sec.enableGrouping ? (sec.segmentGap || 8) : standardGap;
+
+            items.forEach(item => {
+                for (let i = 0; i < item.span; i++) {
+                    let portEl = document.createElement('div');
+                    portEl.className = 'hardware-port';
+
+                    const finalWidth = `${portWidth}mm`;
+                    portEl.style.width = finalWidth;
+                    portEl.style.minWidth = finalWidth;
+                    portEl.style.maxWidth = finalWidth;
+                    portEl.style.height = `${portHeight + 8}mm`;
+
+                    if (item.color && item.color.toLowerCase() !== '#ffffff' && item.color.toLowerCase() !== '#fff') {
+                        portEl.style.borderBottom = `3px solid ${item.color}`;
+                    }
+
+                    // Bold category logic for Hardware View
+                    let displayTxt = (item.text1 || '').trim();
+                    if (displayTxt === '' && item.text2) {
+                        displayTxt = `<span style="font-weight:bold;">${item.text2}</span>`;
+                    }
+
+                    portEl.innerHTML = `<div class="pins"></div><span style="font-size:7px; overflow:hidden; white-space:nowrap; text-overflow:clip; width:90%;">${displayTxt}</span>`;
+
+                    let directionMargin = currentLang === 'en' ? 'marginRight' : 'marginLeft';
+                    let regularMargin = standardGap;
+
+                    if ((portCountInRow + 1) % segmentSize === 0) regularMargin = segmentGap;
+                    if ((portCountInRow + 1) % portsPerRow === 0) regularMargin = 0;
+
+                    portEl.style[directionMargin] = `${regularMargin}mm`;
+
+                    rowDiv.appendChild(portEl);
+                    portCountInRow++;
+
+                    if (portCountInRow >= portsPerRow) {
+                        hwViewArea.appendChild(rowDiv);
+                        rowDiv = document.createElement('div');
+                        rowDiv.className = 'rack-visual-row';
+                        portCountInRow = 0;
+                    }
                 }
-                
-                portEl.innerHTML = `<div class="pins"></div><span style="font-size:7px; overflow:hidden; white-space:nowrap; text-overflow:clip; width:90%;">${item.text2 || item.text1}</span>`;
-                
-                let directionMargin = currentLang === 'en' ? 'marginRight' : 'marginLeft';
-                let regularMargin = standardGap;
-                
-                if ((portCountInRow + 1) % segmentSize === 0) regularMargin = segmentGap;
-                if ((portCountInRow + 1) % portsPerRow === 0) regularMargin = 0;
-                
-                portEl.style[directionMargin] = `${regularMargin}mm`;
+            });
 
-                rowDiv.appendChild(portEl);
-                portCountInRow++;
-
-                if (portCountInRow >= portsPerRow) {
-                    hwViewArea.appendChild(rowDiv);
-                    rowDiv = document.createElement('div');
-                    rowDiv.className = 'rack-visual-row';
-                    portCountInRow = 0;
-                }
-            }
+            if (portCountInRow > 0) hwViewArea.appendChild(rowDiv);
         });
-
-        if (portCountInRow > 0) hwViewArea.appendChild(rowDiv);
     }
 
-    function renderPrintSheets(items, portsPerRow, portWidth, portHeight, standardGap, segmentSize, segmentGap, printMode) {
+    function renderPrintSheets(flattenedData, processedSections, printMode) {
         const previewArea = document.getElementById('preview-area');
         previewArea.innerHTML = '';
 
+        if (printMode === 'summary') {
+            renderGraphicalMapSheet(previewArea);
+            return;
+        }
+
         if (printMode === 'separate') {
             let colorGroups = {};
-            items.forEach(item => {
-                const colorKey = (item.color || '#ffffff').trim(); 
-                if (!colorGroups[colorKey]) colorGroups[colorKey] = [];
-                colorGroups[colorKey].push(item);
+            processedSections.forEach(group => {
+                group.expandedItems.forEach(item => {
+                    const colorKey = (item.color || '#ffffff').trim();
+                    if (!colorGroups[colorKey]) colorGroups[colorKey] = [];
+                    colorGroups[colorKey].push(item);
+                });
             });
 
             for (const [color, colorItems] of Object.entries(colorGroups)) {
-                buildPaginatedPages(colorItems, portsPerRow, portWidth, portHeight, standardGap, segmentSize, segmentGap, color, false);
+                buildPaginatedPages(colorItems, color, false);
             }
         } else {
-            buildPaginatedPages(items, portsPerRow, portWidth, portHeight, standardGap, segmentSize, segmentGap, 'Mixed', true);
+            let allExpanded = [];
+            processedSections.forEach(group => {
+                allExpanded = allExpanded.concat(group.expandedItems);
+            });
+            buildPaginatedPages(allExpanded, 'Mixed', true);
         }
     }
 
-    function buildPaginatedPages(items, portsPerRow, portWidth, portHeight, standardGap, segmentSize, segmentGap, groupTitle, useInk) {
+    function renderGraphicalMapSheet(previewArea) {
+        let pageDiv = document.createElement('div');
+        pageDiv.className = 'page';
+
+        let projectName = document.getElementById('projectNameInput').value || i18n[currentLang].summary_title;
+
+        let headerDiv = document.createElement('div');
+        headerDiv.className = 'official-report-header';
+
+        let title = document.createElement('div');
+        title.className = 'official-report-title';
+        title.textContent = projectName;
+
+        let subtitle = document.createElement('div');
+        subtitle.className = 'official-report-subtitle';
+        subtitle.textContent = i18n[currentLang].summary_title;
+
+        headerDiv.appendChild(title);
+        headerDiv.appendChild(subtitle);
+        pageDiv.appendChild(headerDiv);
+
+        let contentContainer = document.createElement('div');
+        contentContainer.className = 'map-columns-container';
+
+        let catMap = {};
+        categories.forEach(c => {
+            catMap[c.name] = { color: c.color || '#ffffff', items: [], totalPorts: 0 };
+        });
+
+        portSections.forEach(sec => {
+            let secPorts = portsList.filter(p => p.sectionId === sec.id || (!p.sectionId && sec === portSections[0]));
+            let secCounter = sec.startNumber !== undefined ? sec.startNumber : 1;
+
+            secPorts.forEach(port => {
+                let cat = categories.find(c => c.id === port.categoryId) || { name: currentLang === 'he' ? "לא משויך" : "Unassigned", color: "#ffffff" };
+                let span = parseInt(port.span) || 1;
+
+                let portDisplay = span === 1 ? `${secCounter}` : `${secCounter}-${secCounter + span - 1}`;
+                secCounter += span;
+
+                if (!catMap[cat.name]) {
+                    catMap[cat.name] = { color: cat.color || '#ffffff', items: [], totalPorts: 0 };
+                }
+
+                catMap[cat.name].items.push({
+                    portDisplay: portDisplay,
+                    portLabel: port.text || "—"
+                });
+                catMap[cat.name].totalPorts += span;
+            });
+        });
+
+        for (let [catName, data] of Object.entries(catMap)) {
+            if (data.items.length === 0) continue;
+
+            let wrapper = document.createElement('div');
+            wrapper.className = 'map-cat-table-wrapper';
+
+            let colorHex = data.color;
+            let isWhite = (!colorHex || colorHex.toLowerCase() === '#ffffff' || colorHex.toLowerCase() === '#fff');
+
+            let header = document.createElement('div');
+            header.className = 'map-cat-table-header';
+            if (!isWhite) {
+                header.style.borderTop = `3px solid ${colorHex}`;
+            }
+
+            header.innerHTML = `
+                <span class="color-dot" style="background-color: ${colorHex}; border: ${isWhite ? '1px solid #cbd5e1' : 'none'}"></span>
+                <span>${catName}</span>
+                <span class="cat-count">(${data.totalPorts} ${currentLang === 'he' ? 'פורטים' : 'ports'})</span>
+            `;
+            wrapper.appendChild(header);
+
+            let table = document.createElement('table');
+            table.className = 'map-cat-table';
+            let tbody = document.createElement('tbody');
+
+            data.items.forEach(item => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="td-port">${currentLang === 'he' ? 'פורט ' : 'P'}${item.portDisplay}</td>
+                    <td class="td-label">${item.portLabel}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            table.appendChild(tbody);
+            wrapper.appendChild(table);
+            contentContainer.appendChild(wrapper);
+        }
+
+        pageDiv.appendChild(contentContainer);
+        previewArea.appendChild(pageDiv);
+    }
+
+    function buildPaginatedPages(items, groupTitle, useInk) {
         const previewArea = document.getElementById('preview-area');
 
         let pages = [];
         let currentPageItems = [];
-        let currentRowWidth = 0;
-        const gapSize = 3; 
-        const itemHeightWithGap = portHeight + gapSize; 
+        let currentLineWidth = 0;
+        const gapSize = 3;
         let currentPageTotalHeight = 0;
-        
-        const maxPageWidth = 185; 
-        const maxPageHeight = 240; 
+
+        const maxPageWidth = 185;
+        const maxPageHeight = 240;
 
         items.forEach(item => {
+            let sec = item.section;
+            let portWidth = sec.portWidth || 15;
+            let portHeight = sec.portHeight || 10;
+            let standardGap = sec.standardGap || 2;
+            let segmentSize = sec.enableGrouping ? (sec.segmentSize || 4) : 999999;
+            let segmentGap = sec.enableGrouping ? (sec.segmentGap || 8) : standardGap;
+
             let totalWidth = (item.span * portWidth) + ((item.span - 1) * standardGap);
             let extraGaps = 0;
             for (let s = 1; s < item.span; s++) {
@@ -1195,20 +1784,21 @@
             }
             totalWidth += extraGaps * (segmentGap - standardGap);
             let itemTotalSpace = totalWidth + gapSize;
+            let itemHeightWithGap = portHeight + gapSize;
 
-            if (currentRowWidth > 0 && (currentRowWidth + itemTotalSpace > maxPageWidth)) {
+            if (currentLineWidth > 0 && (currentLineWidth + itemTotalSpace > maxPageWidth)) {
                 currentPageTotalHeight += itemHeightWithGap;
-                currentRowWidth = 0;
+                currentLineWidth = 0;
             }
 
             if (currentPageTotalHeight + itemHeightWithGap > maxPageHeight && currentPageItems.length > 0) {
                 pages.push(currentPageItems);
                 currentPageItems = [];
                 currentPageTotalHeight = 0;
-                currentRowWidth = 0;
+                currentLineWidth = 0;
             }
 
-            currentRowWidth += itemTotalSpace;
+            currentLineWidth += itemTotalSpace;
             currentPageItems.push({ item, totalWidth });
         });
 
@@ -1222,20 +1812,23 @@
 
             let title = document.createElement('div');
             title.className = 'page-title';
-            let pageLabelSuffix = pages.length > 1 ? ` (Part ${pageIdx + 1}/${pages.length})` : '';
-            
+            let pageLabelSuffix = pages.length > 1 ? ` (${currentLang === 'he' ? 'חלק' : 'Part'} ${pageIdx + 1}/${pages.length})` : '';
+
             let groupDisplayTitle = groupTitle;
             if (!useInk) {
-                groupDisplayTitle = getColorName(groupTitle);
+                groupDisplayTitle = getBasicColorName(groupTitle, currentLang);
             }
             title.textContent = (useInk ? i18n[currentLang].sheet_color : `${i18n[currentLang].paper_color} ${groupDisplayTitle}`) + pageLabelSuffix;
             pageDiv.appendChild(title);
-            
+
             let labelsContainer = document.createElement('div');
             labelsContainer.className = 'print-labels-container';
 
             pageItems.forEach(entry => {
                 let item = entry.item;
+                let sec = item.section;
+                let portHeight = sec.portHeight || 10;
+
                 let labelDiv = document.createElement('div');
                 labelDiv.className = 'label';
 
@@ -1243,18 +1836,31 @@
                 labelDiv.style.minWidth = `${entry.totalWidth}mm`;
                 labelDiv.style.maxWidth = `${entry.totalWidth}mm`;
                 labelDiv.style.height = `${portHeight}mm`;
-                
+
                 let catColorStyle = "";
                 const isWhite = (!item.color || item.color.toLowerCase() === '#ffffff' || item.color.toLowerCase() === '#fff');
                 if (useInk && !isWhite) {
                     labelDiv.style.borderColor = item.color;
-                    labelDiv.style.borderWidth = '2px';
+                    labelDiv.style.borderWidth = `${document.getElementById('borderThickness').value}px`;
                     catColorStyle = `color: ${item.color};`;
                 }
 
-                labelDiv.innerHTML = `<div style="overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px; ${catColorStyle}">${item.text1}</div>` +
-                                     (item.text2 ? `<div style="font-size:9px; font-weight:normal; overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; color:#333;">${item.text2}</div>` : '');
-                
+                // Bold Category logic for Print Labels
+                let html = '';
+                let t1 = (item.text1 || '').trim();
+                let t2 = (item.text2 || '').trim();
+
+                if (t1 !== '' && t2 !== '') {
+                    html = `<div style="overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px; ${catColorStyle}">${t1}</div>` +
+                        `<div style="font-size:9px; font-weight:bold; overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; color:#333;">${t2}</div>`;
+                } else if (t1 !== '') {
+                    html = `<div style="overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px; ${catColorStyle}">${t1}</div>`;
+                } else if (t2 !== '') {
+                    html = `<div style="overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px; font-weight:bold; color:#333;">${t2}</div>`;
+                }
+
+                labelDiv.innerHTML = html;
+
                 labelsContainer.appendChild(labelDiv);
             });
 
@@ -1282,12 +1888,12 @@
         const containers = document.querySelectorAll('.view-container');
         containers.forEach(container => {
             if(container.querySelector('.table-container')) return;
-            
+
             const wrapper = container.querySelector('.scale-wrapper');
             const sizer = container.querySelector('.scale-container-sizer');
             if (!wrapper || !sizer) return;
 
-            const availableWidth = container.clientWidth - 48; 
+            const availableWidth = container.clientWidth - 48;
             const requiredWidth = wrapper.scrollWidth;
 
             if (requiredWidth > availableWidth && requiredWidth > 0) {
