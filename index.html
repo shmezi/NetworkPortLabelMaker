@@ -152,7 +152,7 @@
         }
 
         .lang-toggle button {
-            background: var(--bg-body); color: var(--text-secondary); 
+            background: var(--bg-body); color: var(--text-secondary);
             border: 1px solid var(--border-color); padding: 6px 16px;
             font-size: 0.85em; border-radius: 20px; cursor: pointer; font-weight: 600;
             transition: all 0.2s ease;
@@ -173,7 +173,7 @@
             box-shadow: var(--shadow-md);
             border-color: var(--border-hover);
         }
-        
+
         .accordion-header {
             padding: 16px 20px;
             font-size: 0.95em;
@@ -212,31 +212,31 @@
 
         /* --- Inputs & Forms --- */
         .form-group { margin-bottom: 16px; }
-        label { 
-            display: block; 
-            margin-bottom: 6px; 
-            font-weight: 500; 
-            font-size: 0.85em; 
-            color: var(--text-secondary); 
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.85em;
+            color: var(--text-secondary);
         }
 
         input[type="number"], input[type="text"], input[type="file"], select {
             width: 100%; padding: 10px 14px; box-sizing: border-box;
-            border: 1px solid var(--border-color); 
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             background: #f8fafc; color: var(--text-main);
-            font-size: 0.9em; 
+            font-size: 0.9em;
             transition: all 0.2s ease;
             font-family: inherit;
         }
         body[dir="rtl"] input[type="text"], body[dir="rtl"] select { text-align: right; }
 
         input:hover, select:hover { border-color: var(--border-hover); }
-        input:focus, select:focus { 
-            outline: none; 
+        input:focus, select:focus {
+            outline: none;
             background: #ffffff;
-            border-color: var(--primary); 
-            box-shadow: 0 0 0 3px var(--primary-light); 
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
         }
 
         /* --- Buttons --- */
@@ -252,13 +252,13 @@
         button.btn-success { background-color: var(--success); width: auto; }
         button.btn-success:hover { background-color: var(--success-hover); }
 
-        button.btn-secondary { 
-            background: #ffffff; color: var(--text-secondary); 
-            border: 1px solid var(--border-color); 
-            box-shadow: var(--shadow-sm); width: auto; 
+        button.btn-secondary {
+            background: #ffffff; color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm); width: auto;
         }
-        button.btn-secondary:hover { 
-            background: #f8fafc; border-color: var(--border-hover); color: var(--text-main); 
+        button.btn-secondary:hover {
+            background: #f8fafc; border-color: var(--border-hover); color: var(--text-main);
         }
 
         button.delete-btn {
@@ -286,17 +286,17 @@
 
         /* --- View Containers --- */
         .view-container {
-            background: var(--surface-color); 
+            background: var(--surface-color);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-xl); 
-            padding: 24px; 
+            border-radius: var(--radius-xl);
+            padding: 24px;
             box-shadow: var(--shadow-md);
-            width: 100%; box-sizing: border-box; 
+            width: 100%; box-sizing: border-box;
             overflow: visible; flex-shrink: 0;
         }
-        
+
         .view-container-header {
-            display: flex; justify-content: space-between; align-items: center; 
+            display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px;
             padding-bottom: 16px;
             border-bottom: 1px solid var(--border-color);
@@ -317,8 +317,8 @@
         }
 
         .rack-visual-row {
-            display: flex; flex-wrap: nowrap; margin-bottom: 12px; 
-            background: #f8fafc; padding: 12px; border-radius: var(--radius-md); 
+            display: flex; flex-wrap: nowrap; margin-bottom: 12px;
+            background: #f8fafc; padding: 12px; border-radius: var(--radius-md);
             width: max-content; border: 1px solid var(--border-color);
             box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
         }
@@ -371,6 +371,14 @@
             gap: 16px;
             flex-wrap: wrap;
             animation: slideUp 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #printViewContainer.screen-hidden-print-target {
+            position: absolute;
+            left: -10000px;
+            top: 0;
+            width: 1000px;
+            visibility: hidden;
+            pointer-events: none;
         }
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
@@ -445,14 +453,14 @@
         .cat-manager { padding-top: 4px; }
         .cat-item-row {
             display: flex; gap: 8px; align-items: center; margin-bottom: 10px;
-            background: #f8fafc; padding: 6px 6px 6px 12px; border-radius: var(--radius-md); 
+            background: #f8fafc; padding: 6px 6px 6px 12px; border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
         }
         body[dir="rtl"] .cat-item-row { padding: 6px 12px 6px 6px; }
-        
-        .cat-item-row input[type="text"] { 
-            flex: 2; border: none; background: transparent; padding: 4px; 
-            font-size: 0.9em; font-weight: 500; min-width: 0; 
+
+        .cat-item-row input[type="text"] {
+            flex: 2; border: none; background: transparent; padding: 4px;
+            font-size: 0.9em; font-weight: 500; min-width: 0;
         }
         .cat-item-row input[type="text"]:focus { box-shadow: none; background: #fff; border-radius: 4px; }
 
@@ -463,7 +471,7 @@
             transition: transform 0.15s;
         }
         .color-picker-trigger:hover { transform: scale(1.15); box-shadow: 0 0 0 1px #94a3b8, var(--shadow-md); }
-        
+
         .color-picker-palette {
             position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
             background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius-lg);
@@ -471,7 +479,7 @@
             grid-template-columns: repeat(6, 24px); gap: 8px;
         }
         body[dir="rtl"] .color-picker-palette { left: 50%; right: auto; transform: translateX(-50%); }
-        
+
         .color-swatch {
             width: 24px; height: 24px; border-radius: 50%; cursor: pointer;
             box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); transition: transform 0.15s ease;
@@ -496,15 +504,15 @@
             border: 1px solid var(--border-color); max-width: 190mm;
             box-sizing: border-box; font-family: var(--print-font);
         }
-        .page-title { 
-            text-align: center; margin-bottom: 20px; color: #1e293b; 
-            font-size: 1.1em; font-weight: 600; font-family: var(--ui-font); 
+        .page-title {
+            text-align: center; margin-bottom: 20px; color: #1e293b;
+            font-size: 1.1em; font-weight: 600; font-family: var(--ui-font);
         }
 
         .print-labels-container { display: flex; flex-wrap: wrap; gap: 3mm; justify-content: flex-start; }
         .label {
             border: var(--global-border-width) solid #0f172a;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
             box-sizing: border-box; text-align: center; font-weight: 700;
             font-size: 11px; line-height: 1.2; border-radius: 4px;
             flex-shrink: 0; overflow: hidden; background-color: #fff;
@@ -521,7 +529,7 @@
             max-height: 85vh; display: flex; flex-direction: column;
         }
         .modal-content h3 { margin: 0 0 8px 0; font-size: 1.25em; color: var(--text-main); }
-        
+
         .flow-container {
             display: flex; flex-direction: column; align-items: center; overflow-y: auto;
             padding: 16px 4px; margin: 16px 0; flex-grow: 1; width: 100%; box-sizing: border-box;
@@ -563,10 +571,18 @@
             #sidebar, #mobile-menu-btn, .top-action-bar, #printOrderModal, #selection-toolbar { display: none !important; }
             #main-content { padding: 0; height: auto; overflow: visible; display: block; background: white; gap: 0; }
             .view-container { background: none; border: none; padding: 0; box-shadow: none; margin-bottom: 0; overflow: visible; }
-            
+
             .view-container-header { display: none !important; }
             .view-container > h2 { display: none !important; }
             .view-container:not(.print-active-view) { display: none !important; }
+            #printViewContainer.screen-hidden-print-target {
+                position: static !important;
+                left: auto !important;
+                width: 100% !important;
+                visibility: visible !important;
+                pointer-events: auto !important;
+                display: block !important;
+            }
 
             .scale-wrapper { transform: none !important; width: 100% !important; }
             .scale-container-sizer { height: auto !important; }
@@ -579,7 +595,7 @@
             .page-backside { page-break-after: always; }
             @page { size: auto; margin: 10mm; }
         }
-        
+
         .official-report-header { text-align: center; border-bottom: 2px solid #0f172a; margin-bottom: 24px; padding-bottom: 16px; }
         .official-report-title { font-size: 1.8em; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; }
         .official-report-subtitle { font-size: 1em; color: var(--text-muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; font-family: var(--ui-font); }
@@ -605,7 +621,7 @@
     <div class="modal-content">
         <h3 id="modalTitle">סדר הדפסת עמודים ודפים</h3>
         <p style="font-size: 0.9em; color: var(--text-muted); margin-bottom: 16px;" id="modalDesc">אנא טען את הדפים במדפסת לפי הסדר הגרפי הבא:</p>
-        
+
         <div class="flow-container" id="modalFlowContainer"></div>
 
         <div class="modal-buttons">
@@ -863,6 +879,9 @@
     let isDraggingRubberband = false;
     let rbStartX = 0;
     let rbStartY = 0;
+    let rbSelectionSnapshot = new Set();
+    let hasRubberbandMoved = false;
+    let suppressNextDocumentClick = false;
 
     function getBasicColorName(hex, lang) {
         if (!hex) return lang === 'he' ? "לבן" : "White";
@@ -900,16 +919,17 @@
             if (btn.getAttribute('data-mode') === mode) btn.classList.add('active');
             else btn.classList.remove('active');
         });
-        
+
         const hwContainer = document.getElementById('hwViewContainer');
         const printContainer = document.getElementById('printViewContainer');
         if (mode === 'hardware') {
             hwContainer.style.display = 'block';
-            printContainer.classList.remove('print-active-view');
-            printContainer.style.display = 'none';
+            printContainer.classList.add('print-active-view', 'screen-hidden-print-target');
+            printContainer.style.display = 'block';
         } else {
             hwContainer.style.display = 'block';
             printContainer.classList.add('print-active-view');
+            printContainer.classList.remove('screen-hidden-print-target');
             printContainer.style.display = 'block';
         }
 
@@ -1513,10 +1533,13 @@
     function startRubberband(e) {
         if (e.target.closest('.hardware-port') || e.target.closest('#selection-toolbar')) return;
 
+        e.preventDefault();
         isDraggingRubberband = true;
+        hasRubberbandMoved = false;
+        rbSelectionSnapshot = new Set(selectedAbsoluteIndices);
         const wrapper = document.getElementById('hardware-view-area');
         const rect = wrapper.getBoundingClientRect();
-        
+
         let scale = 1;
         const transformMatch = wrapper.style.transform.match(/scale\(([^)]+)\)/);
         if (transformMatch) scale = parseFloat(transformMatch[1]) || 1;
@@ -1555,6 +1578,7 @@
         let top = Math.min(rbStartY, currentY);
         let width = Math.abs(currentX - rbStartX);
         let height = Math.abs(currentY - rbStartY);
+        hasRubberbandMoved = hasRubberbandMoved || width > 3 || height > 3;
 
         const rb = document.getElementById('rubberband');
         rb.style.left = `${left}px`;
@@ -1563,21 +1587,24 @@
         rb.style.height = `${height}px`;
 
         const rbRect = { left, top, right: left + width, bottom: top + height };
+        const nextSelection = (e.shiftKey || e.ctrlKey || e.metaKey) ? new Set(rbSelectionSnapshot) : new Set();
         document.querySelectorAll('.hardware-port').forEach(portEl => {
+            const portClientRect = portEl.getBoundingClientRect();
             const pRect = {
-                left: portEl.offsetLeft,
-                top: portEl.offsetTop,
-                right: portEl.offsetLeft + portEl.offsetWidth,
-                bottom: portEl.offsetTop + portEl.offsetHeight
+                left: (portClientRect.left - rect.left) / scale,
+                top: (portClientRect.top - rect.top) / scale,
+                right: (portClientRect.right - rect.left) / scale,
+                bottom: (portClientRect.bottom - rect.top) / scale
             };
 
             const intersect = !(rbRect.left > pRect.right || rbRect.right < pRect.left || rbRect.top > pRect.bottom || rbRect.bottom < pRect.top);
             const absIdx = parseInt(portEl.getAttribute('data-absolute-index'));
             if (!isNaN(absIdx)) {
-                if (intersect) selectedAbsoluteIndices.add(absIdx);
+                if (intersect) nextSelection.add(absIdx);
             }
         });
 
+        selectedAbsoluteIndices = nextSelection;
         highlightSelectedPorts();
     }
 
@@ -1589,12 +1616,16 @@
         window.removeEventListener('mousemove', onRubberbandMove);
         window.removeEventListener('mouseup', endRubberband);
 
+        if (hasRubberbandMoved && selectedAbsoluteIndices.size > 0) {
+            lastClickedAbsoluteIndex = Math.min(...selectedAbsoluteIndices);
+            suppressNextDocumentClick = true;
+        }
         updateSelectionToolbar();
     }
 
     function handlePortClick(event, absoluteIndex) {
         event.stopPropagation();
-        
+
         if (event.shiftKey && lastClickedAbsoluteIndex !== null) {
             const start = Math.min(lastClickedAbsoluteIndex, absoluteIndex);
             const end = Math.max(lastClickedAbsoluteIndex, absoluteIndex);
@@ -1672,7 +1703,7 @@
 
         // Group selected absolute indices by their parent port object
         let portToSelectedAbs = new Map(); // portObj -> Set of absolute unit indices belonging to this port that are selected
-        
+
         let globalAbsIdx = 0;
         portsList.forEach(port => {
             let span = parseInt(port.span) || 1;
@@ -1738,6 +1769,11 @@
     }
 
     document.addEventListener('click', (e) => {
+        if (suppressNextDocumentClick) {
+            suppressNextDocumentClick = false;
+            e.stopPropagation();
+            return;
+        }
         if (!e.target.closest('.hardware-port') && !e.target.closest('#selection-toolbar') && !e.target.closest('#sidebar')) {
             clearSelection();
         }
@@ -1868,13 +1904,13 @@
 
         const fontFamily = document.getElementById('fontFamilySelect').value;
         const borderThickness = document.getElementById('borderThickness').value;
-        
+
         let targetPrintFont = fontFamily;
         if(fontFamily === 'GladiaCLM') targetPrintFont = `'GladiaCLM', 'Inter', sans-serif`;
         else if(fontFamily === 'Roboto Mono') targetPrintFont = `'Roboto Mono', monospace`;
         else if(fontFamily === 'Inter') targetPrintFont = `'Inter', system-ui, sans-serif`;
         else targetPrintFont = `'${fontFamily}', sans-serif`;
-        
+
         document.documentElement.style.setProperty('--print-font', targetPrintFont);
         document.documentElement.style.setProperty('--global-border-width', `${borderThickness}px`);
 
@@ -1917,11 +1953,11 @@
                     let currentAbsIdx = absoluteIndexCounter;
                     let portEl = document.createElement('div');
                     portEl.className = 'hardware-port';
-                    
+
                     if (selectedAbsoluteIndices.has(currentAbsIdx)) {
                         portEl.classList.add('selected-port');
                     }
-                    
+
                     portEl.setAttribute('data-absolute-index', currentAbsIdx);
                     portEl.addEventListener('click', (e) => handlePortClick(e, currentAbsIdx));
 
@@ -2331,14 +2367,14 @@
                     labelDiv.style.minWidth = `${entry.totalWidth}mm`;
                     labelDiv.style.maxWidth = `${entry.totalWidth}mm`;
                     labelDiv.style.height = `${portHeight}mm`;
-                    
+
                     labelDiv.style.borderColor = '#94a3b8';
                     labelDiv.style.borderWidth = `${document.getElementById('borderThickness').value}px`;
                     labelDiv.style.borderStyle = 'dashed';
 
                     let pName = (item.panelName || '').trim();
                     let pRange = (item.portRange || '').trim();
-                    
+
                     labelDiv.innerHTML = `
                         <div style="font-weight:700; overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px; font-size:10px; color:#334155;">${pName}</div>
                         <div style="font-size:9px; font-weight:600; overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; color:#475569;">${currentLang === 'he' ? 'פורט' : 'Port'} ${pRange}</div>
