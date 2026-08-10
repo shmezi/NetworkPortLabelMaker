@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Network Port Label Generator</title>
     <!-- Google Fonts & Material Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         @font-face {
@@ -16,22 +16,32 @@
         }
 
         :root {
-            --sidebar-width: 400px;
-            --bg-color: #f4f6f8;
+            --bg-body: #f0f4f8;
+            --bg-sidebar: #ffffff;
             --surface-color: #ffffff;
-            --text-main: #212529;
-            --text-muted: #6c757d;
-            --border-color: #e0e0e0;
-            --primary: #1976d2;
-            --primary-hover: #115293;
-            --success: #2e7d32;
-            --success-hover: #1b5e20;
-            --danger: #d32f2f;
-            --danger-hover: #c62828;
-            --shadow: 0 2px 4px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
-            --shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --ui-font: 'Roboto', sans-serif;
-            --print-font: 'GladiaCLM', 'Roboto', sans-serif;
+            --text-main: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #e0e7ff;
+            --success: #10b981;
+            --success-hover: #059669;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --danger-light: #fee2e2;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --ui-font: 'Inter', system-ui, -apple-system, sans-serif;
+            --print-font: 'GladiaCLM', 'Inter', sans-serif;
+            --mono-font: 'Roboto Mono', monospace;
+            --sidebar-width: 380px;
             --global-border-width: 1px;
         }
 
@@ -39,18 +49,21 @@
             font-family: var(--ui-font);
             margin: 0;
             padding: 0;
-            background-color: var(--bg-color);
+            background-color: var(--bg-body);
             color: var(--text-main);
             display: flex;
             height: 100vh;
             overflow: hidden;
             direction: ltr;
+            -webkit-font-smoothing: antialiased;
         }
 
-        body[dir="rtl"] {
-            direction: rtl;
-            text-align: right;
-        }
+        body[dir="rtl"] { direction: rtl; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         #mobile-menu-btn {
             display: none;
@@ -62,50 +75,56 @@
             color: white;
             border: none;
             padding: 10px 16px;
-            border-radius: 4px;
+            border-radius: var(--radius-md);
             font-size: 0.9em;
-            font-weight: 500;
-            letter-spacing: 0.5px;
+            font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 3px 1px -2px rgba(0,0,0,0.2), 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
-            transition: background 0.2s;
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s;
         }
-        #mobile-menu-btn:hover { background: var(--primary-hover); }
+        #mobile-menu-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
         body[dir="rtl"] #mobile-menu-btn { left: auto; right: 16px; }
 
+        /* --- Sidebar --- */
         #sidebar {
             width: var(--sidebar-width);
-            background: var(--surface-color);
-            padding: 20px;
-            box-shadow: 4px 0 16px rgba(0,0,0,0.08);
+            background: var(--bg-sidebar);
+            padding: 24px 20px;
+            box-shadow: 1px 0 0 var(--border-color), var(--shadow-lg);
             height: 100vh;
             overflow-y: auto;
             box-sizing: border-box;
-            border-right: 1px solid var(--border-color);
             flex-shrink: 0;
             z-index: 50;
-            transition: transform 0.3s ease;
-            overflow-x: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        body[dir="rtl"] #sidebar {
-            border-right: none;
-            border-left: 1px solid var(--border-color);
-            box-shadow: -4px 0 16px rgba(0,0,0,0.08);
+        body[dir="rtl"] #sidebar { box-shadow: -1px 0 0 var(--border-color), var(--shadow-lg); }
+
+        #sidebar h2 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.02em;
         }
 
         #main-content {
-            padding: 24px;
+            padding: 24px 32px;
             flex-grow: 1;
             box-sizing: border-box;
             height: 100vh;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
+            position: relative;
         }
 
-        /* Frozen / Sticky Top Action Bar */
+        /* --- Floating Glass Top Bar --- */
         .top-action-bar {
             position: sticky;
             top: 0;
@@ -113,422 +132,262 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px 20px;
-            box-shadow: var(--shadow);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: var(--radius-lg);
+            padding: 12px 24px;
+            box-shadow: var(--shadow-sm);
             gap: 16px;
             flex-wrap: wrap;
         }
-        body[dir="rtl"] .top-action-bar {
-            flex-direction: row-reverse;
-        }
+        body[dir="rtl"] .top-action-bar { flex-direction: row-reverse; }
 
         .top-action-group {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
         .lang-toggle button {
-            background: #f5f5f5; color: #424242; border: 1px solid var(--border-color); padding: 4px 12px;
-            font-size: 0.8em; border-radius: 16px; cursor: pointer; font-weight: 500; width: auto;
-            transition: background 0.2s;
+            background: var(--bg-body); color: var(--text-secondary); 
+            border: 1px solid var(--border-color); padding: 6px 16px;
+            font-size: 0.85em; border-radius: 20px; cursor: pointer; font-weight: 600;
+            transition: all 0.2s ease;
         }
-        .lang-toggle button:hover { background: #e0e0e0; }
+        .lang-toggle button:hover { background: #e2e8f0; color: var(--text-main); }
 
-        h2 { color: var(--text-main); margin-top: 0; margin-bottom: 16px; font-size: 1.25em; font-weight: 500; letter-spacing: 0.15px; }
-
+        /* --- Modern Accordion Cards --- */
         .accordion-section {
+            background: var(--surface-color);
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            margin-bottom: 12px;
-            background: #fff;
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
             overflow: visible;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
         }
+        .accordion-section:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--border-hover);
+        }
+        
         .accordion-header {
-            background: #fff;
-            padding: 14px 16px;
+            padding: 16px 20px;
             font-size: 0.95em;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-main);
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
             user-select: none;
+            border-radius: var(--radius-lg);
             transition: background 0.2s;
         }
-        .accordion-header:hover { background: #fafafa; }
+        .accordion-header:hover { background: #f8fafc; }
         .accordion-header::after {
             content: 'expand_more';
             font-family: 'Material Icons';
             font-size: 1.2em;
             color: var(--text-muted);
-            transition: transform 0.3s;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .accordion-section.active .accordion-header::after { transform: rotate(180deg); }
         .accordion-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-            padding: 0 16px;
-            background: #fff;
+            transition: max-height 0.35s ease-out, padding 0.35s ease-out, opacity 0.2s;
+            padding: 0 20px;
+            opacity: 0;
         }
         .accordion-section.active .accordion-content {
-            max-height: 1500px;
+            max-height: 2000px;
             overflow: visible;
-            padding: 14px 16px;
-            border-top: 1px solid var(--border-color);
+            padding: 4px 20px 20px 20px;
+            opacity: 1;
         }
 
-        .form-group { margin-bottom: 14px; }
-        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.85em; color: var(--text-muted); }
+        /* --- Inputs & Forms --- */
+        .form-group { margin-bottom: 16px; }
+        label { 
+            display: block; 
+            margin-bottom: 6px; 
+            font-weight: 500; 
+            font-size: 0.85em; 
+            color: var(--text-secondary); 
+        }
 
         input[type="number"], input[type="text"], input[type="file"], select {
-            width: 100%; padding: 10px 12px; box-sizing: border-box;
-            border: 1px solid var(--border-color); border-radius: 4px;
-            background: #fff; color: var(--text-main);
-            font-size: 0.9em; transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%; padding: 10px 14px; box-sizing: border-box;
+            border: 1px solid var(--border-color); 
+            border-radius: var(--radius-md);
+            background: #f8fafc; color: var(--text-main);
+            font-size: 0.9em; 
+            transition: all 0.2s ease;
             font-family: inherit;
         }
         body[dir="rtl"] input[type="text"], body[dir="rtl"] select { text-align: right; }
 
-        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15); }
-
-        button {
-            font-family: var(--ui-font); font-weight: 500; border-radius: 4px;
-            cursor: pointer; transition: all 0.2s; width: 100%; padding: 10px 16px;
-            background: var(--primary); color: white; border: none; font-size: 0.9em;
-            box-shadow: var(--shadow);
-            letter-spacing: 0.4px;
+        input:hover, select:hover { border-color: var(--border-hover); }
+        input:focus, select:focus { 
+            outline: none; 
+            background: #ffffff;
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 3px var(--primary-light); 
         }
-        button:hover { background: var(--primary-hover); box-shadow: var(--shadow-lg); }
 
-        button.btn-success { background-color: var(--success); margin-top: 0; font-size: 0.9em; padding: 10px 20px; width: auto; }
+        /* --- Buttons --- */
+        button {
+            font-family: var(--ui-font); font-weight: 600; border-radius: var(--radius-md);
+            cursor: pointer; transition: all 0.2s ease; width: 100%; padding: 10px 16px;
+            background: var(--primary); color: white; border: none; font-size: 0.9em;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        button:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        button:active { transform: translateY(0); box-shadow: none; }
+
+        button.btn-success { background-color: var(--success); width: auto; }
         button.btn-success:hover { background-color: var(--success-hover); }
 
-        button.btn-secondary { background: #f5f5f5; color: #334155; border: 1px solid var(--border-color); box-shadow: none; width: auto; padding: 8px 14px; font-size: 0.85em; }
-        button.btn-secondary:hover { background: #e0e0e0; box-shadow: var(--shadow); }
+        button.btn-secondary { 
+            background: #ffffff; color: var(--text-secondary); 
+            border: 1px solid var(--border-color); 
+            box-shadow: var(--shadow-sm); width: auto; 
+        }
+        button.btn-secondary:hover { 
+            background: #f8fafc; border-color: var(--border-hover); color: var(--text-main); 
+        }
 
         button.delete-btn {
-            background: transparent; color: var(--text-muted); border: 1px solid transparent;
+            background: transparent; color: var(--text-muted); border: none;
             width: 32px; height: 32px; padding: 0; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 1.1em;
-            flex-shrink: 0; transition: all 0.2s; box-shadow: none;
+            font-size: 1.1em; flex-shrink: 0; box-shadow: none;
         }
-        button.delete-btn:hover { background: #ffebee; color: var(--danger); }
+        button.delete-btn:hover { background: var(--danger-light); color: var(--danger); transform: none; box-shadow: none; }
 
-        /* Segmented Control Styling */
+        /* --- Segmented Control --- */
         .segmented-control {
-            display: flex;
-            background: #e2e8f0;
-            border-radius: 6px;
-            padding: 3px;
-            gap: 3px;
+            display: flex; background: #e2e8f0; border-radius: var(--radius-md);
+            padding: 4px; gap: 4px; flex-wrap: wrap;
         }
         .segment-btn {
-            background: transparent;
-            color: #475569;
-            border: none;
-            padding: 8px 12px;
-            font-size: 0.85em;
-            font-weight: 500;
-            border-radius: 4px;
-            box-shadow: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            width: auto;
+            background: transparent; color: var(--text-secondary); border: none;
+            padding: 8px 16px; font-size: 0.85em; border-radius: 6px;
+            box-shadow: none; width: auto;
         }
-        .segment-btn:hover {
-            background: rgba(255, 255, 255, 0.5);
-            color: var(--text-main);
-            box-shadow: none;
-        }
+        .segment-btn:hover { background: rgba(255, 255, 255, 0.4); color: var(--text-main); transform: none; box-shadow: none; }
         .segment-btn.active {
-            background: #ffffff;
-            color: var(--primary);
-            font-weight: 600;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background: #ffffff; color: var(--primary); font-weight: 700;
+            box-shadow: var(--shadow-sm);
         }
 
+        /* --- View Containers --- */
         .view-container {
-            background: var(--surface-color); border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 20px; box-shadow: var(--shadow);
-            width: 100%; box-sizing: border-box; overflow: hidden; flex-shrink: 0;
+            background: var(--surface-color); 
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl); 
+            padding: 24px; 
+            box-shadow: var(--shadow-md);
+            width: 100%; box-sizing: border-box; 
+            overflow: visible; flex-shrink: 0;
         }
+        
+        .view-container-header {
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .view-container h2 { margin: 0; font-size: 1.15em; font-weight: 600; letter-spacing: -0.01em; color: var(--text-main); }
 
         .scale-wrapper { transform-origin: top left; width: max-content; }
         body[dir="rtl"] .scale-wrapper { transform-origin: top right; }
 
-        /* Hardware visualizer forced LTR */
-        #hw-sizer {
-            direction: ltr;
-        }
+        /* --- Interactive Hardware Visualizer with Rubberband Selection --- */
+        #hwViewContainer { position: relative; overflow: visible; }
+        #hw-sizer { direction: ltr; overflow: visible; }
         #hardware-view-area {
-            direction: ltr;
-            text-align: left;
-            font-family: var(--print-font);
-            transform-origin: top left !important;
+            direction: ltr; text-align: left;
+            font-family: var(--print-font); transform-origin: top left !important;
+            position: relative; user-select: none;
         }
 
         .rack-visual-row {
-            display: flex; flex-wrap: nowrap; margin-bottom: 10px; background: #f8f9fa;
-            padding: 8px; border-radius: 6px; width: max-content; border: 1px solid var(--border-color);
+            display: flex; flex-wrap: nowrap; margin-bottom: 12px; 
+            background: #f8fafc; padding: 12px; border-radius: var(--radius-md); 
+            width: max-content; border: 1px solid var(--border-color);
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
         }
 
         .hardware-port {
-            background: #fff; border: var(--global-border-width) solid #b0bec5; box-sizing: border-box;
+            background: #fff; border: var(--global-border-width) solid #cbd5e1; box-sizing: border-box;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             font-size: 10px; text-align: center; border-radius: 4px; flex-shrink: 0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            box-shadow: var(--shadow-sm); cursor: pointer; position: relative;
+            user-select: none; transition: background-color 0.1s, border-color 0.1s;
         }
-        .hardware-port .pins { width: 50%; height: 2px; background: #ffa726; margin-bottom: 3px; border-radius: 1px; }
+        .hardware-port:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light), var(--shadow-md);
+            z-index: 5;
+        }
+        .hardware-port.selected-port {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px var(--primary-light), var(--shadow-md);
+            background-color: #f5f3ff;
+            z-index: 6;
+        }
+        .hardware-port .pins { width: 50%; height: 2px; background: #fbbf24; margin-bottom: 4px; border-radius: 1px; }
 
-        .page {
-            background: white; color: black; margin-bottom: 20px; padding: 20px;
-            border-radius: 8px; box-shadow: var(--shadow-lg);
-            border: 1px solid var(--border-color);
-            max-width: 190mm;
-            box-sizing: border-box;
-            font-family: var(--print-font);
-        }
-        .page-title { text-align: center; margin-bottom: 15px; color: #424242; font-size: 1em; font-weight: 500; font-family: var(--ui-font); }
-
-        .print-labels-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 3mm;
-            justify-content: flex-start;
-        }
-        body[dir="rtl"] .print-labels-container {
-            justify-content: flex-start;
-        }
-
-        .label {
-            border: var(--global-border-width) solid #212529;
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; box-sizing: border-box; text-align: center; font-weight: 700;
-            font-size: 11px; line-height: 1.2;
-            border-radius: 4px;
-            flex-shrink: 0; overflow: hidden;
-            background-color: #fff;
-        }
-
-        /* --- OFFICIAL REPORT MAP LAYOUT --- */
-        .official-report-header {
-            text-align: center;
-            border-bottom: 2px solid #0f172a;
-            margin-bottom: 24px;
-            padding-bottom: 12px;
-        }
-        .official-report-title {
-            font-size: 1.6em;
-            font-weight: 700;
-            color: #0f172a;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .official-report-subtitle {
-            font-size: 0.9em;
-            color: #64748b;
-            margin-top: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: var(--ui-font);
-        }
-        .map-columns-container {
-            columns: 260px;
-            column-gap: 24px;
-        }
-        .map-cat-table-wrapper {
-            break-inside: avoid;
-            page-break-inside: avoid;
-            margin-bottom: 20px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            background: #fff;
-            overflow: hidden;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-        }
-        .map-cat-table-header {
-            background: #f8fafc;
-            color: #0f172a;
-            font-weight: 700;
-            padding: 8px 12px;
-            border-bottom: 1px solid #cbd5e1;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9em;
-        }
-        .map-cat-table-header .cat-count {
-            font-weight: 400;
-            color: #64748b;
-            font-size: 0.85em;
-            margin-inline-start: auto;
-        }
-        .map-cat-table-header .color-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-        .map-cat-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8em;
-        }
-        .map-cat-table th, .map-cat-table td {
-            padding: 6px 10px;
-            border-bottom: 1px solid #e2e8f0;
-            vertical-align: middle;
-            text-align: center;
-        }
-        .map-cat-table tr:last-child td {
-            border-bottom: none;
-        }
-        .map-cat-table tr:nth-child(even) {
-            background-color: #fcfcfc;
-        }
-        .map-cat-table .td-port {
-            font-weight: 700;
-            color: #334155;
-            width: 35%;
-            white-space: nowrap;
-            border-right: 1px solid #e2e8f0;
-            text-align: center;
-        }
-        body[dir="rtl"] .map-cat-table .td-port {
-            border-right: none;
-            border-left: 1px solid #e2e8f0;
-        }
-        .map-cat-table .td-label {
-            font-weight: 500;
-            color: #0f172a;
-            text-align: center;
-        }
-
-        .cat-manager {
-            background: #fafafa; border: 1px solid var(--border-color); border-radius: 6px;
-            padding: 12px; margin-bottom: 14px;
-            overflow: visible;
-        }
-        .cat-item-row {
-            display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
-            background: #fff; padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border-color);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-            position: relative;
-            overflow: visible;
-        }
-        .cat-item-row input[type="text"] { flex: 2; border: none; background: transparent; padding: 2px; font-size: 0.9em; min-width: 0; }
-        body[dir="rtl"] .cat-item-row input[type="text"] { text-align: right; }
-        .cat-item-row input[type="text"]:focus { box-shadow: none; }
-
-        /* Custom Color Picker Styling */
-        .cat-color-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin: 0 4px;
-            position: relative;
-            overflow: visible;
-        }
-        .color-picker-trigger {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            flex-shrink: 0;
-            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
-            transition: transform 0.1s;
-        }
-        .color-picker-trigger:hover {
-            transform: scale(1.1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-        }
-        .color-picker-palette {
+        /* Rubberband Selection Box */
+        #rubberband {
             position: absolute;
-            top: 32px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            z-index: 9999;
+            border: 2px dashed var(--primary);
+            background: rgba(79, 70, 229, 0.1);
+            pointer-events: none;
             display: none;
-            grid-template-columns: repeat(6, 24px);
-            gap: 6px;
-            white-space: nowrap;
-        }
-        body[dir="rtl"] .color-picker-palette {
-            left: 50%;
-            right: auto;
-            transform: translateX(-50%);
-        }
-        .color-swatch {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 1px solid rgba(0,0,0,0.15);
-            box-sizing: border-box;
-            transition: transform 0.15s ease;
-        }
-        .color-swatch:hover {
-            transform: scale(1.2);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .color-swatch.selected {
-            border: 2px solid #212529;
-            transform: scale(1.1);
-            box-shadow: inset 0 0 0 2px #fff;
+            z-index: 100;
+            border-radius: 4px;
         }
 
-        /* Multi-section manager card UI */
-        .section-card {
-            background: #fafafa;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-        }
-        .section-card-header {
-            display: flex;
-            justify-content: space-between;
+        /* Floating Multi-Selection Toolbar */
+        #selection-toolbar {
+            display: none;
+            position: sticky;
+            bottom: 24px;
+            margin-top: 24px;
+            background: #0f172a;
+            color: white;
+            padding: 16px 24px;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
             align-items: center;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 0.9em;
-            color: var(--primary);
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            animation: slideUp 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
+        /* --- Tables --- */
         .table-container {
-            overflow-x: auto;
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            margin-top: 10px;
+            overflow-x: auto; max-height: 450px; overflow-y: auto;
+            border: 1px solid var(--border-color); border-radius: var(--radius-md);
+            background: #fff;
         }
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            text-align: left;
-        }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
         body[dir="rtl"] table { text-align: right; }
 
         th, td {
-            padding: 10px 12px;
+            padding: 12px 16px;
             border-bottom: 1px solid var(--border-color);
             vertical-align: middle;
             background: #fff;
@@ -536,193 +395,178 @@
         body[dir="rtl"] th, body[dir="rtl"] td { text-align: right; }
 
         th {
-            background: #fafafa;
-            font-weight: 500;
-            font-size: 0.8em;
-            color: var(--text-muted);
-            position: sticky;
-            top: 0;
-            z-index: 2;
-            border-bottom: 2px solid var(--border-color);
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
+            background: #f8fafc; font-weight: 600; font-size: 0.75em;
+            color: var(--text-muted); position: sticky; top: 0; z-index: 2;
+            border-bottom: 1px solid var(--border-color);
+            letter-spacing: 0.05em; text-transform: uppercase;
+        }
+        th::after {
+            content: ''; position: absolute; left: 0; right: 0; bottom: -5px;
+            height: 5px; background: linear-gradient(to bottom, rgba(0,0,0,0.02), transparent);
+            pointer-events: none;
         }
 
         tr.section-header-row td {
-            background: #f1f5f9;
-            font-weight: 600;
-            color: var(--primary);
-            font-size: 0.95em;
-            border-bottom: 2px solid var(--border-color);
-            padding: 10px 14px;
-            vertical-align: middle;
+            background: #f1f5f9; font-weight: 600; color: var(--text-main);
+            font-size: 0.95em; padding: 12px 16px;
         }
 
-        tbody tr {
-            transition: background-color 0.2s;
-        }
-        tbody tr.dragging {
-            opacity: 0.4;
-            background: #e3f2fd;
-        }
-        tbody tr.drag-over {
-            border-top: 2px solid var(--primary);
-        }
-
+        tbody tr { transition: background-color 0.2s; }
+        tbody tr:hover td { background-color: #f8fafc; }
+        tbody tr.dragging { opacity: 0.5; background: var(--primary-light); }
+        tbody tr.drag-over { border-top: 2px solid var(--primary); }
         tbody tr:last-child td { border-bottom: none; }
-        td input, td select { width: 100%; padding: 6px 10px; margin: 0; box-sizing: border-box; }
+        td input, td select { width: 100%; padding: 8px 12px; margin: 0; }
 
-        tbody tr.has-category-border {
-            border-left: 5px solid var(--row-cat-color, transparent);
-        }
+        tbody tr.has-category-border { border-left: 4px solid var(--row-cat-color, transparent); }
         body[dir="rtl"] tbody tr.has-category-border {
             border-left: 1px solid var(--border-color);
-            border-right: 5px solid var(--row-cat-color, transparent);
+            border-right: 4px solid var(--row-cat-color, transparent);
         }
 
         .drag-handle {
-            cursor: grab;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-            font-size: 1.2em;
-            padding: 4px;
+            cursor: grab; color: var(--text-muted); display: flex; align-items: center;
+            justify-content: center; user-select: none; font-size: 1.2em; padding: 4px;
+            transition: color 0.2s;
         }
-        .drag-handle:active {
-            cursor: grabbing;
-        }
+        .drag-handle:hover { color: var(--text-main); }
+        .drag-handle:active { cursor: grabbing; }
 
         .port-number-badge {
-            display: inline-block;
-            background: #e3f2fd;
-            color: #1565c0;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: 600;
-            border: 1px solid #bbdefb;
+            display: inline-block; background: var(--primary-light); color: var(--primary-hover);
+            padding: 4px 10px; border-radius: 12px; font-size: 0.75em; font-weight: 700;
+            font-family: var(--mono-font); letter-spacing: 0.5px;
         }
 
         .action-cols { width: 90px; text-align: center; }
-        .action-btns { display: flex; gap: 6px; align-items: center; justify-content: center; }
+        .action-btns { display: flex; gap: 4px; align-items: center; justify-content: center; }
 
-        /* Modal Popup Styling */
+        /* --- Sidebar Inner Managers --- */
+        .cat-manager { padding-top: 4px; }
+        .cat-item-row {
+            display: flex; gap: 8px; align-items: center; margin-bottom: 10px;
+            background: #f8fafc; padding: 6px 6px 6px 12px; border-radius: var(--radius-md); 
+            border: 1px solid var(--border-color);
+        }
+        body[dir="rtl"] .cat-item-row { padding: 6px 12px 6px 6px; }
+        
+        .cat-item-row input[type="text"] { 
+            flex: 2; border: none; background: transparent; padding: 4px; 
+            font-size: 0.9em; font-weight: 500; min-width: 0; 
+        }
+        .cat-item-row input[type="text"]:focus { box-shadow: none; background: #fff; border-radius: 4px; }
+
+        .cat-color-wrapper { position: relative; display: flex; align-items: center; margin: 0 4px; }
+        .color-picker-trigger {
+            width: 20px; height: 20px; border-radius: 50%; cursor: pointer;
+            border: 2px solid #fff; box-shadow: 0 0 0 1px #cbd5e1, var(--shadow-sm);
+            transition: transform 0.15s;
+        }
+        .color-picker-trigger:hover { transform: scale(1.15); box-shadow: 0 0 0 1px #94a3b8, var(--shadow-md); }
+        
+        .color-picker-palette {
+            position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
+            background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+            padding: 12px; box-shadow: var(--shadow-lg); z-index: 9999; display: none;
+            grid-template-columns: repeat(6, 24px); gap: 8px;
+        }
+        body[dir="rtl"] .color-picker-palette { left: 50%; right: auto; transform: translateX(-50%); }
+        
+        .color-swatch {
+            width: 24px; height: 24px; border-radius: 50%; cursor: pointer;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); transition: transform 0.15s ease;
+        }
+        .color-swatch:hover { transform: scale(1.2); box-shadow: var(--shadow-md); z-index: 2; }
+        .color-swatch.selected { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--primary); transform: scale(1.1); }
+
+        .section-card {
+            background: #f8fafc; border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px;
+        }
+        .section-card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px;
+        }
+        .section-card-header input { font-weight: 600; width: 75%; }
+
+        /* --- Print Specific & Modal --- */
+        .page {
+            background: white; color: black; margin-bottom: 24px; padding: 20px;
+            border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color); max-width: 190mm;
+            box-sizing: border-box; font-family: var(--print-font);
+        }
+        .page-title { 
+            text-align: center; margin-bottom: 20px; color: #1e293b; 
+            font-size: 1.1em; font-weight: 600; font-family: var(--ui-font); 
+        }
+
+        .print-labels-container { display: flex; flex-wrap: wrap; gap: 3mm; justify-content: flex-start; }
+        .label {
+            border: var(--global-border-width) solid #0f172a;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            box-sizing: border-box; text-align: center; font-weight: 700;
+            font-size: 11px; line-height: 1.2; border-radius: 4px;
+            flex-shrink: 0; overflow: hidden; background-color: #fff;
+        }
+
         #printOrderModal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            z-index: 1000; justify-content: center; align-items: center;
         }
         .modal-content {
-            background: #fff;
-            padding: 28px;
-            border-radius: 10px;
-            width: 480px;
-            max-width: 95%;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
+            background: #fff; padding: 32px; border-radius: var(--radius-xl);
+            width: 480px; max-width: 90%; box-shadow: var(--shadow-lg);
+            max-height: 85vh; display: flex; flex-direction: column;
         }
-        .modal-content h3 { margin-top: 0; margin-bottom: 8px; font-size: 1.2em; color: var(--text-main); }
-
-        /* Graphical Flow Layout for Modal */
+        .modal-content h3 { margin: 0 0 8px 0; font-size: 1.25em; color: var(--text-main); }
+        
         .flow-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-y: auto;
-            padding: 10px 4px;
-            margin: 14px 0;
-            flex-grow: 1;
+            display: flex; flex-direction: column; align-items: center; overflow-y: auto;
+            padding: 16px 4px; margin: 16px 0; flex-grow: 1; width: 100%; box-sizing: border-box;
         }
-        .flow-step-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
+        .flow-step-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .flow-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 12px 16px;
-            width: 100%;
-            box-sizing: border-box;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            display: flex; align-items: center; gap: 16px; background: #f8fafc;
+            border-radius: var(--radius-md); padding: 16px; width: 100%; box-sizing: border-box;
+            box-shadow: var(--shadow-sm); border: 2px solid transparent;
         }
         .flow-number-badge {
-            background: var(--primary);
-            color: white;
-            font-weight: 700;
-            font-size: 0.85em;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+            background: var(--primary); color: white; font-weight: 700; font-size: 0.85em;
+            width: 28px; height: 28px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; flex-shrink: 0;
         }
-        .flow-details {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            align-items: center;
-            text-align: center;
-        }
-        .flow-label-text {
-            font-weight: 600;
-            font-size: 1em;
-            color: var(--text-main);
-        }
+        .flow-details { display: flex; flex-direction: column; flex-grow: 1; text-align: center; }
+        .flow-label-text { font-weight: 600; font-size: 1em; color: var(--text-main); }
         .flow-arrow {
-            color: var(--primary);
-            font-size: 1.5em;
-            margin: 6px 0;
-            font-weight: bold;
-            line-height: 1;
-            display: flex;
-            justify-content: center;
-            width: 100%;
+            color: var(--border-hover); font-size: 1.5em; margin: 8px 0;
+            font-weight: bold; line-height: 1; display: flex; justify-content: center; width: 100%;
         }
+        .modal-buttons { display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; }
 
-        .modal-buttons { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+        @media (max-width: 1024px) { :root { --sidebar-width: 320px; } }
 
         @media (max-width: 768px) {
             #mobile-menu-btn { display: block; }
             #sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100vh;
+                position: fixed; top: 0; left: 0; height: 100vh;
                 transform: translateX(-100%);
             }
-            body[dir="rtl"] #sidebar {
-                left: auto;
-                right: 0;
-                transform: translateX(100%);
-            }
+            body[dir="rtl"] #sidebar { left: auto; right: 0; transform: translateX(100%); }
             #sidebar.mobile-open { transform: translateX(0); }
-            #main-content { padding: 70px 16px 20px 16px; }
+            #main-content { padding: 80px 16px 24px 16px; }
         }
 
         @media print {
             body { background: white; color: black; display: block; height: auto; overflow: visible; }
-            #sidebar, #mobile-menu-btn, .top-action-bar, #printOrderModal { display: none !important; }
+            #sidebar, #mobile-menu-btn, .top-action-bar, #printOrderModal, #selection-toolbar { display: none !important; }
             #main-content { padding: 0; height: auto; overflow: visible; display: block; background: white; gap: 0; }
             .view-container { background: none; border: none; padding: 0; box-shadow: none; margin-bottom: 0; overflow: visible; }
-            .hardware-section, .view-container:nth-child(2), .view-container:nth-child(3) { display: none; }
-
+            
+            .view-container-header { display: none !important; }
             .view-container > h2 { display: none !important; }
+            .view-container:not(.print-active-view) { display: none !important; }
 
             .scale-wrapper { transform: none !important; width: 100% !important; }
             .scale-container-sizer { height: auto !important; }
@@ -732,8 +576,24 @@
                 page-break-after: always; max-width: none; width: 100%;
             }
 
+            .page-backside { page-break-after: always; }
             @page { size: auto; margin: 10mm; }
         }
+        
+        .official-report-header { text-align: center; border-bottom: 2px solid #0f172a; margin-bottom: 24px; padding-bottom: 16px; }
+        .official-report-title { font-size: 1.8em; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; }
+        .official-report-subtitle { font-size: 1em; color: var(--text-muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; font-family: var(--ui-font); }
+        .map-columns-container { columns: 280px; column-gap: 24px; }
+        .map-cat-table-wrapper { break-inside: avoid; page-break-inside: avoid; margin-bottom: 20px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: #fff; overflow: hidden; }
+        .map-cat-table-header { background: #f8fafc; color: #0f172a; font-weight: 700; padding: 10px 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; font-size: 0.9em; }
+        .map-cat-table-header .cat-count { font-weight: 500; color: var(--text-muted); font-size: 0.85em; margin-inline-start: auto; }
+        .map-cat-table-header .color-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+        .map-cat-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+        .map-cat-table th, .map-cat-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; text-align: center; }
+        .map-cat-table tr:last-child td { border-bottom: none; }
+        .map-cat-table .td-port { font-weight: 700; color: var(--text-secondary); width: 35%; white-space: nowrap; border-right: 1px solid #f1f5f9; text-align: center; }
+        body[dir="rtl"] .map-cat-table .td-port { border-right: none; border-left: 1px solid #f1f5f9; }
+        .map-cat-table .td-label { font-weight: 500; color: var(--text-main); text-align: center; }
     </style>
 </head>
 <body>
@@ -744,41 +604,46 @@
 <div id="printOrderModal">
     <div class="modal-content">
         <h3 id="modalTitle">סדר הדפסת עמודים ודפים</h3>
-        <p style="font-size: 0.85em; color: var(--text-muted); margin-bottom: 4px;" id="modalDesc">אנא טען את הדפים במדפסת לפי הסדר הגרפי הבא:</p>
-
+        <p style="font-size: 0.9em; color: var(--text-muted); margin-bottom: 16px;" id="modalDesc">אנא טען את הדפים במדפסת לפי הסדר הגרפי הבא:</p>
+        
         <div class="flow-container" id="modalFlowContainer"></div>
 
         <div class="modal-buttons">
-            <button class="btn-secondary" onclick="closePrintModal()" id="modalCancelBtn" style="width: auto;">ביטול</button>
-            <button class="btn-success" onclick="proceedWithPrint()" id="modalProceedBtn" style="width: auto; margin-top: 0;">הדפס עכשיו 🖨️</button>
+            <button class="btn-secondary" onclick="closePrintModal()" id="modalCancelBtn">ביטול</button>
+            <button class="btn-success" onclick="proceedWithPrint()" id="modalProceedBtn">הדפס עכשיו 🖨️</button>
         </div>
     </div>
 </div>
 
 <div id="sidebar">
-    <h2 data-i18n="settings">הגדרות</h2>
+    <h2 data-i18n="settings"><span class="material-icons" style="font-size:1.2em;">tune</span> הגדרות רשת</h2>
 
     <!-- SECTION 1: TITLE, FONT & BORDER -->
     <div class="accordion-section active">
-        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sec_styles">1. כותרת, גופן ומסגרת</div>
+        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sec_styles">1. כותרת ועיצוב</div>
         <div class="accordion-content">
-            <div class="form-group" style="margin-top: 6px;">
+            <div class="form-group" style="margin-top: 12px;">
                 <label data-i18n="proj_name_label">שם הפרויקט</label>
                 <input type="text" id="projectNameInput" class="config-input" value="התקנת רשת">
             </div>
             <div class="form-group">
-                <label data-i18n="font_family">גופן</label>
+                <label data-i18n="font_family">גופן (להדפסה)</label>
                 <select id="fontFamilySelect" class="config-input">
                     <option value="GladiaCLM">GladiaCLM</option>
-                    <option value="Roboto">Roboto</option>
+                    <option value="Inter">Inter (Sans-serif)</option>
+                    <option value="Roboto Mono">Roboto Mono</option>
                     <option value="Arial">Arial</option>
-                    <option value="Courier New">Courier New</option>
-                    <option value="Times New Roman">Times New Roman</option>
                 </select>
             </div>
             <div class="form-group">
-                <label data-i18n="border_thick">עובי מסגרת (פיקסלים)</label>
+                <label data-i18n="border_thick">עובי מסגרת חיתוך (px)</label>
                 <input type="number" id="borderThickness" class="config-input" value="1" min="0" max="5">
+            </div>
+            <div class="form-group" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; color: var(--text-main); font-size: 0.9em;">
+                    <input type="checkbox" id="printBacksideToggle" class="config-input" onchange="processLayout(false)" style="width:18px; height:18px; margin:0;">
+                    <span data-i18n="toggle_backside">הדפס מיקום מדויק בגב העמוד (דופלקס)</span>
+                </label>
             </div>
         </div>
     </div>
@@ -788,41 +653,41 @@
         <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sec_cats">2. קטגוריות וצבעים</div>
         <div class="accordion-content">
             <div class="cat-manager">
-                <label style="font-weight: 500; color: var(--text-main); margin-bottom: 8px;" data-i18n="manage_cats">ניהול קטגוריות</label>
-                <div id="sidebarCatList" style="margin-bottom: 8px;"></div>
-                <button class="btn-secondary" onclick="addCategory()" data-i18n="add_cat">+ קטגוריה חדשה</button>
+                <label style="font-weight: 600; color: var(--text-main); margin-bottom: 12px;" data-i18n="manage_cats">ניהול יעדים</label>
+                <div id="sidebarCatList" style="margin-bottom: 12px;"></div>
+                <button class="btn-secondary" onclick="addCategory()" data-i18n="add_cat"><span class="material-icons" style="font-size: 1.2em;">add_circle_outline</span> קטגוריה חדשה</button>
             </div>
         </div>
     </div>
 
     <!-- SECTION 3: PORT SECTIONS -->
     <div class="accordion-section">
-        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sec_sections">3. מקטעי פורטים</div>
+        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sec_sections">3. מבנה הפאנלים</div>
         <div class="accordion-content">
-            <div style="font-size: 0.85em; color: var(--text-muted); margin-bottom: 10px;" data-i18n="sections_desc">הגדר מספר מקטעי פאנל עם כללי פריסה מותאמים אישית.</div>
+            <div style="font-size: 0.85em; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;" data-i18n="sections_desc">הגדר מקטעי פאנל עם כללי פריסה פיזיים (לדוגמה: פאנל 24, מרווחים).</div>
             <div id="sectionsListContainer"></div>
-            <button class="btn-secondary" onclick="addPortSection()" data-i18n="add_section" style="width: 100%; margin-top: 4px;">+ הוסף מקטע פורטים</button>
+            <button class="btn-secondary" onclick="addPortSection()" data-i18n="add_section" style="width: 100%; margin-top: 8px;"><span class="material-icons" style="font-size: 1.2em;">view_stream</span> הוסף פאנל</button>
         </div>
     </div>
 
     <!-- SECTION 4: DATA UTILITIES & PROJECT MANAGEMENT -->
     <div class="accordion-section">
-        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sec_data">4. נתונים וקבצי פרויקט</div>
+        <div class="accordion-header" onclick="toggleAccordion(this)" data-i18n="sec_data">4. ניהול נתונים</div>
         <div class="accordion-content">
-            <div class="form-group" style="background: #fafafa; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 12px;">
-                <label style="color: var(--text-main); font-weight: 500;" data-i18n="proj_files">קבצי פרויקט</label>
-                <div style="display: flex; gap: 6px; margin-bottom: 8px;">
-                    <button class="btn-secondary" onclick="saveProjectFile()" data-i18n="save_proj">💾 שמור פרויקט</button>
-                    <button class="btn-secondary" onclick="document.getElementById('projectFileOpen').click()" data-i18n="open_proj">📂 טען פרויקט</button>
+            <div class="form-group" style="background: #f8fafc; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 16px;">
+                <label style="color: var(--text-main); font-weight: 600; margin-bottom: 12px;" data-i18n="proj_files">שמירה וטעינה</label>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <button class="btn-secondary" onclick="saveProjectFile()" data-i18n="save_proj" style="flex: 1;"><span class="material-icons" style="font-size: 1.1em;">save</span> שמור</button>
+                    <button class="btn-secondary" onclick="document.getElementById('projectFileOpen').click()" data-i18n="open_proj" style="flex: 1;"><span class="material-icons" style="font-size: 1.1em;">folder_open</span> טען</button>
                     <input type="file" id="projectFileOpen" accept=".json" style="display:none;" onchange="loadProjectFile(event)">
                 </div>
             </div>
 
-            <div class="form-group" style="background: #fafafa; padding: 10px; border-radius: 6px; border: 1px dashed var(--border-color);">
-                <label style="color: var(--text-main); font-weight: 500;" data-i18n="bulk_add">כלי עזר</label>
-                <button class="btn-secondary" onclick="downloadCsvTemplate()" data-i18n="dl_template" style="margin-bottom: 6px; width: 100%;">הורד תבנית CSV</button>
-                <input type="file" id="csvFile" accept=".csv" style="background: white; font-size: 0.85em; width: 100%;">
-                <button class="btn-secondary" onclick="clearData()" style="margin-top: 8px; color: var(--danger); border-color: #ffcdd2; background: #ffebee; width: 100%;" data-i18n="clear_all">נקה את כל הנתונים</button>
+            <div class="form-group" style="background: #fff; padding: 16px; border-radius: var(--radius-md); border: 1px dashed var(--border-hover);">
+                <label style="color: var(--text-main); font-weight: 600; margin-bottom: 12px;" data-i18n="bulk_add">כלי ייבוא וניקוי</label>
+                <button class="btn-secondary" onclick="downloadCsvTemplate()" data-i18n="dl_template" style="margin-bottom: 8px; width: 100%;"><span class="material-icons" style="font-size: 1.1em;">download</span> תבנית CSV</button>
+                <input type="file" id="csvFile" accept=".csv" style="background: #f8fafc; font-size: 0.85em; width: 100%;">
+                <button class="btn-secondary" onclick="clearData()" style="margin-top: 16px; color: var(--danger); border-color: var(--danger-light); background: #fff5f5; width: 100%; font-weight: 600;" data-i18n="clear_all"><span class="material-icons" style="font-size: 1.1em;">delete_sweep</span> נקה הכל</button>
             </div>
         </div>
     </div>
@@ -830,20 +695,21 @@
 
 <div id="main-content" onclick="checkCloseMobileMenu(event)">
 
-    <!-- FROZEN TOP ACTION BAR FOR PRINT CONTROLS & LANGUAGE -->
+    <!-- FROZEN TOP ACTION BAR -->
     <div class="top-action-bar">
         <div class="top-action-group">
-            <label style="margin-bottom: 0; font-weight: 600; font-size: 0.9em;" data-i18n="print_mode_label">פורמט הדפסה:</label>
+            <label style="margin-bottom: 0; font-weight: 600; font-size: 0.9em; color: var(--text-main);" data-i18n="print_mode_label">תצוגה והדפסה:</label>
             <div class="segmented-control" id="printModeSegmented">
-                <button class="segment-btn active" data-mode="separate" onclick="setPrintMode('separate')" data-i18n="mode_separate">דפים נפרדים</button>
-                <button class="segment-btn" data-mode="ink" onclick="setPrintMode('ink')" data-i18n="mode_ink">דף רציף</button>
-                <button class="segment-btn" data-mode="summary" onclick="setPrintMode('summary')" data-i18n="mode_summary">מפה גרפית</button>
+                <button class="segment-btn active" data-mode="separate" onclick="setPrintMode('separate')" data-i18n="mode_separate">מדבקות חיתוך</button>
+                <button class="segment-btn" data-mode="ink" onclick="setPrintMode('ink')" data-i18n="mode_ink">דף מעורב</button>
+                <button class="segment-btn" data-mode="summary" onclick="setPrintMode('summary')" data-i18n="mode_summary">דוח חיבורים</button>
+                <button class="segment-btn" data-mode="hardware" onclick="setPrintMode('hardware')" data-i18n="mode_hardware">תרשים ארון</button>
             </div>
-            <!-- Hidden select kept for state compatibility -->
             <select id="printMode" class="config-input" style="display: none;">
                 <option value="separate">Separate Pages</option>
                 <option value="ink">Single Sheet</option>
                 <option value="summary">Graphical Map</option>
+                <option value="hardware">Hardware View</option>
             </select>
         </div>
 
@@ -851,13 +717,38 @@
             <div class="lang-toggle" style="margin-bottom: 0;">
                 <button id="langToggleBtn" onclick="toggleLanguage()">English</button>
             </div>
-            <button class="btn-success" onclick="handlePrintClick()" data-i18n="print_btn">🖨️ הדפס מסמך</button>
+            <button class="btn-success" onclick="handlePrintClick()" data-i18n="print_btn"><span class="material-icons" style="font-size:1.1em;">print</span> הדפס מסמך</button>
         </div>
     </div>
 
+    <!-- INTERACTIVE HARDWARE VISUALIZER -->
+    <div class="view-container" id="hwViewContainer">
+        <div class="view-container-header">
+            <h2 data-i18n="hw_title">תרשים ארון תקשורת (גרור עם העכבר לבחירת סרט/ריבוע, או לחץ לעריכה)</h2>
+            <div style="font-size: 0.85em; color: var(--text-muted);" id="hwSelectionHint">טיפ: גרור מלבן בחירה על גבי הפורטים או השתמש ב-Shift+לחץ.</div>
+        </div>
+        <div class="scale-container-sizer" id="hw-sizer">
+            <div class="scale-wrapper" id="hardware-view-area" onmousedown="startRubberband(event)">
+                <div id="rubberband"></div>
+            </div>
+        </div>
+
+        <!-- FLOATING MULTI-SELECTION TOOLBAR -->
+        <div id="selection-toolbar">
+            <span id="selectedCountText" style="font-size: 0.9em; font-weight: 600;">0 פורטים נבחרו</span>
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <select id="bulkCategorySelect" style="padding: 8px 12px; border-radius: 6px; border: none; font-size: 0.85em; background: #1e293b; color: white; width: 160px;"></select>
+                <input type="text" id="bulkTextInput" placeholder="טקסט אחיד לפורטים..." style="padding: 8px 12px; border-radius: 6px; border: none; font-size: 0.85em; background: #1e293b; color: white; width: 160px;">
+                <button onclick="applyBulkEdit()" style="background: var(--primary); padding: 8px 16px; font-size: 0.85em; width: auto;">החל שינויים</button>
+                <button onclick="clearSelection()" style="background: transparent; color: #94a3b8; padding: 8px 12px; font-size: 0.85em; width: auto; border: 1px solid #475569;">ביטול</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN EDITOR TABLE -->
     <div class="view-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h2 data-i18n="editor_title" style="margin-bottom: 0;">עורך רשימת הפורטים</h2>
+        <div class="view-container-header">
+            <h2 data-i18n="editor_title">רשימת הפורטים</h2>
         </div>
         <div class="table-container">
             <table>
@@ -866,8 +757,8 @@
                     <th style="width: 40px; text-align: center;">⠿</th>
                     <th data-i18n="th_num" style="width: 15%;">מספר פורט</th>
                     <th data-i18n="th_cat" style="width: 25%;">יעד / קטגוריה</th>
-                    <th data-i18n="th_port" style="width: 35%;">טקסט פורט</th>
-                    <th data-i18n="th_span" style="width: 15%;">פריסה</th>
+                    <th data-i18n="th_port" style="width: 35%;">כיתוב מדבקה</th>
+                    <th data-i18n="th_span" style="width: 15%;">אורך מודול</th>
                     <th data-i18n="th_action" class="action-cols">פעולות</th>
                 </tr>
                 </thead>
@@ -876,15 +767,9 @@
         </div>
     </div>
 
-    <div class="view-container">
-        <h2 data-i18n="hw_title">תצוגת חומרה</h2>
-        <div class="scale-container-sizer" id="hw-sizer">
-            <div class="scale-wrapper" id="hardware-view-area"></div>
-        </div>
-    </div>
-
-    <div class="view-container">
-        <h2 data-i18n="pr_title">תצוגה מקדימה להדפסה</h2>
+    <!-- PRINT PREVIEW -->
+    <div class="view-container print-active-view" id="printViewContainer">
+        <h2 data-i18n="pr_title" style="margin-bottom: 20px;">תצוגה מקדימה להדפסה</h2>
         <div class="scale-container-sizer" id="print-sizer">
             <div class="scale-wrapper" id="preview-area"></div>
         </div>
@@ -895,71 +780,73 @@
     const standardColors = [
         { hex: "#ffffff", en: "White", he: "לבן" },
         { hex: "#000000", en: "Black", he: "שחור" },
-        { hex: "#9e9e9e", en: "Gray", he: "אפור" },
-        { hex: "#e0e0e0", en: "Light Gray", he: "אפור בהיר" },
-        { hex: "#f44336", en: "Red", he: "אדום" },
-        { hex: "#e53935", en: "Dark Red", he: "אדום כהה" },
-        { hex: "#ff8a80", en: "Light Red", he: "אדום בהיר" },
-        { hex: "#ff9800", en: "Orange", he: "כתום" },
-        { hex: "#fb8c00", en: "Dark Orange", he: "כתום כהה" },
-        { hex: "#ffe0b2", en: "Light Orange", he: "כתום בהיר" },
-        { hex: "#ffeb3b", en: "Yellow", he: "צהוב" },
-        { hex: "#fdd835", en: "Dark Yellow", he: "צהוב כהה" },
-        { hex: "#fff9c4", en: "Light Yellow", he: "צהוב בהיר" },
-        { hex: "#4caf50", en: "Green", he: "ירוק" },
-        { hex: "#2e7d32", en: "Dark Green", he: "ירוק כהה" },
-        { hex: "#a5d6a7", en: "Light Green", he: "ירוק בהיר" },
-        { hex: "#00bcd4", en: "Cyan", he: "תכלת" },
-        { hex: "#2196f3", en: "Blue", he: "כחול" },
-        { hex: "#1565c0", en: "Dark Blue", he: "כחול כהה" },
-        { hex: "#90caf9", en: "Light Blue", he: "כחול בהיר" },
-        { hex: "#9c27b0", en: "Purple", he: "סגול" },
-        { hex: "#6a1b9a", en: "Dark Purple", he: "סגול כהה" },
-        { hex: "#e1bee7", en: "Light Purple", he: "סגול בהיר" },
-        { hex: "#795548", en: "Brown", he: "חום" }
+        { hex: "#94a3b8", en: "Slate", he: "אפור צפחה" },
+        { hex: "#e2e8f0", en: "Light Gray", he: "אפור בהיר" },
+        { hex: "#ef4444", en: "Red", he: "אדום" },
+        { hex: "#b91c1c", en: "Dark Red", he: "אדום כהה" },
+        { hex: "#fca5a5", en: "Light Red", he: "אדום בהיר" },
+        { hex: "#f97316", en: "Orange", he: "כתום" },
+        { hex: "#c2410c", en: "Dark Orange", he: "כתום כהה" },
+        { hex: "#fdba74", en: "Light Orange", he: "כתום בהיר" },
+        { hex: "#eab308", en: "Yellow", he: "צהוב" },
+        { hex: "#a16207", en: "Dark Yellow", he: "צהוב כהה" },
+        { hex: "#fef08a", en: "Light Yellow", he: "צהוב בהיר" },
+        { hex: "#10b981", en: "Green", he: "ירוק" },
+        { hex: "#047857", en: "Dark Green", he: "ירוק כהה" },
+        { hex: "#6ee7b7", en: "Light Green", he: "ירוק בהיר" },
+        { hex: "#06b6d4", en: "Cyan", he: "תכלת" },
+        { hex: "#3b82f6", en: "Blue", he: "כחול" },
+        { hex: "#1d4ed8", en: "Dark Blue", he: "כחול כהה" },
+        { hex: "#93c5fd", en: "Light Blue", he: "כחול בהיר" },
+        { hex: "#8b5cf6", en: "Purple", he: "סגול" },
+        { hex: "#5b21b6", en: "Dark Purple", he: "סגול כהה" },
+        { hex: "#c4b5fd", en: "Light Purple", he: "סגול בהיר" },
+        { hex: "#84cc16", en: "Lime", he: "ליים" }
     ];
 
     const i18n = {
         en: {
-            settings: "Settings",
-            sec_cats: "2. Categories & Colors",
-            sec_sections: "3. Port Sections",
-            sec_styles: "1. Title, Font & Border",
-            sec_data: "4. Data & Project Files",
+            settings: "<span class='material-icons' style='font-size:1.2em;'>tune</span> Network Settings",
+            sec_cats: "2. Destinations & Colors",
+            sec_sections: "3. Panel Structure",
+            sec_styles: "1. Layout & Styling",
+            sec_data: "4. Data Management",
             proj_name_label: "Project Name",
-            sections_desc: "Define multiple panel sections with individual layout rules.",
-            add_section: "+ Add Port Section",
-            font_family: "Font Family", border_thick: "Border Thickness (px)",
-            manage_cats: "Manage Categories", add_cat: "+ New Category",
-            proj_files: "Project Files", save_proj: "💾 Save Project", open_proj: "📂 Open Project",
-            print_mode_label: "Format:",
-            mode_separate: "Separate Pages", mode_ink: "Single Sheet", mode_summary: "Graphical Map",
-            bulk_add: "Bulk Utilities", dl_template: "Download CSV Template", clear_all: "Clear All Data",
-            print_btn: "🖨️ Print Document",
-            editor_title: "Ports List Editor", add_port: "+ Add Port Entry",
-            th_num: "Port #", th_port: "Port Label", th_cat: "Destination / Category", th_span: "Port Span", th_action: "Actions",
-            hw_title: "Hardware Visualizer", pr_title: "Print Preview", paper_color: "Print on Paper Color:", sheet_color: "Continuous Print Sheet", summary_title: "Destination Connection Schedule",
-            modal_title: "Page Print Order Sequence", modal_desc: "Please load your printer paper trays in the following graphical order:", cancel: "Cancel", proceed: "Print Now 🖨️"
+            sections_desc: "Define hardware panel sections (e.g. 24-port arrays, spacing rules).",
+            add_section: "<span class='material-icons' style='font-size: 1.2em;'>view_stream</span> Add Panel",
+            font_family: "Print Font", border_thick: "Cut Border Thickness (px)",
+            manage_cats: "Manage Destinations", add_cat: "<span class='material-icons' style='font-size: 1.2em;'>add_circle_outline</span> New Category",
+            proj_files: "Save & Load", save_proj: "<span class='material-icons' style='font-size: 1.1em;'>save</span> Save", open_proj: "<span class='material-icons' style='font-size: 1.1em;'>folder_open</span> Load",
+            print_mode_label: "View & Print Format:",
+            mode_separate: "Cutout Labels", mode_ink: "Mixed Sheet", mode_summary: "Connection Report", mode_hardware: "Rack Diagram",
+            toggle_backside: "Print exact location on page backside (Duplex)",
+            bulk_add: "Import & Clear Tools", dl_template: "<span class='material-icons' style='font-size: 1.1em;'>download</span> CSV Template", clear_all: "<span class='material-icons' style='font-size: 1.1em;'>delete_sweep</span> Clear All Data",
+            print_btn: "<span class='material-icons' style='font-size:1.1em;'>print</span> Print Document",
+            editor_title: "Ports Inventory", add_port: "+ Add Port Entry",
+            th_num: "Port #", th_port: "Label Text", th_cat: "Destination", th_span: "Module Span", th_action: "Actions",
+            hw_title: "Network Rack Diagram (Drag ribbon box to select multiple, or click to edit)", pr_title: "Print Preview", sheet_color: "Continuous Print Sheet", summary_title: "Destination Connection Schedule",
+            modal_title: "Page Print Order Sequence", modal_desc: "Please load your printer paper trays in the following sequence:", cancel: "Cancel", proceed: "Print Now 🖨️"
         },
         he: {
-            settings: "הגדרות",
+            settings: "<span class='material-icons' style='font-size:1.2em;'>tune</span> הגדרות רשת",
             sec_cats: "2. קטגוריות וצבעים",
-            sec_sections: "3. מקטעי פורטים",
-            sec_styles: "1. כותרת, גופן ומסגרת",
-            sec_data: "4. נתונים וקבצי פרויקט",
+            sec_sections: "3. מבנה הפאנלים",
+            sec_styles: "1. כותרת ועיצוב",
+            sec_data: "4. ניהול נתונים",
             proj_name_label: "שם הפרויקט",
-            sections_desc: "הגדר מספר מקטעי פאנל עם כללי פריסה מותאמים אישית.",
-            add_section: "+ הוסף מקטע פורטים",
-            font_family: "גופן", border_thick: "עובי מסגרת (פיקסלים)",
-            manage_cats: "ניהול קטגוריות", add_cat: "+ קטגוריה חדשה",
-            proj_files: "קבצי פרויקט", save_proj: "💾 שמור פרויקט", open_proj: "📂 טען פרויקט",
-            print_mode_label: "פורמט הדפסה:",
-            mode_separate: "דפים נפרדים", mode_ink: "דף רציף", mode_summary: "מפה גרפית",
-            bulk_add: "כלי עזר", dl_template: "הורד תבנית CSV", clear_all: "נקה את כל הנתונים",
-            print_btn: "🖨️ הדפס מסמך",
-            editor_title: "עורך רשימת הפורטים", add_port: "+ הוסף פורט",
-            th_num: "מספר פורט", th_port: "טקסט פורט", th_cat: "יעד / קטגוריה", th_span: "פריסה", th_action: "פעולות",
-            hw_title: "תצוגת חומרה", pr_title: "תצוגה מקדימה להדפסה", paper_color: "הדפס על דף בצבע:", sheet_color: "דף הדפסה רציף", summary_title: "לוח חיבורים לפי יעד",
+            sections_desc: "הגדר מקטעי פאנל עם כללי פריסה פיזיים (לדוגמה: פאנל 24, מרווחים).",
+            add_section: "<span class='material-icons' style='font-size: 1.2em;'>view_stream</span> הוסף פאנל",
+            font_family: "גופן (להדפסה)", border_thick: "עובי מסגרת חיתוך (px)",
+            manage_cats: "ניהול יעדים", add_cat: "<span class='material-icons' style='font-size: 1.2em;'>add_circle_outline</span> קטגוריה חדשה",
+            proj_files: "שמירה וטעינה", save_proj: "<span class='material-icons' style='font-size: 1.1em;'>save</span> שמור", open_proj: "<span class='material-icons' style='font-size: 1.1em;'>folder_open</span> טען",
+            print_mode_label: "תצוגה והדפסה:",
+            mode_separate: "מדבקות חיתוך", mode_ink: "דף מעורב", mode_summary: "דוח חיבורים", mode_hardware: "תרשים ארון",
+            toggle_backside: "הדפס מיקום מדויק בגב העמוד (דופלקס)",
+            bulk_add: "כלי ייבוא וניקוי", dl_template: "<span class='material-icons' style='font-size: 1.1em;'>download</span> תבנית CSV", clear_all: "<span class='material-icons' style='font-size: 1.1em;'>delete_sweep</span> נקה הכל",
+            print_btn: "<span class='material-icons' style='font-size:1.1em;'>print</span> הדפס מסמך",
+            editor_title: "רשימת הפורטים", add_port: "+ הוסף פורט",
+            th_num: "מספר פורט", th_port: "כיתוב מדבקה", th_cat: "יעד / קטגוריה", th_span: "אורך מודול", th_action: "פעולות",
+            hw_title: "תרשים ארון תקשורת (גרור מלבן בחירה מרובה, או לחץ לעריכה)", pr_title: "תצוגה מקדימה להדפסה", sheet_color: "דף הדפסה רציף", summary_title: "לוח חיבורים לפי יעד",
             modal_title: "סדר הדפסת עמודים ודפים", modal_desc: "אנא טען את הדפים במדפסת לפי הסדר הגרפי הבא:", cancel: "ביטול", proceed: "הדפס עכשיו 🖨️"
         }
     };
@@ -970,14 +857,18 @@
     let portSections = [];
     let configInputTimeout = null;
     let draggedIndex = null;
+    let selectedAbsoluteIndices = new Set(); // Stores absolute flat port indexes (0-based across all sections)
+    let lastClickedAbsoluteIndex = null;
+
+    let isDraggingRubberband = false;
+    let rbStartX = 0;
+    let rbStartY = 0;
 
     function getBasicColorName(hex, lang) {
         if (!hex) return lang === 'he' ? "לבן" : "White";
         const cleanHex = hex.toLowerCase().trim();
         const found = standardColors.find(c => c.hex.toLowerCase() === cleanHex);
-        if (found) {
-            return found[lang] || found['en'];
-        }
+        if (found) return found[lang] || found['en'];
         return lang === 'he' ? "לבן" : "White";
     }
 
@@ -1006,17 +897,26 @@
     function setPrintMode(mode) {
         document.getElementById('printMode').value = mode;
         document.querySelectorAll('.segment-btn').forEach(btn => {
-            if (btn.getAttribute('data-mode') === mode) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
+            if (btn.getAttribute('data-mode') === mode) btn.classList.add('active');
+            else btn.classList.remove('active');
         });
+        
+        const hwContainer = document.getElementById('hwViewContainer');
+        const printContainer = document.getElementById('printViewContainer');
+        if (mode === 'hardware') {
+            hwContainer.style.display = 'block';
+            printContainer.classList.remove('print-active-view');
+            printContainer.style.display = 'none';
+        } else {
+            hwContainer.style.display = 'block';
+            printContainer.classList.add('print-active-view');
+            printContainer.style.display = 'block';
+        }
+
         saveSettingsToStorage();
         processLayout(false);
     }
 
-    // Close color palettes when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.cat-color-wrapper')) {
             document.querySelectorAll('.color-picker-palette').forEach(p => p.style.display = 'none');
@@ -1042,10 +942,10 @@
         window.addEventListener('resize', applyScaling);
 
         if(categories.length === 0 && portsList.length === 0) {
-            categories.push({ id: generateId(), name: currentLang === 'he' ? "מתג א'" : "Switch A", color: "#2196f3" });
+            categories.push({ id: generateId(), name: currentLang === 'he' ? "מתג א'" : "Switch A", color: "#3b82f6" });
             portSections.push({
                 id: generateId(),
-                name: currentLang === 'he' ? "פאנל א'" : "Panel A",
+                name: currentLang === 'he' ? "פאנל ראשי" : "Main Panel",
                 startNumber: 1,
                 portsPerRow: 24,
                 portWidth: 15,
@@ -1090,22 +990,24 @@
             fontFamily: document.getElementById('fontFamilySelect').value,
             borderThickness: document.getElementById('borderThickness').value,
             printMode: document.getElementById('printMode').value,
+            printBackside: document.getElementById('printBacksideToggle').checked,
             lang: currentLang,
             categories: categories,
             portSections: portSections,
             portsList: portsList
         };
-        localStorage.setItem('portLabelMakerConfigV41', JSON.stringify(config));
+        localStorage.setItem('portLabelMakerConfigV48', JSON.stringify(config));
     }
 
     function loadSettingsFromStorage() {
-        const stored = localStorage.getItem('portLabelMakerConfigV41');
+        const stored = localStorage.getItem('portLabelMakerConfigV48') || localStorage.getItem('portLabelMakerConfigV47');
         if (stored) {
             try {
                 const config = JSON.parse(stored);
                 document.getElementById('projectNameInput').value = config.projectName || 'התקנת רשת';
                 document.getElementById('fontFamilySelect').value = config.fontFamily || 'GladiaCLM';
                 document.getElementById('borderThickness').value = config.borderThickness !== undefined ? config.borderThickness : 1;
+                document.getElementById('printBacksideToggle').checked = config.printBackside || false;
 
                 const loadedMode = config.printMode || "separate";
                 document.getElementById('printMode').value = loadedMode;
@@ -1115,21 +1017,20 @@
                 portSections = config.portSections || [];
                 portsList = config.portsList || [];
 
-                if (config.lang) {
-                    currentLang = config.lang;
-                }
+                if (config.lang) currentLang = config.lang;
             } catch (e) { console.error("Could not parse local storage."); }
         }
     }
 
     function saveProjectFile() {
         const state = {
-            version: 1,
+            version: 8,
             timestamp: new Date().toISOString(),
             projectName: document.getElementById('projectNameInput').value,
             fontFamily: document.getElementById('fontFamilySelect').value,
             borderThickness: document.getElementById('borderThickness').value,
             printMode: document.getElementById('printMode').value,
+            printBackside: document.getElementById('printBacksideToggle').checked,
             categories: categories,
             portSections: portSections,
             portsList: portsList
@@ -1154,6 +1055,7 @@
                 document.getElementById('projectNameInput').value = config.projectName || 'התקנת רשת';
                 document.getElementById('fontFamilySelect').value = config.fontFamily || 'GladiaCLM';
                 document.getElementById('borderThickness').value = config.borderThickness !== undefined ? config.borderThickness : 1;
+                document.getElementById('printBacksideToggle').checked = config.printBackside || false;
 
                 const loadedMode = config.printMode || "separate";
                 document.getElementById('printMode').value = loadedMode;
@@ -1165,9 +1067,7 @@
 
                 event.target.value = '';
                 processLayout(true);
-            } catch (err) {
-                alert("קובץ פרויקט שגוי.");
-            }
+            } catch (err) { alert("קובץ פרויקט שגוי."); }
         };
         reader.readAsText(file);
     }
@@ -1178,7 +1078,7 @@
         container.innerHTML = '';
 
         if(categories.length === 0) {
-            container.innerHTML = `<span style="font-size:0.8em; color:var(--text-muted); display: block; padding: 4px;">טרם נוצרו קטגוריות.</span>`;
+            container.innerHTML = `<span style="font-size:0.85em; color:var(--text-muted); display: block; padding: 4px;">טרם נוצרו קטגוריות.</span>`;
             return;
         }
 
@@ -1195,17 +1095,32 @@
                 return `<div class="color-swatch ${isSelected ? 'selected' : ''}" style="background-color: ${sc.hex};" title="${title}" onclick="updateSidebarCategoryColor(event, ${index}, '${sc.hex}')"></div>`;
             }).join('');
 
+            let escapedName = (cat.name || '').replace(/"/g, '&quot;');
+
             row.innerHTML = `
-                <input type="text" value="${cat.name}" oninput="updateSidebarCategory(${index}, 'name', this.value)" placeholder="שם הקטגוריה">
+                <input type="text" value="${escapedName}" oninput="updateSidebarCategory(${index}, 'name', this.value)" placeholder="שם הקטגוריה">
                 <div class="cat-color-wrapper">
                     <div class="color-picker-trigger" style="background-color: ${colorHex};" onclick="toggleColorPalette(event, ${index})" title="${colorName}"></div>
                     <div class="color-picker-palette" id="palette-${index}">
                         ${swatchesHtml}
                     </div>
                 </div>
-                <button class="delete-btn" onclick="deleteCategory(${index})" title="מחק קטגוריה">✕</button>
+                <button class="delete-btn" onclick="deleteCategory(${index})" title="מחק קטגוריה">
+                    <span class="material-icons" style="font-size:1.1em;">close</span>
+                </button>
             `;
             container.appendChild(row);
+        });
+
+        updateBulkCategoryDropdown();
+    }
+
+    function updateBulkCategoryDropdown() {
+        const select = document.getElementById('bulkCategorySelect');
+        if (!select) return;
+        select.innerHTML = `<option value="">-- בחר יעד חדש לבחירה --</option>`;
+        categories.forEach(cat => {
+            select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
         });
     }
 
@@ -1215,9 +1130,7 @@
             if (p.id !== `palette-${index}`) p.style.display = 'none';
         });
         const palette = document.getElementById(`palette-${index}`);
-        if (palette) {
-            palette.style.display = palette.style.display === 'none' || !palette.style.display ? 'grid' : 'none';
-        }
+        if (palette) palette.style.display = palette.style.display === 'none' || !palette.style.display ? 'grid' : 'none';
     }
 
     function updateSidebarCategoryColor(event, index, hex) {
@@ -1229,12 +1142,8 @@
         renderPortsTable();
     }
 
-    function addCategory(name = (currentLang === 'he' ? "יעד חדש" : "New Destination"), color = "#2196f3") {
-        categories.push({
-            id: generateId(),
-            name: name,
-            color: color
-        });
+    function addCategory(name = (currentLang === 'he' ? "יעד חדש" : "New Destination"), color = "#3b82f6") {
+        categories.push({ id: generateId(), name: name, color: color });
         processLayout(true);
     }
 
@@ -1260,7 +1169,7 @@
         container.innerHTML = '';
 
         if(portSections.length === 0) {
-            container.innerHTML = `<span style="font-size:0.8em; color:var(--text-muted); display: block; padding: 4px;">לא הוגדרו פאנלים. הוסף פאנל למטה.</span>`;
+            container.innerHTML = `<span style="font-size:0.85em; color:var(--text-muted); display: block; padding: 4px;">לא הוגדרו פאנלים. הוסף פאנל למטה.</span>`;
             return;
         }
 
@@ -1268,50 +1177,53 @@
             let startNum = sec.startNumber !== undefined ? sec.startNumber : 1;
             let card = document.createElement('div');
             card.className = 'section-card';
+            let escapedSecName = (sec.name || '').replace(/"/g, '&quot;');
             card.innerHTML = `
                 <div class="section-card-header">
-                    <input type="text" value="${sec.name}" oninput="updateSectionProp(${index}, 'name', this.value)" placeholder="שם הפאנל" style="font-weight:600; width: 75%; padding: 4px 8px;">
-                    <button class="delete-btn" onclick="deletePortSection(${index})" title="מחק פאנל">✕</button>
+                    <input type="text" value="${escapedSecName}" oninput="updateSectionProp(${index}, 'name', this.value)" placeholder="שם הפאנל">
+                    <button class="delete-btn" onclick="deletePortSection(${index})" title="מחק פאנל">
+                        <span class="material-icons" style="font-size:1.1em;">close</span>
+                    </button>
                 </div>
-                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                <div style="display: flex; gap: 12px; margin-bottom: 12px;">
                     <div style="flex: 1;">
-                        <label style="font-size:0.75em;">מספר התחלה</label>
+                        <label style="font-size:0.75em; margin-bottom:4px;">התחלה</label>
                         <input type="number" value="${startNum}" oninput="updateSectionProp(${index}, 'startNumber', parseInt(this.value) !== NaN ? parseInt(this.value) : 1)">
                     </div>
                     <div style="flex: 1;">
-                        <label style="font-size:0.75em;">פורטים בשורה</label>
+                        <label style="font-size:0.75em; margin-bottom:4px;">פורטים בשורה</label>
                         <input type="number" min="1" value="${sec.portsPerRow}" oninput="updateSectionProp(${index}, 'portsPerRow', parseInt(this.value) || 1)">
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                <div style="display: flex; gap: 12px; margin-bottom: 12px;">
                     <div style="flex: 1;">
-                        <label style="font-size:0.75em;">רוחב (מ"מ)</label>
+                        <label style="font-size:0.75em; margin-bottom:4px;">רוחב (מ"מ)</label>
                         <input type="number" min="1" value="${sec.portWidth}" oninput="updateSectionProp(${index}, 'portWidth', parseFloat(this.value) || 1)">
                     </div>
                     <div style="flex: 1;">
-                        <label style="font-size:0.75em;">גובה (מ"מ)</label>
+                        <label style="font-size:0.75em; margin-bottom:4px;">גובה (מ"מ)</label>
                         <input type="number" min="1" value="${sec.portHeight}" oninput="updateSectionProp(${index}, 'portHeight', parseFloat(this.value) || 1)">
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                <div style="display: flex; gap: 12px; margin-bottom: 8px;">
                     <div style="flex: 1;">
-                        <label style="font-size:0.75em;">רווח רגיל</label>
+                        <label style="font-size:0.75em; margin-bottom:4px;">רווח רגיל</label>
                         <input type="number" min="0" value="${sec.standardGap}" oninput="updateSectionProp(${index}, 'standardGap', parseFloat(this.value) || 0)">
                     </div>
                     <div style="flex: 1; display: flex; align-items: flex-end;">
-                        <label style="display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 0.8em; padding-bottom: 8px;">
-                            <input type="checkbox" ${sec.enableGrouping ? 'checked' : ''} onchange="toggleSectionGrouping(${index}, this.checked)"> קיבוץ
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.85em; padding-bottom: 10px; color: var(--text-main); font-weight: 600;">
+                            <input type="checkbox" style="width:16px; height:16px; margin:0;" ${sec.enableGrouping ? 'checked' : ''} onchange="toggleSectionGrouping(${index}, this.checked)"> חלוקה לקבוצות
                         </label>
                     </div>
                 </div>
-                <div id="secGroupingParams_${index}" style="display: ${sec.enableGrouping ? 'block' : 'none'}; padding-left: 8px; border-left: 2px solid var(--primary); margin-top: 6px;">
-                    <div style="display: flex; gap: 8px;">
+                <div id="secGroupingParams_${index}" style="display: ${sec.enableGrouping ? 'block' : 'none'}; padding-left: 12px; border-left: 2px solid var(--border-hover); margin-top: 8px;">
+                    <div style="display: flex; gap: 12px;">
                         <div style="flex: 1;">
-                            <label style="font-size:0.75em;">רווח קבוצה</label>
+                            <label style="font-size:0.75em; margin-bottom:4px;">רווח קבוצה</label>
                             <input type="number" min="0" value="${sec.segmentGap}" oninput="updateSectionProp(${index}, 'segmentGap', parseFloat(this.value) || 0)">
                         </div>
                         <div style="flex: 1;">
-                            <label style="font-size:0.75em;">גודל קבוצה</label>
+                            <label style="font-size:0.75em; margin-bottom:4px;">גודל קבוצה</label>
                             <input type="number" min="1" value="${sec.segmentSize}" oninput="updateSectionProp(${index}, 'segmentSize', parseInt(this.value) || 1)">
                         </div>
                     </div>
@@ -1358,9 +1270,7 @@
         }
         portSections.splice(index, 1);
         portsList.forEach(p => {
-            if(!portSections.some(s => s.id === p.sectionId)) {
-                p.sectionId = portSections[0].id;
-            }
+            if(!portSections.some(s => s.id === p.sectionId)) p.sectionId = portSections[0].id;
         });
         processLayout(true);
     }
@@ -1378,13 +1288,8 @@
         return false;
     }
 
-    function handleDragEnter(e) {
-        this.classList.add('drag-over');
-    }
-
-    function handleDragLeave(e) {
-        this.classList.remove('drag-over');
-    }
+    function handleDragEnter(e) { this.classList.add('drag-over'); }
+    function handleDragLeave(e) { this.classList.remove('drag-over'); }
 
     function handleDrop(e) {
         e.stopPropagation();
@@ -1401,9 +1306,7 @@
 
     function handleDragEnd(e) {
         this.classList.remove('dragging');
-        document.querySelectorAll('#portsTableBody tr').forEach(row => {
-            row.classList.remove('drag-over');
-        });
+        document.querySelectorAll('#portsTableBody tr').forEach(row => row.classList.remove('drag-over'));
         draggedIndex = null;
     }
 
@@ -1413,7 +1316,7 @@
         tbody.innerHTML = '';
 
         if(portSections.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding: 15px;">לא הוגדרו פאנלים.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding: 20px;">לא הוגדרו פאנלים.</td></tr>`;
             return;
         }
 
@@ -1423,12 +1326,13 @@
         portSections.forEach(sec => {
             let headerTr = document.createElement('tr');
             headerTr.className = 'section-header-row';
+            let escapedSecName = (sec.name || '').replace(/"/g, '&quot;');
             headerTr.innerHTML = `
-                <td colspan="5">
-                    📁 ${sec.name}
+                <td colspan="5" style="border-bottom: 2px solid var(--border-color);">
+                    <span class="material-icons" style="font-size:1.1em; vertical-align:text-bottom; color: var(--primary);">storage</span> ${escapedSecName}
                 </td>
-                <td style="text-align: center; white-space: nowrap;">
-                    <button class="btn-secondary add-port-btn" onclick="handleAccordionAddPort(event, '${sec.id}')" style="padding: 6px 12px; font-size: 0.85em; background: var(--primary); color: white; border: none; width: auto; display: inline-flex; align-items: center; justify-content: center;" title="לחץ להוספת פורט, או Shift+לחץ להוספת 10 פורטים">+ הוסף פורט</button>
+                <td style="text-align: center; white-space: nowrap; border-bottom: 2px solid var(--border-color);">
+                    <button class="btn-secondary add-port-btn" onclick="handleAccordionAddPort(event, '${sec.id}')" style="padding: 6px 12px; font-size: 0.85em; background: var(--primary); color: white; border: none; width: auto;" title="לחץ להוספת פורט, או Shift+לחץ להוספת 10 פורטים"><span class="material-icons" style="font-size:1em;">add</span> הוסף פורט</button>
                 </td>
             `;
             tbody.appendChild(headerTr);
@@ -1437,7 +1341,7 @@
 
             if(sectionPorts.length === 0) {
                 let emptyTr = document.createElement('tr');
-                emptyTr.innerHTML = `<td colspan="6" style="text-align:center; color:var(--text-muted); font-size: 0.85em; font-style: italic; padding: 8px;">אין פורטים בפאנל זה. לחץ על '+ הוסף פורט' למעלה.</td>`;
+                emptyTr.innerHTML = `<td colspan="6" style="text-align:center; color:var(--text-muted); font-size: 0.9em; padding: 16px;">אין פורטים בפאנל זה. לחץ על הוסף פורט למעלה.</td>`;
                 tbody.appendChild(emptyTr);
                 return;
             }
@@ -1467,29 +1371,29 @@
 
                 let span = parseInt(port.span) || 1;
                 let portRangeDisplay = "";
-                if (span === 1) {
-                    portRangeDisplay = `${sectionPortCounter}`;
-                } else {
-                    portRangeDisplay = `${sectionPortCounter} - ${sectionPortCounter + span - 1}`;
-                }
+                if (span === 1) portRangeDisplay = `${sectionPortCounter}`;
+                else portRangeDisplay = `${sectionPortCounter} - ${sectionPortCounter + span - 1}`;
                 sectionPortCounter += span;
 
                 let catSelectHtml = `<select onchange="updatePortCategory(${index}, this.value)">`;
                 categories.forEach(catItem => {
                     const selected = (catItem.id === port.categoryId) ? 'selected' : '';
-                    catSelectHtml += `<option value="${catItem.id}" ${selected}>${catItem.name}</option>`;
+                    let escapedCatName = (catItem.name || '').replace(/"/g, '&quot;');
+                    catSelectHtml += `<option value="${catItem.id}" ${selected}>${escapedCatName}</option>`;
                 });
                 catSelectHtml += `</select>`;
+
+                let escapedText = (port.text || '').replace(/"/g, '&quot;');
 
                 tr.innerHTML = `
                     <td style="text-align: center;"><span class="drag-handle" title="גרור לשינוי סדר">⠿</span></td>
                     <td><span class="port-number-badge">${currentLang === 'he' ? 'פורט' : 'Port'} ${portRangeDisplay}</span></td>
                     <td>${catSelectHtml}</td>
-                    <td><input type="text" value="${port.text}" oninput="updatePortText(${index}, this.value)" placeholder=""></td>
+                    <td><input type="text" value="${escapedText}" oninput="updatePortText(${index}, this.value)" placeholder=""></td>
                     <td><input type="number" min="1" value="${port.span}" oninput="updatePortSpan(${index}, this.value)"></td>
                     <td class="action-cols">
                         <div class="action-btns">
-                            <button class="delete-btn" onclick="deletePortEntry(${index})" title="מחק פורט">✕</button>
+                            <button class="delete-btn" onclick="deletePortEntry(${index})" title="מחק פורט"><span class="material-icons">close</span></button>
                         </div>
                     </td>
                 `;
@@ -1515,7 +1419,7 @@
                 text: "",
                 categoryId: categories[0].id,
                 sectionId: secId,
-                span: 2
+                span: 1
             });
         }
         processLayout(true);
@@ -1550,89 +1454,34 @@
 
     function updatePreviewsOnly() {
         const printMode = document.getElementById('printMode').value;
-
-        let catLookup = {};
-        categories.forEach(c => catLookup[c.id] = c);
-
-        let secLookup = {};
-        portSections.forEach(s => secLookup[s.id] = s);
-
-        let flattenedData = [];
-        portsList.forEach(port => {
-            let cat = catLookup[port.categoryId] || { name: currentLang === 'he' ? "לא משויך" : "Unassigned", color: "#ffffff" };
-            let sec = secLookup[port.sectionId] || portSections[0] || { name: "Panel", portsPerRow: 24, portWidth: 15, portHeight: 10, standardGap: 2, enableGrouping: false, segmentGap: 8, segmentSize: 4 };
-
-            flattenedData.push({
-                text1: port.text || "",
-                text2: cat.name,
-                color: cat.color || "#ffffff",
-                span: port.span,
-                section: sec
-            });
-        });
-
-        let sectionGroups = {};
-        portSections.forEach(sec => sectionGroups[sec.id] = { section: sec, items: [] });
-
-        flattenedData.forEach(item => {
-            let sId = item.section.id;
-            if(!sectionGroups[sId]) {
-                sectionGroups[sId] = { section: item.section, items: [] };
-            }
-            sectionGroups[sId].items.push(item);
-        });
-
-        let processedSections = [];
-        portSections.forEach(sec => {
-            let group = sectionGroups[sec.id];
-            if(!group || group.items.length === 0) return;
-
-            let portsPerRow = sec.portsPerRow || 24;
-            let segmentSize = sec.enableGrouping ? (sec.segmentSize || 4) : 999999;
-            let segmentGap = sec.enableGrouping ? (sec.segmentGap || 8) : sec.standardGap;
-
-            let expandedItems = [];
-            let currentPortIndex = 0;
-
-            group.items.forEach(item => {
-                let spanLeft = item.span;
-                while (spanLeft > 0) {
-                    const spaceInRow = portsPerRow - currentPortIndex;
-                    const spanThisRow = Math.min(spanLeft, spaceInRow);
-
-                    expandedItems.push({
-                        text1: item.text1,
-                        text2: item.text2,
-                        color: item.color,
-                        span: spanThisRow,
-                        startIndex: currentPortIndex,
-                        section: sec
-                    });
-
-                    currentPortIndex += spanThisRow;
-                    spanLeft -= spanThisRow;
-                    if (currentPortIndex >= portsPerRow) currentPortIndex = 0;
-                }
-            });
-
-            processedSections.push({
-                section: sec,
-                expandedItems: expandedItems
-            });
-        });
-
+        let processedSections = getProcessedSectionsData();
         renderHardwareView(processedSections);
+        let flattenedData = [];
+        portSections.forEach(sec => {
+            let secPorts = portsList.filter(p => p.sectionId === sec.id || (!p.sectionId && sec === portSections[0]));
+            let secCounter = sec.startNumber !== undefined ? sec.startNumber : 1;
+            secPorts.forEach(port => {
+                let cat = categories.find(c => c.id === port.categoryId) || { name: currentLang === 'he' ? "לא משויך" : "Unassigned", color: "#ffffff" };
+                let span = parseInt(port.span) || 1;
+                let portRangeStr = span === 1 ? `${secCounter}` : `${secCounter}-${secCounter + span - 1}`;
+                secCounter += span;
+                flattenedData.push({
+                    text1: port.text || "",
+                    text2: cat.name,
+                    color: cat.color || "#ffffff",
+                    span: port.span,
+                    section: sec,
+                    panelName: sec.name,
+                    portRange: portRangeStr
+                });
+            });
+        });
         renderPrintSheets(flattenedData, processedSections, printMode);
     }
 
     function addSequence(n = 24, overwrite = false) {
-        if(categories.length === 0) {
-            categories.push({ id: generateId(), name: currentLang === 'he' ? "מתג א'" : "Switch A", color: "#2196f3" });
-        }
-        if(portSections.length === 0) {
-            addPortSection();
-        }
-
+        if(categories.length === 0) categories.push({ id: generateId(), name: currentLang === 'he' ? "מתג א'" : "Switch A", color: "#3b82f6" });
+        if(portSections.length === 0) addPortSection();
         if (overwrite) portsList = [];
 
         const defaultCatId = categories.length > 0 ? categories[0].id : null;
@@ -1644,7 +1493,7 @@
                 text: "",
                 categoryId: defaultCatId,
                 sectionId: defaultSecId,
-                span: 2
+                span: 1
             });
         }
         processLayout(true);
@@ -1654,34 +1503,267 @@
         if (confirm(currentLang === 'he' ? "האם אתה בטוח שברצונך לנקות את כל הפורטים והקטגוריות?" : "Are you sure you want to clear all ports and categories?")) {
             categories = [];
             portsList = [];
+            selectedAbsoluteIndices.clear();
+            updateSelectionToolbar();
             processLayout(true);
         }
     }
 
-    // --- Print Order Modal Handler with Graphical Flow Blocks ---
+    // --- Interactive Hardware Visualizer & Rubberband Multi-Selection ---
+    function startRubberband(e) {
+        if (e.target.closest('.hardware-port') || e.target.closest('#selection-toolbar')) return;
+
+        isDraggingRubberband = true;
+        const wrapper = document.getElementById('hardware-view-area');
+        const rect = wrapper.getBoundingClientRect();
+        
+        let scale = 1;
+        const transformMatch = wrapper.style.transform.match(/scale\(([^)]+)\)/);
+        if (transformMatch) scale = parseFloat(transformMatch[1]) || 1;
+
+        rbStartX = (e.clientX - rect.left) / scale;
+        rbStartY = (e.clientY - rect.top) / scale;
+
+        const rb = document.getElementById('rubberband');
+        rb.style.left = `${rbStartX}px`;
+        rb.style.top = `${rbStartY}px`;
+        rb.style.width = `0px`;
+        rb.style.height = `0px`;
+        rb.style.display = 'block';
+
+        if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
+            selectedAbsoluteIndices.clear();
+        }
+
+        window.addEventListener('mousemove', onRubberbandMove);
+        window.addEventListener('mouseup', endRubberband);
+    }
+
+    function onRubberbandMove(e) {
+        if (!isDraggingRubberband) return;
+        const wrapper = document.getElementById('hardware-view-area');
+        const rect = wrapper.getBoundingClientRect();
+
+        let scale = 1;
+        const transformMatch = wrapper.style.transform.match(/scale\(([^)]+)\)/);
+        if (transformMatch) scale = parseFloat(transformMatch[1]) || 1;
+
+        let currentX = (e.clientX - rect.left) / scale;
+        let currentY = (e.clientY - rect.top) / scale;
+
+        let left = Math.min(rbStartX, currentX);
+        let top = Math.min(rbStartY, currentY);
+        let width = Math.abs(currentX - rbStartX);
+        let height = Math.abs(currentY - rbStartY);
+
+        const rb = document.getElementById('rubberband');
+        rb.style.left = `${left}px`;
+        rb.style.top = `${top}px`;
+        rb.style.width = `${width}px`;
+        rb.style.height = `${height}px`;
+
+        const rbRect = { left, top, right: left + width, bottom: top + height };
+        document.querySelectorAll('.hardware-port').forEach(portEl => {
+            const pRect = {
+                left: portEl.offsetLeft,
+                top: portEl.offsetTop,
+                right: portEl.offsetLeft + portEl.offsetWidth,
+                bottom: portEl.offsetTop + portEl.offsetHeight
+            };
+
+            const intersect = !(rbRect.left > pRect.right || rbRect.right < pRect.left || rbRect.top > pRect.bottom || rbRect.bottom < pRect.top);
+            const absIdx = parseInt(portEl.getAttribute('data-absolute-index'));
+            if (!isNaN(absIdx)) {
+                if (intersect) selectedAbsoluteIndices.add(absIdx);
+            }
+        });
+
+        highlightSelectedPorts();
+    }
+
+    function endRubberband(e) {
+        isDraggingRubberband = false;
+        const rb = document.getElementById('rubberband');
+        rb.style.display = 'none';
+
+        window.removeEventListener('mousemove', onRubberbandMove);
+        window.removeEventListener('mouseup', endRubberband);
+
+        updateSelectionToolbar();
+    }
+
+    function handlePortClick(event, absoluteIndex) {
+        event.stopPropagation();
+        
+        if (event.shiftKey && lastClickedAbsoluteIndex !== null) {
+            const start = Math.min(lastClickedAbsoluteIndex, absoluteIndex);
+            const end = Math.max(lastClickedAbsoluteIndex, absoluteIndex);
+            for (let i = start; i <= end; i++) {
+                selectedAbsoluteIndices.add(i);
+            }
+        } else if (event.ctrlKey || event.metaKey) {
+            if (selectedAbsoluteIndices.has(absoluteIndex)) selectedAbsoluteIndices.delete(absoluteIndex);
+            else selectedAbsoluteIndices.add(absoluteIndex);
+            lastClickedAbsoluteIndex = absoluteIndex;
+        } else {
+            if (selectedAbsoluteIndices.has(absoluteIndex) && selectedAbsoluteIndices.size === 1) {
+                // Find which entry/span this absolute port index belongs to and prompt single text edit
+                let currentAbsCount = 0;
+                let targetPortObj = null;
+                for (let p of portsList) {
+                    let pSpan = parseInt(p.span) || 1;
+                    if (absoluteIndex >= currentAbsCount && absoluteIndex < currentAbsCount + pSpan) {
+                        targetPortObj = p;
+                        break;
+                    }
+                    currentAbsCount += pSpan;
+                }
+
+                let newText = prompt(currentLang === 'he' ? "הזן כיתוב חדש לפורט:" : "Enter new port label:", targetPortObj ? targetPortObj.text : "");
+                if (newText !== null) {
+                    targetPortObj.text = newText;
+                    processLayout(true);
+                }
+                return;
+            }
+            selectedAbsoluteIndices.clear();
+            selectedAbsoluteIndices.add(absoluteIndex);
+            lastClickedAbsoluteIndex = absoluteIndex;
+        }
+
+        updateSelectionToolbar();
+        highlightSelectedPorts();
+    }
+
+    function highlightSelectedPorts() {
+        document.querySelectorAll('.hardware-port').forEach(el => {
+            const absIdx = parseInt(el.getAttribute('data-absolute-index'));
+            if (selectedAbsoluteIndices.has(absIdx)) {
+                el.classList.add('selected-port');
+            } else {
+                el.classList.remove('selected-port');
+            }
+        });
+    }
+
+    function updateSelectionToolbar() {
+        const toolbar = document.getElementById('selection-toolbar');
+        const countText = document.getElementById('selectedCountText');
+        if (selectedAbsoluteIndices.size > 0) {
+            toolbar.style.display = 'flex';
+            countText.innerText = `${selectedAbsoluteIndices.size} ${currentLang === 'he' ? 'פורטים נבחרו' : 'ports selected'}`;
+        } else {
+            toolbar.style.display = 'none';
+        }
+    }
+
+    function clearSelection() {
+        selectedAbsoluteIndices.clear();
+        updateSelectionToolbar();
+        highlightSelectedPorts();
+    }
+
+    // --- Intelligent Span Splitting & Bulk Editing Logic ---
+    function applyBulkEdit() {
+        const newCatId = document.getElementById('bulkCategorySelect').value;
+        const newTextVal = document.getElementById('bulkTextInput').value;
+
+        if (selectedAbsoluteIndices.size === 0) return;
+
+        // Group selected absolute indices by their parent port object
+        let portToSelectedAbs = new Map(); // portObj -> Set of absolute unit indices belonging to this port that are selected
+        
+        let globalAbsIdx = 0;
+        portsList.forEach(port => {
+            let span = parseInt(port.span) || 1;
+            for (let s = 0; s < span; s++) {
+                if (selectedAbsoluteIndices.has(globalAbsIdx)) {
+                    if (!portToSelectedAbs.has(port)) portToSelectedAbs.set(port, new Set());
+                    portToSelectedAbs.get(port).add(s);
+                }
+                globalAbsIdx++;
+            }
+        });
+
+        // For each port that has some (or all) of its units selected, split or update accordingly
+        let newPortsList = [];
+
+        portsList.forEach(port => {
+            let span = parseInt(port.span) || 1;
+            let selectedUnits = portToSelectedAbs.get(port);
+
+            if (!selectedUnits || selectedUnits.size === 0) {
+                // Not touched at all
+                newPortsList.push(port);
+            } else if (selectedUnits.size === span) {
+                // Entire span selected! Simply update its properties directly without breaking span
+                if (newCatId) port.categoryId = newCatId;
+                if (newTextVal !== "") port.text = newTextVal;
+                newPortsList.push(port);
+            } else {
+                // PARTIAL SPAN SELECTION: We need to split this port entry into contiguous chunks!
+                // Iterate through each sub-unit 0 to span - 1
+                let currentChunkType = null; // 'selected' or 'unselected'
+                let chunkStart = 0;
+
+                for (let s = 0; s <= span; s++) {
+                    let isSelected = s < span && selectedUnits.has(s);
+                    let chunkType = s < span ? (isSelected ? 'selected' : 'unselected') : null;
+
+                    if (s === 0) {
+                        currentChunkType = chunkType;
+                        chunkStart = 0;
+                    } else if (chunkType !== currentChunkType) {
+                        // Emit previous chunk
+                        let chunkSize = s - chunkStart;
+                        let chunkPort = {
+                            id: generateId(),
+                            text: (currentChunkType === 'selected' && newTextVal !== "") ? newTextVal : port.text,
+                            categoryId: (currentChunkType === 'selected' && newCatId) ? newCatId : port.categoryId,
+                            sectionId: port.sectionId,
+                            span: chunkSize
+                        };
+                        newPortsList.push(chunkPort);
+
+                        currentChunkType = chunkType;
+                        chunkStart = s;
+                    }
+                }
+            }
+        });
+
+        portsList = newPortsList;
+        clearSelection();
+        processLayout(true);
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.hardware-port') && !e.target.closest('#selection-toolbar') && !e.target.closest('#sidebar')) {
+            clearSelection();
+        }
+    });
+
+    // --- Print Order Modal Handler ---
     function handlePrintClick() {
         const printMode = document.getElementById('printMode').value;
         const flowContainer = document.getElementById('modalFlowContainer');
         flowContainer.innerHTML = '';
 
         let stepsData = [];
+        const backsideEnabled = document.getElementById('printBacksideToggle').checked;
 
         if (printMode === 'summary') {
-            stepsData.push({
-                title: currentLang === 'he' ? "מפה גרפית (עמוד יחיד)" : "Graphical Map (Single Page)",
-                color: "#0f172a"
-            });
+            stepsData.push({ title: currentLang === 'he' ? "דוח חיבורים (עמוד יחיד)" : "Connection Report (Single Page)", color: "#0f172a" });
+        } else if (printMode === 'hardware') {
+            stepsData.push({ title: currentLang === 'he' ? "תרשים ארון (עמוד יחיד)" : "Rack Diagram (Single Page)", color: "#3b82f6" });
         } else if (printMode === 'ink') {
-            stepsData.push({
-                title: currentLang === 'he' ? "דף הדפסה רציף (מעורב)" : "Continuous Print Sheet (Mixed)",
-                color: "#1976d2"
-            });
+            stepsData.push({ title: currentLang === 'he' ? "דף הדפסה רציף (מעורב)" : "Continuous Print Sheet (Mixed)", color: "#3b82f6" });
+            if (backsideEnabled) stepsData.push({ title: currentLang === 'he' ? "גב העמוד: מיקומי חיתוך" : "Backside: Cutout Locations", color: "#0f172a" });
         } else {
-            // Separate pages by color group
             let colorGroups = {};
             let processedSections = getProcessedSectionsData();
             processedSections.forEach(group => {
-                group.expandedItems.forEach(item => {
+                group.items.forEach(item => {
                     const colorKey = (item.color || '#ffffff').trim();
                     if (!colorGroups[colorKey]) colorGroups[colorKey] = [];
                     colorGroups[colorKey].push(item);
@@ -1690,137 +1772,90 @@
 
             for (const [colorKey] of Object.entries(colorGroups)) {
                 let colorName = getBasicColorName(colorKey, currentLang);
-                stepsData.push({
-                    title: colorName,
-                    color: colorKey
-                });
+                stepsData.push({ title: `${currentLang === 'he' ? 'חזית:' : 'Front:'} ${colorName}`, color: colorKey });
+                if (backsideEnabled) {
+                    stepsData.push({ title: `${currentLang === 'he' ? 'גב:' : 'Back:'} ${colorName} (${currentLang === 'he' ? 'מיקומי חיתוך' : 'Cutout Locations'})`, color: "#0f172a" });
+                }
             }
         }
 
-        if (stepsData.length === 0) {
-            window.print();
-            return;
-        }
+        if (stepsData.length === 0) { window.print(); return; }
 
         stepsData.forEach((step, idx) => {
             let isWhite = (!step.color || step.color.toLowerCase() === '#ffffff' || step.color.toLowerCase() === '#fff');
-
             let stepWrapper = document.createElement('div');
             stepWrapper.className = 'flow-step-wrapper';
 
             let card = document.createElement('div');
             card.className = 'flow-card';
             card.style.border = `2px solid ${step.color}`;
-            if (isWhite) {
-                card.style.border = `2px solid #cbd5e1`;
-            }
+            if (isWhite) card.style.border = `2px solid #cbd5e1`;
 
             card.innerHTML = `
                 <div class="flow-number-badge">${idx + 1}</div>
-                <div class="flow-details">
-                    <span class="flow-label-text">${step.title}</span>
-                </div>
+                <div class="flow-details"><span class="flow-label-text">${step.title}</span></div>
             `;
             stepWrapper.appendChild(card);
 
-            // Add downward arrow if not the last item
             if (idx < stepsData.length - 1) {
                 let arrow = document.createElement('div');
                 arrow.className = 'flow-arrow';
                 arrow.innerHTML = '↓';
                 stepWrapper.appendChild(arrow);
             }
-
             flowContainer.appendChild(stepWrapper);
         });
 
         document.getElementById('printOrderModal').style.display = 'flex';
     }
 
-    function closePrintModal() {
-        document.getElementById('printOrderModal').style.display = 'none';
-    }
-
-    function proceedWithPrint() {
-        closePrintModal();
-        window.print();
-    }
+    function closePrintModal() { document.getElementById('printOrderModal').style.display = 'none'; }
+    function proceedWithPrint() { closePrintModal(); window.print(); }
 
     function getProcessedSectionsData() {
         let catLookup = {};
         categories.forEach(c => catLookup[c.id] = c);
 
-        let secLookup = {};
-        portSections.forEach(s => secLookup[s.id] = s);
-
-        let flattenedData = [];
-        portsList.forEach(port => {
-            let cat = catLookup[port.categoryId] || { name: currentLang === 'he' ? "לא משויך" : "Unassigned", color: "#ffffff" };
-            let sec = secLookup[port.sectionId] || portSections[0] || { name: "Panel", portsPerRow: 24, portWidth: 15, portHeight: 10, standardGap: 2, enableGrouping: false, segmentGap: 8, segmentSize: 4 };
-
-            flattenedData.push({
-                text1: port.text || "",
-                text2: cat.name,
-                color: cat.color || "#ffffff",
-                span: port.span,
-                section: sec
-            });
-        });
-
         let sectionGroups = {};
         portSections.forEach(sec => sectionGroups[sec.id] = { section: sec, items: [] });
 
-        flattenedData.forEach(item => {
-            let sId = item.section.id;
-            if(!sectionGroups[sId]) {
-                sectionGroups[sId] = { section: item.section, items: [] };
-            }
-            sectionGroups[sId].items.push(item);
+        portSections.forEach(sec => {
+            let secPorts = portsList.map((p, origIdx) => ({ p, origIdx })).filter(item => (item.p.sectionId === sec.id || (!item.p.sectionId && sec === portSections[0])));
+            let secCounter = sec.startNumber !== undefined ? sec.startNumber : 1;
+
+            secPorts.forEach(({ p: port, origIdx: originalIndex }) => {
+                let cat = catLookup[port.categoryId] || { name: currentLang === 'he' ? "לא משויך" : "Unassigned", color: "#ffffff" };
+                let span = parseInt(port.span) || 1;
+                let portRangeStr = span === 1 ? `${secCounter}` : `${secCounter}-${secCounter + span - 1}`;
+                secCounter += span;
+
+                let itemObj = {
+                    originalIndex: originalIndex,
+                    text1: port.text || "",
+                    text2: cat.name,
+                    color: cat.color || "#ffffff",
+                    span: span,
+                    section: sec,
+                    panelName: sec.name,
+                    portRange: portRangeStr
+                };
+
+                if (sectionGroups[sec.id]) {
+                    sectionGroups[sec.id].items.push(itemObj);
+                }
+            });
         });
 
         let processedSections = [];
         portSections.forEach(sec => {
             let group = sectionGroups[sec.id];
             if(!group || group.items.length === 0) return;
-
-            let portsPerRow = sec.portsPerRow || 24;
-            let segmentSize = sec.enableGrouping ? (sec.segmentSize || 4) : 999999;
-            let segmentGap = sec.enableGrouping ? (sec.segmentGap || 8) : sec.standardGap;
-
-            let expandedItems = [];
-            let currentPortIndex = 0;
-
-            group.items.forEach(item => {
-                let spanLeft = item.span;
-                while (spanLeft > 0) {
-                    const spaceInRow = portsPerRow - currentPortIndex;
-                    const spanThisRow = Math.min(spanLeft, spaceInRow);
-
-                    expandedItems.push({
-                        text1: item.text1,
-                        text2: item.text2,
-                        color: item.color,
-                        span: spanThisRow,
-                        startIndex: currentPortIndex,
-                        section: sec
-                    });
-
-                    currentPortIndex += spanThisRow;
-                    spanLeft -= spanThisRow;
-                    if (currentPortIndex >= portsPerRow) currentPortIndex = 0;
-                }
-            });
-
-            processedSections.push({
-                section: sec,
-                expandedItems: expandedItems
-            });
+            processedSections.push({ section: sec, items: group.items });
         });
 
         return processedSections;
     }
 
-    // --- Visualizer & Render Logic ---
     function processLayout(fullRebuild = true) {
         if (fullRebuild) {
             renderSidebarCategories();
@@ -1833,26 +1868,36 @@
 
         const fontFamily = document.getElementById('fontFamilySelect').value;
         const borderThickness = document.getElementById('borderThickness').value;
-        document.documentElement.style.setProperty('--print-font', `'${fontFamily}', 'Roboto', sans-serif`);
+        
+        let targetPrintFont = fontFamily;
+        if(fontFamily === 'GladiaCLM') targetPrintFont = `'GladiaCLM', 'Inter', sans-serif`;
+        else if(fontFamily === 'Roboto Mono') targetPrintFont = `'Roboto Mono', monospace`;
+        else if(fontFamily === 'Inter') targetPrintFont = `'Inter', system-ui, sans-serif`;
+        else targetPrintFont = `'${fontFamily}', sans-serif`;
+        
+        document.documentElement.style.setProperty('--print-font', targetPrintFont);
         document.documentElement.style.setProperty('--global-border-width', `${borderThickness}px`);
 
         saveSettingsToStorage();
         updatePreviewsOnly();
-
         setTimeout(applyScaling, 0);
     }
 
     function renderHardwareView(processedSections) {
         const hwViewArea = document.getElementById('hardware-view-area');
+        const rbEl = document.getElementById('rubberband');
         hwViewArea.innerHTML = '';
+        if (rbEl) hwViewArea.appendChild(rbEl);
+
+        let absoluteIndexCounter = 0;
 
         processedSections.forEach(group => {
             let sec = group.section;
-            let items = group.expandedItems;
+            let items = group.items;
             if(items.length === 0) return;
 
             let headerEl = document.createElement('div');
-            headerEl.style.cssText = "font-weight: 600; font-size: 0.9em; color: var(--primary); margin: 8px 0 4px 0; font-family: var(--ui-font);";
+            headerEl.style.cssText = "font-weight: 600; font-size: 0.95em; color: var(--text-main); margin: 12px 0 6px 0; font-family: var(--ui-font); letter-spacing: -0.01em;";
             headerEl.textContent = sec.name;
             hwViewArea.appendChild(headerEl);
 
@@ -1868,9 +1913,17 @@
             let segmentGap = sec.enableGrouping ? (sec.segmentGap || 8) : standardGap;
 
             items.forEach(item => {
-                for (let i = 0; i < item.span; i++) {
+                for (let s = 0; s < item.span; s++) {
+                    let currentAbsIdx = absoluteIndexCounter;
                     let portEl = document.createElement('div');
                     portEl.className = 'hardware-port';
+                    
+                    if (selectedAbsoluteIndices.has(currentAbsIdx)) {
+                        portEl.classList.add('selected-port');
+                    }
+                    
+                    portEl.setAttribute('data-absolute-index', currentAbsIdx);
+                    portEl.addEventListener('click', (e) => handlePortClick(e, currentAbsIdx));
 
                     const finalWidth = `${portWidth}mm`;
                     portEl.style.width = finalWidth;
@@ -1882,13 +1935,19 @@
                         portEl.style.borderBottom = `3px solid ${item.color}`;
                     }
 
-                    // Bold category logic for Hardware View
-                    let displayTxt = (item.text1 || '').trim();
-                    if (displayTxt === '' && item.text2) {
-                        displayTxt = `<span style="font-weight:bold;">${item.text2}</span>`;
+                    let displayTxt = '';
+                    let catName = (item.text2 || '').trim();
+                    let portText = (item.text1 || '').trim();
+
+                    if (catName !== '' && portText !== '') {
+                        displayTxt = `<div style="font-weight:bold; font-size:9px; overflow:hidden; white-space:nowrap; text-overflow:clip; width:90%; color:var(--text-main);">${catName}</div><div style="font-size:7px; overflow:hidden; white-space:nowrap; text-overflow:clip; width:90%; color:var(--text-secondary);">${portText}</div>`;
+                    } else if (catName !== '') {
+                        displayTxt = `<div style="font-weight:bold; font-size:9px; overflow:hidden; white-space:nowrap; text-overflow:clip; width:90%; color:var(--text-main);">${catName}</div>`;
+                    } else if (portText !== '') {
+                        displayTxt = `<div style="font-size:8px; overflow:hidden; white-space:nowrap; text-overflow:clip; width:90%; color:var(--text-secondary);">${portText}</div>`;
                     }
 
-                    portEl.innerHTML = `<div class="pins"></div><span style="font-size:7px; overflow:hidden; white-space:nowrap; text-overflow:clip; width:90%;">${displayTxt}</span>`;
+                    portEl.innerHTML = `<div class="pins"></div>${displayTxt}`;
 
                     let directionMargin = 'marginRight';
                     let regularMargin = standardGap;
@@ -1900,6 +1959,7 @@
 
                     rowDiv.appendChild(portEl);
                     portCountInRow++;
+                    absoluteIndexCounter++;
 
                     if (portCountInRow >= portsPerRow) {
                         hwViewArea.appendChild(rowDiv);
@@ -1923,10 +1983,17 @@
             return;
         }
 
+        if (printMode === 'hardware') {
+            renderHardwarePrintSheet(previewArea, processedSections);
+            return;
+        }
+
+        const backsideEnabled = document.getElementById('printBacksideToggle').checked;
+
         if (printMode === 'separate') {
             let colorGroups = {};
             processedSections.forEach(group => {
-                group.expandedItems.forEach(item => {
+                group.items.forEach(item => {
                     const colorKey = (item.color || '#ffffff').trim();
                     if (!colorGroups[colorKey]) colorGroups[colorKey] = [];
                     colorGroups[colorKey].push(item);
@@ -1934,15 +2001,124 @@
             });
 
             for (const [color, colorItems] of Object.entries(colorGroups)) {
-                buildPaginatedPages(colorItems, color, false);
+                buildPaginatedPagesWithBackside(colorItems, color, false, backsideEnabled);
             }
         } else {
-            let allExpanded = [];
-            processedSections.forEach(group => {
-                allExpanded = allExpanded.concat(group.expandedItems);
-            });
-            buildPaginatedPages(allExpanded, 'Mixed', true);
+            let allItems = [];
+            processedSections.forEach(group => { allItems = allItems.concat(group.items); });
+            buildPaginatedPagesWithBackside(allItems, 'Mixed', true, backsideEnabled);
         }
+    }
+
+    function renderHardwarePrintSheet(previewArea, processedSections) {
+        let pageDiv = document.createElement('div');
+        pageDiv.className = 'page';
+
+        let projectName = document.getElementById('projectNameInput').value || i18n[currentLang].hw_title;
+
+        let headerDiv = document.createElement('div');
+        headerDiv.className = 'official-report-header';
+
+        let title = document.createElement('div');
+        title.className = 'official-report-title';
+        title.textContent = projectName;
+
+        let subtitle = document.createElement('div');
+        subtitle.className = 'official-report-subtitle';
+        subtitle.textContent = i18n[currentLang].hw_title;
+
+        headerDiv.appendChild(title);
+        headerDiv.appendChild(subtitle);
+        pageDiv.appendChild(headerDiv);
+
+        let cloneArea = document.createElement('div');
+        cloneArea.style.cssText = "direction: ltr; text-align: left; font-family: var(--print-font); width: 100%; display: flex; flex-direction: column; gap: 16px;";
+
+        processedSections.forEach(group => {
+            let sec = group.section;
+            let items = group.items;
+            if(items.length === 0) return;
+
+            let secWrapper = document.createElement('div');
+            let headerEl = document.createElement('div');
+            headerEl.style.cssText = "font-weight: 700; font-size: 1.05em; color: #0f172a; margin-bottom: 8px; font-family: var(--ui-font);";
+            headerEl.textContent = sec.name;
+            secWrapper.appendChild(headerEl);
+
+            let rowDiv = document.createElement('div');
+            rowDiv.className = 'rack-visual-row';
+            rowDiv.style.backgroundColor = 'transparent';
+            rowDiv.style.boxShadow = 'none';
+            rowDiv.style.border = 'none';
+            rowDiv.style.padding = '0';
+            let portCountInRow = 0;
+
+            let portsPerRow = sec.portsPerRow || 24;
+            let portWidth = sec.portWidth || 15;
+            let portHeight = sec.portHeight || 10;
+            let standardGap = sec.standardGap || 2;
+            let segmentSize = sec.enableGrouping ? (sec.segmentSize || 4) : 999999;
+            let segmentGap = sec.enableGrouping ? (sec.segmentGap || 8) : standardGap;
+
+            items.forEach(item => {
+                for (let s = 0; s < item.span; s++) {
+                    let portEl = document.createElement('div');
+                    portEl.className = 'hardware-port';
+
+                    const finalWidth = `${portWidth}mm`;
+                    portEl.style.width = finalWidth;
+                    portEl.style.minWidth = finalWidth;
+                    portEl.style.maxWidth = finalWidth;
+                    portEl.style.height = `${portHeight + 8}mm`;
+
+                    if (item.color && item.color.toLowerCase() !== '#ffffff' && item.color.toLowerCase() !== '#fff') {
+                        portEl.style.borderBottom = `3px solid ${item.color}`;
+                    }
+
+                    let displayTxt = '';
+                    let catName = (item.text2 || '').trim();
+                    let portText = (item.text1 || '').trim();
+
+                    if (catName !== '' && portText !== '') {
+                        displayTxt = `<div style="font-weight:bold; font-size:9px; overflow:hidden; white-space:nowrap; text-overflow:clip; width:90%;">${catName}</div><div style="font-size:7px; overflow:hidden; white-space:nowrap; text-overflow:clip; width:90%;">${portText}</div>`;
+                    } else if (catName !== '') {
+                        displayTxt = `<div style="font-weight:bold; font-size:9px; overflow:hidden; white-space:nowrap; text-overflow:clip; width:90%;">${catName}</div>`;
+                    } else if (portText !== '') {
+                        displayTxt = `<div style="font-size:8px; overflow:hidden; white-space:nowrap; text-overflow:clip; width:90%;">${portText}</div>`;
+                    }
+
+                    portEl.innerHTML = `<div class="pins" style="background:#475569;"></div>${displayTxt}`;
+
+                    let directionMargin = 'marginRight';
+                    let regularMargin = standardGap;
+
+                    if ((portCountInRow + 1) % segmentSize === 0) regularMargin = segmentGap;
+                    if ((portCountInRow + 1) % portsPerRow === 0) regularMargin = 0;
+
+                    portEl.style[directionMargin] = `${regularMargin}mm`;
+
+                    rowDiv.appendChild(portEl);
+                    portCountInRow++;
+
+                    if (portCountInRow >= portsPerRow) {
+                        secWrapper.appendChild(rowDiv);
+                        rowDiv = document.createElement('div');
+                        rowDiv.className = 'rack-visual-row';
+                        rowDiv.style.backgroundColor = 'transparent';
+                        rowDiv.style.boxShadow = 'none';
+                        rowDiv.style.border = 'none';
+                        rowDiv.style.padding = '0';
+                        portCountInRow = 0;
+                    }
+                }
+            });
+
+            if (portCountInRow > 0) secWrapper.appendChild(rowDiv);
+            cloneArea.appendChild(secWrapper);
+        });
+
+        pageDiv.appendChild(cloneArea);
+        previewArea.appendChild(pageDiv);
     }
 
     function renderGraphicalMapSheet(previewArea) {
@@ -1970,9 +2146,7 @@
         contentContainer.className = 'map-columns-container';
 
         let catMap = {};
-        categories.forEach(c => {
-            catMap[c.name] = { color: c.color || '#ffffff', items: [], totalPorts: 0 };
-        });
+        categories.forEach(c => { catMap[c.name] = { color: c.color || '#ffffff', items: [], totalPorts: 0 }; });
 
         portSections.forEach(sec => {
             let secPorts = portsList.filter(p => p.sectionId === sec.id || (!p.sectionId && sec === portSections[0]));
@@ -1981,7 +2155,6 @@
             secPorts.forEach(port => {
                 let cat = categories.find(c => c.id === port.categoryId) || { name: currentLang === 'he' ? "לא משויך" : "Unassigned", color: "#ffffff" };
                 let span = parseInt(port.span) || 1;
-
                 let portDisplay = span === 1 ? `${secCounter}` : `${secCounter}-${secCounter + span - 1}`;
                 secCounter += span;
 
@@ -1989,10 +2162,7 @@
                     catMap[cat.name] = { color: cat.color || '#ffffff', items: [], totalPorts: 0 };
                 }
 
-                catMap[cat.name].items.push({
-                    portDisplay: portDisplay,
-                    portLabel: port.text || ""
-                });
+                catMap[cat.name].items.push({ portDisplay: portDisplay, portLabel: port.text || "" });
                 catMap[cat.name].totalPorts += span;
             });
         });
@@ -2008,9 +2178,7 @@
 
             let header = document.createElement('div');
             header.className = 'map-cat-table-header';
-            if (!isWhite) {
-                header.style.borderTop = `3px solid ${colorHex}`;
-            }
+            if (!isWhite) header.style.borderTop = `4px solid ${colorHex}`;
 
             header.innerHTML = `
                 <span class="color-dot" style="background-color: ${colorHex}; border: ${isWhite ? '1px solid #cbd5e1' : 'none'}"></span>
@@ -2041,7 +2209,7 @@
         previewArea.appendChild(pageDiv);
     }
 
-    function buildPaginatedPages(items, groupTitle, useInk) {
+    function buildPaginatedPagesWithBackside(items, groupTitle, useInk, backsideEnabled) {
         const previewArea = document.getElementById('preview-area');
 
         let pages = [];
@@ -2058,15 +2226,8 @@
             let portWidth = sec.portWidth || 15;
             let portHeight = sec.portHeight || 10;
             let standardGap = sec.standardGap || 2;
-            let segmentSize = sec.enableGrouping ? (sec.segmentSize || 4) : 999999;
-            let segmentGap = sec.enableGrouping ? (sec.segmentGap || 8) : standardGap;
 
             let totalWidth = (item.span * portWidth) + ((item.span - 1) * standardGap);
-            let extraGaps = 0;
-            for (let s = 1; s < item.span; s++) {
-                if ((item.startIndex + s) % segmentSize === 0) extraGaps++;
-            }
-            totalWidth += extraGaps * (segmentGap - standardGap);
             let itemTotalSpace = totalWidth + gapSize;
             let itemHeightWithGap = portHeight + gapSize;
 
@@ -2086,9 +2247,7 @@
             currentPageItems.push({ item, totalWidth });
         });
 
-        if (currentPageItems.length > 0) {
-            pages.push(currentPageItems);
-        }
+        if (currentPageItems.length > 0) pages.push(currentPageItems);
 
         pages.forEach((pageItems, pageIdx) => {
             let pageDiv = document.createElement('div');
@@ -2099,10 +2258,8 @@
             let pageLabelSuffix = pages.length > 1 ? ` (${currentLang === 'he' ? 'חלק' : 'Part'} ${pageIdx + 1}/${pages.length})` : '';
 
             let groupDisplayTitle = groupTitle;
-            if (!useInk) {
-                groupDisplayTitle = getBasicColorName(groupTitle, currentLang);
-            }
-            title.textContent = (useInk ? i18n[currentLang].sheet_color : `${i18n[currentLang].paper_color} ${groupDisplayTitle}`) + pageLabelSuffix;
+            if (!useInk) groupDisplayTitle = getBasicColorName(groupTitle, currentLang);
+            title.textContent = `${groupDisplayTitle}${pageLabelSuffix}`;
             pageDiv.appendChild(title);
 
             let labelsContainer = document.createElement('div');
@@ -2121,35 +2278,77 @@
                 labelDiv.style.maxWidth = `${entry.totalWidth}mm`;
                 labelDiv.style.height = `${portHeight}mm`;
 
-                let catColorStyle = "";
                 const isWhite = (!item.color || item.color.toLowerCase() === '#ffffff' || item.color.toLowerCase() === '#fff');
-                if (useInk && !isWhite) {
+                if (!isWhite) {
                     labelDiv.style.borderColor = item.color;
                     labelDiv.style.borderWidth = `${document.getElementById('borderThickness').value}px`;
-                    catColorStyle = `color: ${item.color};`;
                 }
 
-                // Bold Category logic for Print Labels
                 let html = '';
                 let t1 = (item.text1 || '').trim();
                 let t2 = (item.text2 || '').trim();
 
                 if (t1 !== '' && t2 !== '') {
-                    html = `<div style="overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px; ${catColorStyle}">${t1}</div>` +
-                        `<div style="font-size:9px; font-weight:bold; overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; color:#333;">${t2}</div>`;
-                } else if (t1 !== '') {
-                    html = `<div style="overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px; ${catColorStyle}">${t1}</div>`;
+                    html = `<div style="font-weight:bold; overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px;">${t2}</div>` +
+                        `<div style="font-size:9px; font-weight: 500; overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; color:#334155;">${t1}</div>`;
                 } else if (t2 !== '') {
-                    html = `<div style="overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px; font-weight:bold; color:#333;">${t2}</div>`;
+                    html = `<div style="font-weight:bold; overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px;">${t2}</div>`;
+                } else if (t1 !== '') {
+                    html = `<div style="overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px; font-weight:600;">${t1}</div>`;
                 }
 
                 labelDiv.innerHTML = html;
-
                 labelsContainer.appendChild(labelDiv);
             });
 
             pageDiv.appendChild(labelsContainer);
             previewArea.appendChild(pageDiv);
+
+            if (backsideEnabled) {
+                let backDiv = document.createElement('div');
+                backDiv.className = 'page page-backside';
+
+                let backTitle = document.createElement('div');
+                backTitle.className = 'page-title';
+                let backLabelTranslation = currentLang === 'he' ? 'גב (מיקום)' : 'Back (Location)';
+                backTitle.textContent = `${groupDisplayTitle} - ${backLabelTranslation}${pageLabelSuffix}`;
+                backDiv.appendChild(backTitle);
+
+                let backLabelsContainer = document.createElement('div');
+                backLabelsContainer.className = 'print-labels-container';
+                backLabelsContainer.setAttribute('dir', currentLang === 'he' ? 'ltr' : 'rtl');
+
+                pageItems.forEach(entry => {
+                    let item = entry.item;
+                    let sec = item.section;
+                    let portHeight = sec.portHeight || 10;
+
+                    let labelDiv = document.createElement('div');
+                    labelDiv.className = 'label';
+                    labelDiv.setAttribute('dir', currentLang === 'he' ? 'rtl' : 'ltr');
+
+                    labelDiv.style.width = `${entry.totalWidth}mm`;
+                    labelDiv.style.minWidth = `${entry.totalWidth}mm`;
+                    labelDiv.style.maxWidth = `${entry.totalWidth}mm`;
+                    labelDiv.style.height = `${portHeight}mm`;
+                    
+                    labelDiv.style.borderColor = '#94a3b8';
+                    labelDiv.style.borderWidth = `${document.getElementById('borderThickness').value}px`;
+                    labelDiv.style.borderStyle = 'dashed';
+
+                    let pName = (item.panelName || '').trim();
+                    let pRange = (item.portRange || '').trim();
+                    
+                    labelDiv.innerHTML = `
+                        <div style="font-weight:700; overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; padding:0 2px; font-size:10px; color:#334155;">${pName}</div>
+                        <div style="font-size:9px; font-weight:600; overflow:hidden; white-space:nowrap; text-overflow:clip; width:100%; color:#475569;">${currentLang === 'he' ? 'פורט' : 'Port'} ${pRange}</div>
+                    `;
+                    backLabelsContainer.appendChild(labelDiv);
+                });
+
+                backDiv.appendChild(backLabelsContainer);
+                previewArea.appendChild(backDiv);
+            }
         });
     }
 
